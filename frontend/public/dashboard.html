@@ -88,7 +88,6 @@
 
     const headers = { 'x-auth-token': token };
 
-    // Stats
     async function loadStats() {
       const res = await fetch(`${API_BASE_URL}/api/admin/stats`, { headers });
       const data = await res.json();
@@ -96,7 +95,6 @@
       document.getElementById('total-checked').innerText = data.checkedIn;
     }
 
-    // Users list
     async function loadUsers() {
       const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
       const users = await res.json();
@@ -105,17 +103,16 @@
       users.forEach(u => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${u.name}</td>
-          <td>${u.email}</td>
-          <td>${u.phone || '-'}</td>
-          <td>${u.checkedIn ? '✅ Checked In' : '❌ Not Checked In'}</td>
-          <td>${u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '-'}</td>
+           <td>${u.name}</td>
+           <td>${u.email}</td>
+           <td>${u.phone || '-'}</td>
+           <td>${u.checkedIn ? '✅ Checked In' : '❌ Not Checked In'}</td>
+           <td>${u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '-'}</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    // Manual registration
     async function manualRegister() {
       const name = document.getElementById('man-name').value.trim();
       const email = document.getElementById('man-email').value.trim();
@@ -156,7 +153,6 @@
       }
     }
 
-    // QR Scanner
     let scanner;
     function startScanner() {
       scanner = new Html5Qrcode("reader");
@@ -192,7 +188,6 @@
       }
     }
 
-    // Export CSV
     async function exportCSV() {
       const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
       const users = await res.json();
@@ -224,7 +219,6 @@
       setTimeout(() => t.classList.remove('show'), 3400);
     }
 
-    // Initial load
     loadStats();
     loadUsers();
     startScanner();
