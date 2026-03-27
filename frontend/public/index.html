@@ -1,14 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Event Check-in App" />
-    <title>Event Check-in</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Guild Kochi — Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <div class="view active z1">
+    <div class="card">
+      <div class="card-eyebrow">Build Guild Kochi · April 2025</div>
+      <div class="card-h1">Get your <span style="color:var(--bp-warning)">QR Pass</span></div>
+      <div class="card-sub">Register with your name and email. You'll receive a QR code to check in at the event.</div>
+
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="name" placeholder="Arjun Menon" autocomplete="name">
+      </div>
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="arjun@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Phone (optional)</label>
+        <input type="tel" id="phone" placeholder="+91 98765 43210">
+      </div>
+
+      <button class="btn btn-primary btn-block" onclick="register()">Register →</button>
+      <div class="msg err" id="err-msg"></div>
+      <div class="msg ok" id="ok-msg"></div>
+
+      <div class="hint-box">
+        <strong>Already registered?</strong> <a href="resend.html" style="color:var(--bp-warning)">Resend your QR</a> or go to the <a href="admin.html" style="color:var(--bp-warning)">admin panel</a>.
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    function toast(msg, type='info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast show t-${type}`;
+      setTimeout(() => t.classList.remove('show'), 3400);
+    }
+
+    async function register() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      const errDiv = document.getElementById('err-msg');
+      const okDiv = document.getElementById('ok-msg');
+      errDiv.style.display = 'none';
+      okDiv.style.display = 'none';
+
+      if (!name || !email) {
+        errDiv.textContent = 'Name and email are required.';
+        errDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, phone })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          okDiv.textContent = data.msg + ' Redirecting to your pass...';
+          okDiv.style.display = 'block';
+          localStorage.setItem('qrEmail', email);
+          setTimeout(() => {
+            window.location.href = `/pass.html?email=${encodeURIComponent(email)}`;
+          }, 2000);
+        } else {
+          errDiv.textContent = data.msg || 'Registration failed';
+          errDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errDiv.textContent = 'Network error. Please try again.';
+        errDiv.style.display = 'block';
+      }
+    }
+  </script>
+</body>
 </html>

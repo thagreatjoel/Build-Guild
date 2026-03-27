@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Admin Dashboard — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    .stats-grid { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .stat-card { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 16px 24px; flex: 1; text-align: center; }
+    .stat-number { font-size: 32px; font-weight: 800; color: var(--bp-warning); }
+    .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; }
+    .section { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 20px; margin-bottom: 24px; }
+    .section h2 { font-size: 18px; margin-bottom: 16px; }
+    .user-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .user-table th, .user-table td { border: 1px solid rgba(255,255,255,.2); padding: 8px; text-align: left; }
+    .user-table th { background: rgba(0,0,0,.3); }
+    .btn-small { padding: 4px 12px; font-size: 12px; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .scan-area { margin-bottom: 20px; }
+    #reader { width: 100%; max-width: 400px; margin: 0 auto; }
+    @media (max-width: 600px) { .stats-grid { flex-direction: column; } .stat-card { margin-bottom: 10px; } }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <div class="view active z1" style="padding-top: 40px;">
+    <div style="width:100%; max-width: 1100px;">
+      <div class="flex-between" style="margin-bottom: 20px;">
+        <h1 style="font-size: 28px;">📋 Admin Dashboard</h1>
+        <button class="btn btn-outline btn-small" onclick="logout()">Logout</button>
+      </div>
+
+      <div class="stats-grid" id="stats">
+        <div class="stat-card"><div class="stat-number" id="total-reg">-</div><div class="stat-label">Total Registered</div></div>
+        <div class="stat-card"><div class="stat-number" id="total-checked">-</div><div class="stat-label">Checked In</div></div>
+      </div>
+
+      <div class="section">
+        <h2>📷 Scan QR Code</h2>
+        <div class="scan-area">
+          <div id="reader"></div>
+          <div id="scan-result" class="msg" style="margin-top: 12px;"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>✍️ Manual Walk‑in Registration</h2>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <input type="text" id="man-name" placeholder="Full Name" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <input type="email" id="man-email" placeholder="Email" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <input type="tel" id="man-phone" placeholder="Phone (optional)" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <button class="btn btn-primary" onclick="manualRegister()">Register</button>
+        </div>
+        <div id="man-msg" class="msg" style="margin-top: 12px;"></div>
+      </div>
+
+      <div class="section">
+        <div class="flex-between">
+          <h2>👥 Attendees</h2>
+          <button class="btn btn-outline btn-small" onclick="exportCSV()">Export CSV</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="user-table" id="user-table">
+            <thead>汽<th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Checked In At</th></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let token = localStorage.getItem('adminToken');
+    if (!token) window.location.href = '/admin.html';
+
+    const headers = { 'x-auth-token': token };
+
+    // Stats
+    async function loadStats() {
+      const res = await fetch(`${API_BASE_URL}/api/admin/stats`, { headers });
+      const data = await res.json();
+      document.getElementById('total-reg').innerText = data.total;
+      document.getElementById('total-checked').innerText = data.checkedIn;
+    }
+
+    // Users list
+    async function loadUsers() {
+      const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
+      const users = await res.json();
+      const tbody = document.querySelector('#user-table tbody');
+      tbody.innerHTML = '';
+      users.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${u.name}</td>
+          <td>${u.email}</td>
+          <td>${u.phone || '-'}</td>
+          <td>${u.checkedIn ? '✅ Checked In' : '❌ Not Checked In'}</td>
+          <td>${u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Manual registration
+    async function manualRegister() {
+      const name = document.getElementById('man-name').value.trim();
+      const email = document.getElementById('man-email').value.trim();
+      const phone = document.getElementById('man-phone').value.trim();
+      const msgDiv = document.getElementById('man-msg');
+      msgDiv.style.display = 'none';
+      if (!name || !email) {
+        msgDiv.textContent = 'Name and email are required.';
+        msgDiv.className = 'msg err';
+        msgDiv.style.display = 'block';
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/manual-register`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, phone })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msgDiv.textContent = data.msg + ' QR sent to email.';
+          msgDiv.className = 'msg ok';
+          msgDiv.style.display = 'block';
+          document.getElementById('man-name').value = '';
+          document.getElementById('man-email').value = '';
+          document.getElementById('man-phone').value = '';
+          loadStats();
+          loadUsers();
+        } else {
+          msgDiv.textContent = data.msg || 'Registration failed';
+          msgDiv.className = 'msg err';
+          msgDiv.style.display = 'block';
+        }
+      } catch (err) {
+        msgDiv.textContent = 'Network error.';
+        msgDiv.className = 'msg err';
+        msgDiv.style.display = 'block';
+      }
+    }
+
+    // QR Scanner
+    let scanner;
+    function startScanner() {
+      scanner = new Html5Qrcode("reader");
+      scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (decoded) => {
+        handleScan(decoded);
+      }, (err) => { console.log(err); });
+    }
+
+    async function handleScan(token) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/scan`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+        const data = await res.json();
+        const resultDiv = document.getElementById('scan-result');
+        if (res.ok) {
+          resultDiv.textContent = `✅ ${data.msg}`;
+          resultDiv.className = 'msg ok';
+          resultDiv.style.display = 'block';
+          loadStats();
+          loadUsers();
+          setTimeout(() => resultDiv.style.display = 'none', 3000);
+        } else {
+          resultDiv.textContent = `❌ ${data.msg}`;
+          resultDiv.className = 'msg err';
+          resultDiv.style.display = 'block';
+          setTimeout(() => resultDiv.style.display = 'none', 3000);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Export CSV
+    async function exportCSV() {
+      const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
+      const users = await res.json();
+      const headersCSV = ['Name','Email','Phone','Checked In','Checked In At','Registered At'];
+      const rows = users.map(u => [
+        u.name, u.email, u.phone || '',
+        u.checkedIn ? 'Yes' : 'No',
+        u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '',
+        new Date(u.createdAt).toLocaleString()
+      ]);
+      const csv = [headersCSV, ...rows].map(row => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'attendees.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      window.location.href = '/admin.html';
+    }
+
+    function toast(msg, type='info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast show t-${type}`;
+      setTimeout(() => t.classList.remove('show'), 3400);
+    }
+
+    // Initial load
+    loadStats();
+    loadUsers();
+    startScanner();
+  </script>
+</body>
+</html>

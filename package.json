@@ -1,0 +1,32 @@
+{
+  "name": "event-checkin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  
+  "scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "concurrently \"cd backend && node server.js\" \"cd frontend && npm start\""
+},
+
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thagreatjoel/Build-Guild.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/thagreatjoel/Build-Guild/issues"
+  },
+  "homepage": "https://github.com/thagreatjoel/Build-Guild#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
