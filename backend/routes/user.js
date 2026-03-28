@@ -84,4 +84,28 @@ router.get('/test-email', async (req, res) => {
   }
 });
 
+
+
+const net = require('net');
+
+router.get('/test-smtp', async (req, res) => {
+  const host = 'smtp.gmail.com';
+  const port = 587;
+  const socket = new net.Socket();
+  const timeout = 5000;
+  socket.setTimeout(timeout);
+  socket.on('connect', () => {
+    socket.destroy();
+    res.json({ msg: `✅ Successfully connected to ${host}:${port}` });
+  });
+  socket.on('timeout', () => {
+    socket.destroy();
+    res.status(500).json({ msg: `❌ Connection to ${host}:${port} timed out` });
+  });
+  socket.on('error', (err) => {
+    socket.destroy();
+    res.status(500).json({ msg: `❌ Error connecting to ${host}:${port}: ${err.message}` });
+  });
+  socket.connect(port, host);
+});
 module.exports = router;
