@@ -74,6 +74,7 @@
       const originalText = registerBtn.textContent;
       registerBtn.textContent = 'Registering...';
 
+      console.log('Sending registration request to:', `${API_BASE_URL}/api/user/register`);
       try {
         const response = await fetch(`${API_BASE_URL}/api/user/register`, {
           method: 'POST',
@@ -81,13 +82,15 @@
           body: JSON.stringify({ name, email, phone })
         });
         const data = await response.json();
+        console.log('Response status:', response.status);
+        console.log('Response data:', data);
 
         if (response.ok) {
-          // Save email for later retrieval
+          console.log('Registration successful, redirecting to complete.html');
           localStorage.setItem('qrEmail', email);
-          // Redirect to complete page with email
           window.location.href = `/complete.html?email=${encodeURIComponent(email)}`;
         } else {
+          console.log('Registration failed:', data.msg);
           errDiv.textContent = data.msg || 'Registration failed';
           errDiv.style.display = 'block';
           registerBtn.disabled = false;
