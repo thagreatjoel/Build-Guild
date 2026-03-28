@@ -68,4 +68,20 @@ router.get('/by-email', async (req, res) => {
   }
 });
 
+
+// Test email endpoint – call with ?email=youraddress@example.com
+router.get('/test-email', async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ msg: 'Email required' });
+
+    const testQR = 'test-token-123';
+    await sendQREmail(email, 'Test User', testQR);
+    res.json({ msg: 'Test email sent. Check your inbox/spam.' });
+  } catch (err) {
+    console.error('Test email error:', err);
+    res.status(500).json({ msg: err.message });
+  }
+});
+
 module.exports = router;
