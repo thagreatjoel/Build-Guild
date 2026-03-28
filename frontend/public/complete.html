@@ -1,67 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Complete</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: #0e305b;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: white;
-            text-align: center;
-        }
-        .card {
-            background: #081c35;
-            padding: 40px;
-            border-radius: 16px;
-            border: 2px solid #ffc857;
-            max-width: 500px;
-            width: 90%;
-        }
-        h1 { color: #ffc857; margin-bottom: 10px; }
-        p { margin-bottom: 20px; line-height: 1.6; }
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background: #ffc857;
-            color: #081c35;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 8px;
-            transition: transform 0.2s;
-        }
-        .btn:hover { transform: scale(1.05); }
-        .secondary {
-            background: transparent;
-            border: 2px solid #ffc857;
-            color: #ffc857;
-            margin-left: 12px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Complete — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .success-card {
+      background: var(--bp-darker);
+      border: 2px solid var(--bp-warning);
+      padding: 40px;
+      max-width: 400px;
+      animation: rise 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .countdown {
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--bp-light);
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-    <div class="card">
-        <div style="font-size: 64px;">🎉</div>
-        <h1>Registration Complete!</h1>
-        <p>Your QR code has been sent to your email.<br>Check your inbox (and spam folder).</p>
-        <div>
-            <a href="/pass.html" class="btn">View My QR Pass →</a>
-            <a href="/resend.html" class="btn secondary">Resend Email</a>
-        </div>
+  <div class="success-card">
+    <div style="font-size: 64px;">🎉</div>
+    <h1 style="color: var(--bp-warning); margin: 20px 0 10px;">Registration Complete!</h1>
+    <p>Your QR code has been sent to your email.<br>Check your inbox (and spam folder).</p>
+    <div class="countdown">Redirecting to your pass in <span id="countdown">5</span> seconds...</div>
+    <div style="margin-top: 20px;">
+      <a href="/" class="btn btn-outline">← Back to Home</a>
     </div>
-    <script>
-        // Trigger confetti
-        canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        canvasConfetti({ particleCount: 100, spread: 100, origin: { y: 0.7, x: 0.2 } });
-        canvasConfetti({ particleCount: 100, spread: 100, origin: { y: 0.7, x: 0.8 } });
-    </script>
+  </div>
+
+  <script>
+    // Trigger confetti
+    canvasConfetti({
+      particleCount: 200,
+      spread: 100,
+      origin: { y: 0.6 },
+      colors: ['#ffc857', '#ffffff', '#0e305b']
+    });
+    canvasConfetti({
+      particleCount: 100,
+      spread: 120,
+      origin: { y: 0.7, x: 0.3 }
+    });
+    canvasConfetti({
+      particleCount: 100,
+      spread: 120,
+      origin: { y: 0.7, x: 0.7 }
+    });
+
+    // Countdown and redirect
+    let seconds = 5;
+    const countdownEl = document.getElementById('countdown');
+    const interval = setInterval(() => {
+      seconds--;
+      if (seconds <= 0) {
+        clearInterval(interval);
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        if (email) {
+          window.location.href = `/pass.html?email=${encodeURIComponent(email)}`;
+        } else {
+          window.location.href = '/';
+        }
+      } else {
+        countdownEl.textContent = seconds;
+      }
+    }, 1000);
+  </script>
 </body>
 </html>
