@@ -1,10 +1,9 @@
 const nodemailer = require('nodemailer');
 const { generateQR } = require('./qr');
 
-// Create transporter based on environment
+// Gmail transporter (real email)
 const transporter = nodemailer.createTransport({
-  host: 'smtp.ethereal.email',
-  port: 587,
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -13,9 +12,10 @@ const transporter = nodemailer.createTransport({
 
 const sendQREmail = async (userEmail, userName, qrToken) => {
   try {
-    console.log(`Attempting to send QR to ${userEmail}`);
-    const qrDataUrl = await generateQR(qrToken);
-    
+    console.log(`Preparing QR code for: ${userEmail}`);
+    const qrImage = await generateQR(qrToken);
+    console.log(`QR generated successfully`);
+
     const mailOptions = {
       from: `"Build Guild Kochi" <${process.env.EMAIL_USER}>`,
       to: userEmail,
@@ -26,23 +26,29 @@ const sendQREmail = async (userEmail, userName, qrToken) => {
           <p>Thank you for registering for <strong>Build Guild Kochi</strong>.</p>
           <p>Here is your check-in QR code:</p>
           <div style="text-align: center; margin: 30px 0;">
-            <img src="${qrDataUrl}" alt="QR Code" style="border: 2px solid #ffc857; padding: 10px; background: white;"/>
+            <img src="${qrImage}" alt="QR Code" style="border: 2px solid #ffc857; padding: 10px; background: white;"/>
           </div>
           <p>Present this QR code at the entrance for scanning.</p>
           <hr style="border-color: #344b6a;">
           <p style="font-size: 12px; color: #dbe4ee;">Build Guild Kochi · April 13–19, 2025</p>
-          <p style="font-size: 11px; margin-top: 20px;">If you did not receive this email, you can also access your QR code at: ${process.env.FRONTEND_URL}/pass.html?email=${encodeURIComponent(userEmail)}</p>
         </div>
       `,
+      attachments: [
+        {
+          filename: 'qrcode.png',
+          content: qrImage.split(';base64,').pop(),
+          encoding: 'base64',
+          cid: 'qr-code',
+        },
+      ],
     };
-    
+
     const info = await transporter.sendMail(mailOptions);
     console.log(`Email sent successfully to ${userEmail}. Message ID: ${info.messageId}`);
-    return { success: true, messageId: info.messageId };
+    return true;
   } catch (err) {
     console.error('Email sending failed:', err.message);
-    console.error('Error details:', err);
-    return { success: false, error: err.message };
+    throw new Error(`Failed to send email: ${err.message}`);
   }
 };
 
