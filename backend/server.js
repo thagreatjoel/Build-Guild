@@ -17,7 +17,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Serve static frontend files (if you want Render to serve them)
+// Serve static frontend files
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 
 // API routes
@@ -25,10 +25,11 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/admin', require('./routes/admin'));
 
-// Catch-all: serve index.html for any unmatched route (for SPA routing)
-app.get('/*', (req, res) => {
+// Catch-all: serve index.html for any unmatched route (SPA support)
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
 });
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
