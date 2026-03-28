@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const { generateQR } = require('./qr');
 
+// Create transporter based on environment
 const transporter = nodemailer.createTransport({
   host: 'smtp.ethereal.email',
   port: 587,
@@ -11,27 +12,38 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendQREmail = async (userEmail, userName, qrToken) => {
-  const qrImage = await generateQR(qrToken);
-  const mailOptions = {
-    from: '"Event Check-in" <noreply@event.com>',
-    to: userEmail,
-    subject: 'Your Event QR Code',
-    html: `
-      <h1>Hello ${userName},</h1>
-      <p>Thank you for registering. Here is your QR code for check-in:</p>
-      <img src="${qrImage}" alt="QR Code" />
-      <p>You can also download the QR code from your profile.</p>
-    `,
-    attachments: [
-      {
-        filename: 'qrcode.png',
-        content: qrImage.split(';base64,').pop(),
-        encoding: 'base64',
-        cid: 'unique@nodemailer.com',
-      },
-    ],
-  };
-  await transporter.sendMail(mailOptions);
+  try {
+    console.log(`Attempting to send QR to ${userEmail}`);
+    const qrDataUrl = await generateQR(qrToken);
+    
+    const mailOptions = {
+      from: `"Build Guild Kochi" <${process.env.EMAIL_USER}>`,
+      to: userEmail,
+      subject: '🎫 Your Build Guild Kochi QR Code',
+      html: `
+        <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0e305b; color: white;">
+          <h1 style="color: #ffc857;">Hello ${userName}!</h1>
+          <p>Thank you for registering for <strong>Build Guild Kochi</strong>.</p>
+          <p>Here is your check-in QR code:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <img src="${qrDataUrl}" alt="QR Code" style="border: 2px solid #ffc857; padding: 10px; background: white;"/>
+          </div>
+          <p>Present this QR code at the entrance for scanning.</p>
+          <hr style="border-color: #344b6a;">
+          <p style="font-size: 12px; color: #dbe4ee;">Build Guild Kochi · April 13–19, 2025</p>
+          <p style="font-size: 11px; margin-top: 20px;">If you did not receive this email, you can also access your QR code at: ${process.env.FRONTEND_URL}/pass.html?email=${encodeURIComponent(userEmail)}</p>
+        </div>
+      `,
+    };
+    
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`Email sent successfully to ${userEmail}. Message ID: ${info.messageId}`);
+    return { success: true, messageId: info.messageId };
+  } catch (err) {
+    console.error('Email sending failed:', err.message);
+    console.error('Error details:', err);
+    return { success: false, error: err.message };
+  }
 };
 
 module.exports = { sendQREmail };
