@@ -153,60 +153,51 @@
       }
     }
 
+  
     async function register() {
-      console.log('register function called');
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
+       const name = document.getElementById('name').value.trim();
+       const email = document.getElementById('email').value.trim();
+       const phone = document.getElementById('phone').value.trim();
+       const errDiv = document.getElementById('err-msg');
+    errDiv.style.display = 'none';
 
-      const errDiv = document.getElementById('err-msg');
-      errDiv.style.display = 'none';
-
-      if (!name || !email) {
+    if (!name || !email) {
         errDiv.textContent = 'Name and email are required.';
         errDiv.style.display = 'block';
-        console.log('Validation failed');
         return;
-      }
+    }
 
-      const btn = document.getElementById('registerBtn');
-      btn.disabled = true;
-      btn.textContent = 'Registering...';
+    const btn = document.getElementById('registerBtn');
+    btn.disabled = true;
+    btn.textContent = 'Registering...';
 
-      try {
-        console.log(`Sending registration for ${email} to ${API_BASE_URL}/api/user/register`);
+    try {
         const res = await fetch(`${API_BASE_URL}/api/user/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, phone })
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone })
         });
         const data = await res.json();
-        console.log('Response status:', res.status);
-        console.log('Response data:', data);
         if (res.ok) {
-          lastRegisteredEmail = email;
-          localStorage.setItem('qrEmail', email);
-          // Clear form
-          document.getElementById('name').value = '';
-          document.getElementById('email').value = '';
-          document.getElementById('phone').value = '';
-          // Show modal
-          console.log('Showing modal');
-          showModal();
+            // Store email for pass retrieval
+            localStorage.setItem('qrEmail', email);
+            // Redirect to success page
+            window.location.href = '/complete.html';
         } else {
-          errDiv.textContent = data.msg || 'Registration failed';
-          errDiv.style.display = 'block';
-          console.log('Registration failed:', data.msg);
+            errDiv.textContent = data.msg || 'Registration failed';
+            errDiv.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Register →';
         }
-      } catch (err) {
+    } catch (err) {
         console.error('Registration error:', err);
-        errDiv.textContent = 'Network error. Please check if backend is running.';
+        errDiv.textContent = 'Network error. Please try again.';
         errDiv.style.display = 'block';
-      } finally {
         btn.disabled = false;
         btn.textContent = 'Register →';
-      }
     }
+}
+
 
     document.addEventListener('DOMContentLoaded', () => {
       console.log('DOM ready, attaching event listeners');
