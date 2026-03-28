@@ -1,18 +1,23 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const cors = require('cors');
+const cors = require('cors');          // ← only one declaration
 const path = require('path');
 const connectDB = require('./config/db');
-app.use('/api/user', require('./routes/user'));
 
 dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors());
+
+// CORS configuration – allow requests from your Netlify frontend
+app.use(cors({
+  origin: ['https://kochiguild.netlify.app', 'http://localhost:3000', 'http://localhost:5000'],
+  credentials: true
+}));
+
 app.use(express.json());
 
-// Serve static files from the frontend/public directory
+// Serve static frontend files (if you want Render to serve them)
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 
 // API routes
@@ -20,19 +25,10 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/admin', require('./routes/admin'));
 
-
-app.get('/', (req, res) => {
+// Catch-all: serve index.html for any unmatched route (for SPA routing)
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
-  });
+});
 
 const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-const cors = require('cors');
-app.use(cors({
-  origin: '*', // For development; restrict later to your Netlify URL
-  credentials: true
-}));
-
-  
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
