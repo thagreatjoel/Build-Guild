@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
+app.use('/api/user', require('./routes/user'));
 
 dotenv.config();
 connectDB();
@@ -28,8 +29,10 @@ const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
-
-
-
+const cors = require('cors');
+app.use(cors({
+  origin: '*', // For development; restrict later to your Netlify URL
+  credentials: true
+}));
 
   
