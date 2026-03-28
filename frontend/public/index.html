@@ -7,6 +7,32 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+  <style>
+    /* Enhanced button hover effects */
+    .btn-primary {
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .btn-outline:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.15);
+    }
+    /* Modal animations */
+    #success-modal {
+      backdrop-filter: blur(4px);
+    }
+    .modal-content {
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
 </head>
 <body>
   <svg width="0" height="0" style="position:fixed">
@@ -36,9 +62,8 @@
         <input type="tel" id="phone" placeholder="+91 98765 43210">
       </div>
 
-      <button class="btn btn-primary btn-block" onclick="register()">Register →</button>
+      <button class="btn btn-primary btn-block" id="registerBtn" onclick="register()">Register →</button>
       <div class="msg err" id="err-msg"></div>
-      <div class="msg ok" id="ok-msg"></div>
 
       <div class="hint-box">
         <strong>Already registered?</strong> <a href="resend.html" style="color:var(--bp-warning)">Resend your QR</a> or go to the <a href="admin.html" style="color:var(--bp-warning)">admin panel</a>.
@@ -46,14 +71,84 @@
     </div>
   </div>
 
+  <!-- Success Modal -->
+  <div id="success-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center;">
+    <div class="modal-content" style="background: var(--bp-darker); border: 2px solid var(--bp-warning); border-radius: 12px; padding: 40px; max-width: 400px; text-align: center; margin: 20px;">
+      <div style="font-size: 48px; margin-bottom: 20px;">🎉</div>
+      <h2 style="color: var(--bp-warning); margin-bottom: 10px;">Registration Complete!</h2>
+      <p style="margin-bottom: 20px;">Your QR code has been sent to your email.<br>Check your inbox (and spam folder).</p>
+      <button class="btn btn-primary" id="continueBtn">Continue to QR Pass →</button>
+      <button class="btn btn-outline" id="resendBtn" style="margin-top: 10px;">Resend Email</button>
+    </div>
+  </div>
+
   <div id="toast" class="toast"></div>
 
   <script>
+    let lastRegisteredEmail = null;
+
     function toast(msg, type='info') {
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.className = `toast show t-${type}`;
       setTimeout(() => t.classList.remove('show'), 3400);
+    }
+
+    function showModal() {
+      const modal = document.getElementById('success-modal');
+      modal.style.display = 'flex';
+      // Trigger confetti
+      canvasConfetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#ffc857', '#ffffff', '#0e305b']
+      });
+      canvasConfetti({
+        particleCount: 100,
+        spread: 100,
+        origin: { y: 0.7, x: 0.2 },
+        colors: ['#ffc857', '#a8f0ae']
+      });
+      canvasConfetti({
+        particleCount: 100,
+        spread: 100,
+        origin: { y: 0.7, x: 0.8 },
+        colors: ['#ffc857', '#a8f0ae']
+      });
+    }
+
+    function closeModalAndGoToPass() {
+      const modal = document.getElementById('success-modal');
+      modal.style.display = 'none';
+      if (lastRegisteredEmail) {
+        window.location.href = `/pass.html?email=${encodeURIComponent(lastRegisteredEmail)}`;
+      }
+    }
+
+    async function resendEmail() {
+      if (!lastRegisteredEmail) return;
+      const modal = document.getElementById('success-modal');
+      modal.style.display = 'none';
+      toast('Resending QR code...', 'info');
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/resend-qr`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: lastRegisteredEmail })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          toast('QR code resent successfully!', 'ok');
+          setTimeout(() => {
+            window.location.href = `/pass.html?email=${encodeURIComponent(lastRegisteredEmail)}`;
+          }, 1500);
+        } else {
+          toast(data.msg || 'Failed to resend', 'err');
+        }
+      } catch (err) {
+        toast('Network error', 'err');
+      }
     }
 
     async function register() {
@@ -62,15 +157,17 @@
       const phone = document.getElementById('phone').value.trim();
 
       const errDiv = document.getElementById('err-msg');
-      const okDiv = document.getElementById('ok-msg');
       errDiv.style.display = 'none';
-      okDiv.style.display = 'none';
 
       if (!name || !email) {
         errDiv.textContent = 'Name and email are required.';
         errDiv.style.display = 'block';
         return;
       }
+
+      const btn = document.getElementById('registerBtn');
+      btn.disabled = true;
+      btn.textContent = 'Registering...';
 
       try {
         const res = await fetch(`${API_BASE_URL}/api/user/register`, {
@@ -80,21 +177,33 @@
         });
         const data = await res.json();
         if (res.ok) {
-          okDiv.textContent = data.msg + ' Redirecting to your pass...';
-          okDiv.style.display = 'block';
+          lastRegisteredEmail = email;
           localStorage.setItem('qrEmail', email);
-          setTimeout(() => {
-            window.location.href = `/pass.html?email=${encodeURIComponent(email)}`;
-          }, 2000);
+          // Clear form
+          document.getElementById('name').value = '';
+          document.getElementById('email').value = '';
+          document.getElementById('phone').value = '';
+          // Show modal
+          showModal();
         } else {
           errDiv.textContent = data.msg || 'Registration failed';
           errDiv.style.display = 'block';
         }
       } catch (err) {
-        errDiv.textContent = 'Network error. Please try again.';
+        console.error('Registration error:', err);
+        errDiv.textContent = 'Network error. Please check if backend is running.';
         errDiv.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Register →';
       }
     }
+
+    // Attach event listeners after DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('continueBtn').addEventListener('click', closeModalAndGoToPass);
+      document.getElementById('resendBtn').addEventListener('click', resendEmail);
+    });
   </script>
 </body>
 </html>
