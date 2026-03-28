@@ -21,27 +21,13 @@ router.post('/register', async (req, res) => {
     await user.save();
     console.log(`User saved to DB: ${user._id}`);
 
-    // Send QR email (don't block registration on email failure)
-    let emailStatus = { success: false };
-    try {
-      emailStatus = await sendQREmail(email, name, qrToken);
-      if (emailStatus.success) {
-        console.log(`QR email sent to: ${email}`);
-      } else {
-        console.warn(`Email failed but user was saved: ${emailStatus.error}`);
-      }
-    } catch (emailErr) {
-      console.error('Unexpected email error:', emailErr);
-    }
+    // Send QR email in the background – do NOT await
+    sendQREmail(email, name, qrToken)
+      .then(() => console.log(`QR email sent to: ${email}`))
+      .catch((err) => console.error(`Email failed for ${email}:`, err.message));
 
-    // Always return success to user; they can still get QR via resend or pass page
-    res.json({
-      msg: emailStatus.success
-        ? 'Registration successful! QR code sent to your email.'
-        : 'Registration successful! However, there was an issue sending the email. Please use the "Resend QR" option.',
-      userId: user._id,
-      emailSent: emailStatus.success
-    });
+    // Respond immediately – user doesn't have to wait for email
+    res.json({ msg: 'Registration successful! QR code will arrive shortly.', userId: user._id });
   } catch (err) {
     console.error('Registration error:', err);
     res.status(500).json({ msg: 'Server error: ' + err.message });
