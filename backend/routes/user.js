@@ -90,9 +90,9 @@ const net = require('net');
 
 router.get('/test-smtp', async (req, res) => {
   const host = 'smtp.gmail.com';
-  const port = 587;
+  const port = 465;   // test SSL port
   const socket = new net.Socket();
-  const timeout = 5000;
+  const timeout = 8000;
   socket.setTimeout(timeout);
   socket.on('connect', () => {
     socket.destroy();
@@ -104,8 +104,10 @@ router.get('/test-smtp', async (req, res) => {
   });
   socket.on('error', (err) => {
     socket.destroy();
-    res.status(500).json({ msg: `❌ Error connecting to ${host}:${port}: ${err.message}` });
+    res.status(500).json({ msg: `❌ Error connecting to ${host}:${port}: ${err.code || err.message}` });
   });
   socket.connect(port, host);
 });
+
+
 module.exports = router;
