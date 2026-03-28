@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Complete</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #0e305b;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+            text-align: center;
+        }
+        .card {
+            background: #081c35;
+            padding: 40px;
+            border-radius: 16px;
+            border: 2px solid #ffc857;
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 { color: #ffc857; margin-bottom: 10px; }
+        p { margin-bottom: 20px; line-height: 1.6; }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #ffc857;
+            color: #081c35;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .secondary {
+            background: transparent;
+            border: 2px solid #ffc857;
+            color: #ffc857;
+            margin-left: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div style="font-size: 64px;">🎉</div>
+        <h1>Registration Complete!</h1>
+        <p>Your QR code has been sent to your email.<br>Check your inbox (and spam folder).</p>
+        <div>
+            <a href="/pass.html" class="btn">View My QR Pass →</a>
+            <a href="/resend.html" class="btn secondary">Resend Email</a>
+        </div>
+    </div>
+    <script>
+        // Trigger confetti
+        canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        canvasConfetti({ particleCount: 100, spread: 100, origin: { y: 0.7, x: 0.2 } });
+        canvasConfetti({ particleCount: 100, spread: 100, origin: { y: 0.7, x: 0.8 } });
+    </script>
+</body>
+</html>
