@@ -53,6 +53,7 @@
           resultDiv.textContent = `✅ ${data.msg}`;
           resultDiv.className = 'msg ok';
           resultDiv.style.display = 'block';
+          // Optional: beep or vibrate? Just show success.
           setTimeout(() => resultDiv.style.display = 'none', 3000);
         } else {
           resultDiv.textContent = `❌ ${data.msg}`;
