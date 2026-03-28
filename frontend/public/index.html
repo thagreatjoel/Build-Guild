@@ -9,7 +9,6 @@
   <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
   <style>
-    /* Enhanced button hover effects */
     .btn-primary {
       transition: all 0.2s ease;
     }
@@ -21,7 +20,6 @@
       transform: translateY(-1px);
       background: rgba(255,255,255,0.15);
     }
-    /* Modal animations */
     #success-modal {
       backdrop-filter: blur(4px);
     }
@@ -95,9 +93,13 @@
     }
 
     function showModal() {
+      console.log('showModal called');
       const modal = document.getElementById('success-modal');
+      if (!modal) {
+        console.error('Modal element not found!');
+        return;
+      }
       modal.style.display = 'flex';
-      // Trigger confetti
       canvasConfetti({
         particleCount: 150,
         spread: 70,
@@ -152,6 +154,7 @@
     }
 
     async function register() {
+      console.log('register function called');
       const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
@@ -162,6 +165,7 @@
       if (!name || !email) {
         errDiv.textContent = 'Name and email are required.';
         errDiv.style.display = 'block';
+        console.log('Validation failed');
         return;
       }
 
@@ -170,12 +174,15 @@
       btn.textContent = 'Registering...';
 
       try {
+        console.log(`Sending registration for ${email} to ${API_BASE_URL}/api/user/register`);
         const res = await fetch(`${API_BASE_URL}/api/user/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, email, phone })
         });
         const data = await res.json();
+        console.log('Response status:', res.status);
+        console.log('Response data:', data);
         if (res.ok) {
           lastRegisteredEmail = email;
           localStorage.setItem('qrEmail', email);
@@ -184,10 +191,12 @@
           document.getElementById('email').value = '';
           document.getElementById('phone').value = '';
           // Show modal
+          console.log('Showing modal');
           showModal();
         } else {
           errDiv.textContent = data.msg || 'Registration failed';
           errDiv.style.display = 'block';
+          console.log('Registration failed:', data.msg);
         }
       } catch (err) {
         console.error('Registration error:', err);
@@ -199,10 +208,12 @@
       }
     }
 
-    // Attach event listeners after DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('continueBtn').addEventListener('click', closeModalAndGoToPass);
-      document.getElementById('resendBtn').addEventListener('click', resendEmail);
+      console.log('DOM ready, attaching event listeners');
+      const continueBtn = document.getElementById('continueBtn');
+      const resendBtn = document.getElementById('resendBtn');
+      if (continueBtn) continueBtn.addEventListener('click', closeModalAndGoToPass);
+      if (resendBtn) resendBtn.addEventListener('click', resendEmail);
     });
   </script>
 </body>
