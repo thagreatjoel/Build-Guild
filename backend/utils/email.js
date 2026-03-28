@@ -1,18 +1,22 @@
 const nodemailer = require('nodemailer');
 const { generateQR } = require('./qr');
 
-// Gmail transporter (real email)
+// Force IPv4 to avoid ENETUNREACH
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,          // use STARTTLS
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 10000,
+  family: 4,              // force IPv4
 });
 
 const sendQREmail = async (userEmail, userName, qrToken) => {
   try {
-    console.log(`Preparing QR code for: ${userEmail}`);
+    console.log(`Preparing QR for: ${userEmail}`);
     const qrImage = await generateQR(qrToken);
     console.log(`QR generated successfully`);
 
@@ -44,11 +48,13 @@ const sendQREmail = async (userEmail, userName, qrToken) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log(`Email sent successfully to ${userEmail}. Message ID: ${info.messageId}`);
+    console.log(`Email sent to ${userEmail}. Message ID: ${info.messageId}`);
     return true;
   } catch (err) {
-    console.error('Email sending failed:', err.message);
-    throw new Error(`Failed to send email: ${err.message}`);
+    console.error(`Email error for ${userEmail}:`, err.message);
+    if (err.code) console.error('Error code:', err.code);
+    // Rethrow so the caller knows it failed (though registration already succeeded)
+    throw err;
   }
 };
 
