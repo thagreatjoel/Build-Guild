@@ -38,15 +38,15 @@
       justify-content: space-between;
     }
     
-    /* Top bar: logo only */
+    /* Top bar: logo only – larger */
     .top-bar {
       flex-shrink: 0;
       margin-bottom: 1.5vh;
     }
     
     .hackclub-logo img {
-      height: 6vh;
-      max-height: 60px;
+      height: 8vh;            /* increased from 6vh */
+      max-height: 80px;       /* increased from 60px */
       width: auto;
     }
     
@@ -62,7 +62,7 @@
       font-size: clamp(2rem, 6vh, 5rem);
       font-weight: 800;
       letter-spacing: 2px;
-      margin-bottom: 0.25vh;  /* reduced spacing between title and date */
+      margin-bottom: 0.25vh;
     }
     
     .hero-title .kochi {
@@ -76,7 +76,7 @@
     .event-date {
       font-size: clamp(0.8rem, 2vh, 1.2rem);
       color: rgba(255,255,255,0.6);
-      margin-top: 0;           /* no extra margin above date */
+      margin-top: 0;
     }
     
     /* Card – takes all remaining space */
@@ -102,9 +102,9 @@
     .time-slot {
       display: flex;
       align-items: center;
-      flex: 1;                     /* each event gets equal height */
+      flex: 1;
       border-bottom: 1px solid rgba(255,255,255,0.08);
-      min-height: 0;               /* allow shrinking */
+      min-height: 0;
     }
     
     .time-slot:last-child {
@@ -188,7 +188,7 @@
   </svg>
 
   <div class="schedule-container z1">
-    <!-- Top bar: Hack Club flag logo -->
+    <!-- Top bar: larger Hack Club flag -->
     <div class="top-bar">
       <div class="hackclub-logo">
         <img src="https://assets.hackclub.com/flag-orpheus-top.svg" alt="Hack Club">
@@ -204,10 +204,9 @@
       <div class="event-date">April 15, 2026 · Kochi, India</div>
     </div>
 
-    <!-- Schedule Card – will flex to fit exactly -->
+    <!-- Schedule Card -->
     <div class="schedule-card">
       <div class="timeline">
-        <!-- All time slots – automatically scale -->
         <div class="time-slot">
           <div class="time">10:00 AM</div>
           <div class="event-content">
