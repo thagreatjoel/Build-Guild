@@ -1,128 +1,224 @@
-cat > frontend/public/schedule.html << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Schedule — Build Guild Kochi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Build Guild Kochi — Schedule</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Schedule specific styles */
-    .schedule-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      animation: rise 0.4s cubic-bezier(.16,1,.3,1);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .hero-schedule {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    .event-badge {
-      display: inline-flex;
+    
+    body {
+      min-height: 100vh;
+      display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .schedule-card {
+      max-width: 1100px;
+      width: 100%;
       background: var(--bp-darker);
       border: 2px solid var(--bp-warning);
-      padding: 12px 24px;
-      border-radius: 50px;
-      margin-bottom: 20px;
+      padding: 24px 28px;
+      animation: rise 0.4s cubic-bezier(.16,1,.3,1);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
-    .event-badge img {
-      height: 32px;
+    
+    /* Header with logos */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(255,200,87,0.3);
     }
-    .timeline {
-      position: relative;
-      padding-left: 30px;
+    
+    .logo-section {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
     }
-    .timeline::before {
-      content: '';
-      position: absolute;
-      left: 8px;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: var(--bp-warning);
-    }
-    .timeline-item {
-      position: relative;
-      margin-bottom: 30px;
-      padding-left: 30px;
-    }
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: -22px;
-      top: 5px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--bp-warning);
-      border: 3px solid var(--bp-darker);
-      box-shadow: 0 0 0 3px var(--bp-warning);
-    }
-    .timeline-time {
-      font-family: var(--fh);
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--bp-warning);
-      margin-bottom: 8px;
-    }
-    .timeline-title {
-      font-family: var(--fh);
+    
+    .logo-item {
       font-weight: 800;
       font-size: 18px;
-      margin-bottom: 6px;
+      color: var(--bp-warning);
+      letter-spacing: 1px;
     }
-    .timeline-desc {
-      font-size: 14px;
-      color: rgba(255,255,255,0.7);
-      line-height: 1.5;
+    
+    .logo-item.blueprint {
+      font-size: 22px;
+      background: linear-gradient(135deg, #ffc857, #ff9f1c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .sponsor-section {
-      margin-top: 60px;
-      padding: 30px;
-      background: var(--bp-darker);
-      border: 2px solid rgba(255,255,255,0.1);
+    
+    .event-title {
       text-align: center;
+      margin-bottom: 24px;
     }
-    .sponsor-logos {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      flex-wrap: wrap;
-      margin-top: 20px;
-    }
-    .sponsor-logos span {
-      font-size: 24px;
+    
+    .event-title h1 {
+      font-size: 32px;
       font-weight: 800;
       color: var(--bp-warning);
-      opacity: 0.8;
+      letter-spacing: 2px;
     }
-    .share-buttons {
-      margin-top: 30px;
+    
+    .event-title p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 5px;
+    }
+    
+    /* Two column layout for schedule */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .time-column {
+      background: rgba(0,0,0,0.3);
+      padding: 12px;
+      border-left: 3px solid var(--bp-warning);
+    }
+    
+    .time-slot {
       display: flex;
-      gap: 15px;
-      justify-content: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
-    .btn-share {
+    
+    .time-slot:last-child {
+      border-bottom: none;
+    }
+    
+    .time {
+      min-width: 85px;
+      font-weight: 700;
+      color: var(--bp-warning);
+      font-size: 13px;
+      font-family: monospace;
+    }
+    
+    .event-detail {
+      flex: 1;
+    }
+    
+    .event-name {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    
+    .event-desc {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+    }
+    
+    /* Special highlight for surprise and lunch */
+    .time-slot.special .event-name {
+      color: var(--bp-warning);
+    }
+    
+    /* Sponsors section */
+    .sponsors {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding-top: 20px;
+      border-top: 2px solid rgba(255,200,87,0.3);
+      margin-top: 8px;
+    }
+    
+    .sponsor-logos {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .sponsor {
+      font-weight: 800;
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 1px;
+    }
+    
+    .share-btn {
       background: transparent;
       border: 2px solid var(--bp-warning);
       color: var(--bp-warning);
+      padding: 6px 16px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .btn-share:hover {
+    
+    .share-btn:hover {
       background: var(--bp-warning);
       color: var(--bp-darker);
     }
-    @media (max-width: 600px) {
-      .timeline {
-        padding-left: 20px;
+    
+    /* Responsive - stack on mobile but still no scroll */
+    @media (max-width: 700px) {
+      body {
+        overflow-y: auto;
+        padding: 15px;
       }
-      .timeline-item {
-        padding-left: 20px;
+      .schedule-card {
+        padding: 16px;
       }
-      .timeline-item::before {
-        left: -12px;
+      .schedule-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .event-title h1 {
+        font-size: 24px;
+      }
+      .logo-item {
+        font-size: 14px;
+      }
+      .logo-item.blueprint {
+        font-size: 16px;
+      }
+      .time-slot {
+        padding: 8px 0;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        overflow-y: auto;
+      }
+      .sponsors {
+        flex-direction: column;
+        text-align: center;
+      }
+      .header {
+        flex-direction: column;
+        text-align: center;
+      }
+      .logo-section {
+        justify-content: center;
       }
     }
   </style>
@@ -136,87 +232,109 @@ cat > frontend/public/schedule.html << 'EOF'
     </filter>
   </svg>
 
-  <div class="view active z1">
-    <div class="schedule-container">
-      <!-- Hero Section -->
-      <div class="hero-schedule">
-        <div class="event-badge">
-          <span style="font-weight: 800; font-size: 24px;">⚡</span>
-          <span style="font-weight: 800;">BUILD GUILD KOCHI</span>
-          <span style="font-weight: 800;">🔧</span>
-        </div>
-        <h1 style="font-size: 48px; margin-bottom: 10px;">
-          <span style="color: var(--bp-warning);">Event</span> Schedule
-        </h1>
-        <p style="color: rgba(255,255,255,0.6);">April 13–19, 2025 · Kochi, India</p>
+  <div class="schedule-card">
+    <!-- Header with logos -->
+    <div class="header">
+      <div class="logo-section">
+        <span class="logo-item">⚡ AMD</span>
+        <span class="logo-item blueprint">Blueprint</span>
+        <span class="logo-item">BUILD GUILD KOCHI</span>
       </div>
+      <div class="logo-section">
+        <span class="logo-item">JLCPCB</span>
+        <span class="logo-item">OSHWELD</span>
+        <span class="logo-item">EasyEDA</span>
+      </div>
+    </div>
 
-      <!-- Timeline Schedule -->
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="timeline-time">10:00 AM</div>
-          <div class="timeline-title">Arrival & Check-in</div>
-          <div class="timeline-desc">Grab your badge, get your QR code scanned, and meet fellow builders.</div>
+    <!-- Event Title -->
+    <div class="event-title">
+      <h1>BUILD GUILD KOCHI</h1>
+      <p>Soldering & Hardware Hackathon</p>
+    </div>
+
+    <!-- Schedule Grid - Two Columns -->
+    <div class="schedule-grid">
+      <!-- Left Column -->
+      <div class="time-column">
+        <div class="time-slot">
+          <div class="time">10:00 AM</div>
+          <div class="event-detail">
+            <div class="event-name">Arrival & Check-in</div>
+            <div class="event-desc">Grab your badge, QR scan</div>
+          </div>
         </div>
         
-        <div class="timeline-item">
-          <div class="timeline-time">10:30 AM</div>
-          <div class="timeline-title">Kickoff & Welcome</div>
-          <div class="timeline-desc">Opening ceremony, introduction to the event, and meet the mentors.</div>
+        <div class="time-slot">
+          <div class="time">10:30 AM</div>
+          <div class="event-detail">
+            <div class="event-name">Kickoff & Welcome</div>
+            <div class="event-desc">Opening ceremony, intro</div>
+          </div>
         </div>
         
-        <div class="timeline-item">
-          <div class="timeline-time">11:00 AM</div>
-          <div class="timeline-title">Soldering 101</div>
-          <div class="timeline-desc">Learn the basics of soldering with hands-on practice. All materials provided.</div>
+        <div class="time-slot">
+          <div class="time">11:00 AM</div>
+          <div class="event-detail">
+            <div class="event-name">Soldering 101</div>
+            <div class="event-desc">Learn basics, hands-on</div>
+          </div>
         </div>
         
-        <div class="timeline-item">
-          <div class="timeline-time">01:00 PM</div>
-          <div class="timeline-title">Lunch Break 🥗</div>
-          <div class="timeline-desc">Refuel with delicious food, network with other participants.</div>
-        </div>
-        
-        <div class="timeline-item">
-          <div class="timeline-time">02:00 PM</div>
-          <div class="timeline-title">Soldering Marathon & Events</div>
-          <div class="timeline-desc">Build your project, participate in challenges, and get help from mentors.</div>
-        </div>
-        
-        <div class="timeline-item">
-          <div class="timeline-time">06:30 PM</div>
-          <div class="timeline-title">Project Demos & Winner Announcement</div>
-          <div class="timeline-desc">Show off your creation! Winners get special prizes and recognition.</div>
-        </div>
-        
-        <div class="timeline-item">
-          <div class="timeline-time">07:00 PM</div>
-          <div class="timeline-title">Surprise !!</div>
-          <div class="timeline-desc">Something special planned — come and find out!</div>
-        </div>
-        
-        <div class="timeline-item">
-          <div class="timeline-time">07:30 PM</div>
-          <div class="timeline-title">Closing & Group Photo</div>
-          <div class="timeline-desc">Wrap-up, group photo, and farewell. See you at the next Build Guild!</div>
+        <div class="time-slot special">
+          <div class="time">01:00 PM</div>
+          <div class="event-detail">
+            <div class="event-name">Lunch Break 🥗</div>
+            <div class="event-desc">Refuel & network</div>
+          </div>
         </div>
       </div>
 
-      <!-- Sponsors Section -->
-      <div class="sponsor-section">
-        <h3 style="color: var(--bp-warning); margin-bottom: 15px;">Powered by</h3>
-        <div class="sponsor-logos">
-          <span>AMD</span>
-          <span>Blueprint</span>
-          <span>JLCPCB</span>
-          <span>OSHWELD</span>
-          <span>EasyEDA</span>
+      <!-- Right Column -->
+      <div class="time-column">
+        <div class="time-slot">
+          <div class="time">02:00 PM</div>
+          <div class="event-detail">
+            <div class="event-name">Soldering Marathon</div>
+            <div class="event-desc">Build projects, challenges</div>
+          </div>
         </div>
-        <div class="share-buttons">
-          <button class="btn btn-share btn-small" onclick="window.location.href='/'">← Back to Register</button>
-          <button class="btn btn-share btn-small" onclick="shareEvent()">📤 Share Event</button>
+        
+        <div class="time-slot">
+          <div class="time">06:30 PM</div>
+          <div class="event-detail">
+            <div class="event-name">Project Demos</div>
+            <div class="event-desc">Winner announcement 🏆</div>
+          </div>
+        </div>
+        
+        <div class="time-slot special">
+          <div class="time">07:00 PM</div>
+          <div class="event-detail">
+            <div class="event-name">Surprise !!</div>
+            <div class="event-desc">Something special planned</div>
+          </div>
+        </div>
+        
+        <div class="time-slot">
+          <div class="time">07:30 PM</div>
+          <div class="event-detail">
+            <div class="event-name">Closing & Group Photo</div>
+            <div class="event-desc">Wrap-up, farewell</div>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- Footer with sponsors and share -->
+    <div class="sponsors">
+      <div class="sponsor-logos">
+        <span class="sponsor">⚡ AMD</span>
+        <span class="sponsor">🔧 JLCPCB</span>
+        <span class="sponsor">🛠️ OSHWELD</span>
+        <span class="sponsor">📟 EasyEDA</span>
+      </div>
+      <button class="share-btn" onclick="shareEvent()">📤 Share Event</button>
     </div>
   </div>
 
@@ -245,4 +363,3 @@ cat > frontend/public/schedule.html << 'EOF'
   </script>
 </body>
 </html>
-EOF
