@@ -7,37 +7,60 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bp-dark);
+    }
+    
+    /* Main container uses full viewport height */
     .schedule-container {
-      max-width: 1200px;
       width: 100%;
+      height: 100vh;
+      max-width: 1400px;
       margin: 0 auto;
       position: relative;
       z-index: 2;
-      padding: 24px;
+      padding: 20px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
     
-    /* Hero Section - Matching registration page */
+    /* Hero Section - Compact */
     .hero-section {
       text-align: center;
-      margin-bottom: 48px;
-      animation: rise 0.4s cubic-bezier(.16,1,.3,1);
+      margin-bottom: 20px;
+      flex-shrink: 0;
     }
     
     .hero-eyebrow {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--bp-warning);
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     
     .hero-title {
       font-family: var(--fh);
-      font-size: 48px;
+      font-size: 36px;
       font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 12px;
+      line-height: 1.2;
+      margin-bottom: 6px;
     }
     
     .hero-title .kochi {
@@ -45,49 +68,57 @@
     }
     
     .hero-sub {
-      font-size: 16px;
+      font-size: 14px;
       color: rgba(255,255,255,0.55);
-      line-height: 1.65;
       max-width: 600px;
       margin: 0 auto;
     }
     
     .logo-section {
-      margin-top: 24px;
+      margin-top: 12px;
       display: flex;
       justify-content: center;
-      gap: 32px;
+      gap: 24px;
       flex-wrap: wrap;
       align-items: center;
     }
     
-    .blueprint-logo {
-      display: inline-block;
-    }
-    
     .blueprint-logo img {
-      height: 48px;
+      height: 40px;
       width: auto;
       filter: brightness(0) invert(1);
     }
     
     .event-date-badge {
       display: inline-block;
-      padding: 6px 16px;
+      padding: 4px 14px;
       background: rgba(255,200,87,0.1);
       border: 1px solid var(--bp-warning);
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--bp-warning);
     }
     
-    /* Main Card - Matching QR pass card style */
+    /* Card takes remaining space but doesn't overflow */
     .schedule-card {
       background: var(--bp-darker);
       border: 2px solid rgba(255,255,255,.14);
-      padding: 48px 56px;
-      margin-bottom: 32px;
-      animation: rise 0.5s cubic-bezier(.16,1,.3,1);
+      padding: 20px 30px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      margin-bottom: 12px;
+    }
+    
+    /* Scroll only inside card if needed, but we aim for no scroll */
+    .schedule-card::-webkit-scrollbar {
+      width: 6px;
+      background: rgba(255,255,255,0.1);
+    }
+    .schedule-card::-webkit-scrollbar-thumb {
+      background: var(--bp-warning);
+      border-radius: 3px;
     }
     
     .card-eyebrow {
@@ -96,28 +127,28 @@
       letter-spacing: .18em;
       text-transform: uppercase;
       color: var(--bp-warning);
-      margin-bottom: 16px;
+      margin-bottom: 8px;
       text-align: center;
     }
     
     .card-title {
       font-family: var(--fh);
-      font-size: 28px;
+      font-size: 22px;
       font-weight: 800;
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 16px;
     }
     
     .timeline {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
     
     .time-slot {
       display: flex;
-      align-items: flex-start;
-      padding: 20px 0;
+      align-items: center;
+      padding: 8px 0;
       border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     
@@ -126,32 +157,31 @@
     }
     
     .time {
-      min-width: 160px;
+      min-width: 120px;
       font-weight: 700;
       color: var(--bp-warning);
-      font-size: 24px;
+      font-size: 18px;
       font-family: monospace;
-      letter-spacing: 1px;
     }
     
     .event-content {
       flex: 1;
-      padding-left: 32px;
+      padding-left: 20px;
       border-left: 2px solid rgba(255,200,87,0.25);
     }
     
     .event-name {
       font-family: var(--fh);
       font-weight: 700;
-      font-size: 22px;
+      font-size: 18px;
       color: #fff;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
     
     .event-detail {
-      font-size: 14px;
+      font-size: 12px;
       color: rgba(255,255,255,0.6);
-      line-height: 1.5;
+      line-height: 1.4;
     }
     
     .time-slot.highlight .event-name {
@@ -162,29 +192,31 @@
       color: rgba(255,200,87,0.7);
     }
     
+    /* Footer compact */
     .footer {
       text-align: center;
-      padding: 24px 0 16px;
+      padding: 10px 0 5px;
       border-top: 1px solid rgba(255,255,255,0.1);
+      flex-shrink: 0;
     }
     
     .footer-text {
-      font-size: 12px;
+      font-size: 10px;
       color: rgba(255,255,255,0.4);
     }
     
     .footer-links {
       display: flex;
       justify-content: center;
-      gap: 28px;
-      margin-top: 12px;
+      gap: 20px;
+      margin-top: 6px;
       flex-wrap: wrap;
     }
     
     .footer-links a {
       color: rgba(255,255,255,0.5);
       text-decoration: none;
-      font-size: 12px;
+      font-size: 10px;
       transition: color 0.2s;
     }
     
@@ -192,72 +224,21 @@
       color: var(--bp-warning);
     }
     
-    @media (max-width: 900px) {
-      .schedule-container {
-        padding: 16px;
-      }
-      .schedule-card {
-        padding: 32px;
-      }
-      .hero-title {
-        font-size: 36px;
-      }
-      .hero-sub {
-        font-size: 14px;
-      }
-      .time {
-        min-width: 130px;
-        font-size: 20px;
-      }
-      .event-name {
-        font-size: 18px;
-      }
-      .card-title {
-        font-size: 24px;
-      }
+    /* For very tall screens, allow minimal scroll, but we aim to avoid it */
+    @media (max-height: 800px) {
+      .hero-title { font-size: 30px; }
+      .time { font-size: 16px; min-width: 100px; }
+      .event-name { font-size: 16px; }
+      .event-detail { font-size: 11px; }
+      .schedule-card { padding: 15px 25px; }
     }
     
-    @media (max-width: 700px) {
-      .time-slot {
-        flex-direction: column;
-        gap: 12px;
-      }
-      .time {
-        min-width: auto;
-      }
-      .event-content {
-        padding-left: 0;
-        border-left: none;
-        padding-top: 8px;
-        border-top: 1px solid rgba(255,200,87,0.25);
-      }
-      .schedule-card {
-        padding: 24px;
-      }
-      .event-name {
-        font-size: 16px;
-      }
-      .hero-title {
-        font-size: 28px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .blueprint-logo img {
-        height: 36px;
-      }
-      .time {
-        font-size: 16px;
-      }
-      .event-name {
-        font-size: 15px;
-      }
-      .event-detail {
-        font-size: 12px;
-      }
-      .hero-title {
-        font-size: 24px;
-      }
+    @media (max-height: 700px) {
+      .hero-title { font-size: 26px; }
+      .hero-eyebrow { font-size: 9px; }
+      .hero-sub { font-size: 12px; }
+      .time-slot { padding: 6px 0; }
+      .blueprint-logo img { height: 32px; }
     }
   </style>
 </head>
@@ -271,14 +252,14 @@
   </svg>
 
   <div class="schedule-container z1">
-    <!-- Hero Section - Matching registration page style -->
+    <!-- Hero Section -->
     <div class="hero-section">
       <div class="hero-eyebrow">Build Guild Kochi · April 2026</div>
       <div class="hero-title">
         Event <span class="kochi">Schedule</span>
       </div>
       <div class="hero-sub">
-        Join us for a day of soldering, building, and community. Check out the timeline below.
+        Join us for a day of soldering, building, and community.
       </div>
       <div class="logo-section">
         <div class="blueprint-logo">
@@ -288,7 +269,7 @@
       </div>
     </div>
 
-    <!-- Schedule Card -->
+    <!-- Schedule Card (fits within remaining space) -->
     <div class="schedule-card">
       <div class="card-eyebrow">⚡ Full Day Event ⚡</div>
       <div class="card-title">Build Guild Kochi Timeline</div>
@@ -298,7 +279,7 @@
           <div class="time">10:00 AM</div>
           <div class="event-content">
             <div class="event-name">Arrival & Check-in</div>
-            <div class="event-detail">Grab your badge, get your QR scanned, and collect your soldering kit</div>
+            <div class="event-detail">Grab your badge, get your QR scanned, collect kit</div>
           </div>
         </div>
         
@@ -306,7 +287,7 @@
           <div class="time">10:30 AM</div>
           <div class="event-content">
             <div class="event-name">Kickoff & Welcome</div>
-            <div class="event-detail">Opening ceremony, meet the mentors, event overview, and safety briefing</div>
+            <div class="event-detail">Opening ceremony, meet mentors, safety briefing</div>
           </div>
         </div>
         
@@ -314,7 +295,7 @@
           <div class="time">11:00 AM</div>
           <div class="event-content">
             <div class="event-name">Soldering 101</div>
-            <div class="event-detail">Learn the basics of soldering with hands-on practice. All materials provided.</div>
+            <div class="event-detail">Hands-on soldering basics. All materials provided.</div>
           </div>
         </div>
         
@@ -322,7 +303,7 @@
           <div class="time">01:00 PM</div>
           <div class="event-content">
             <div class="event-name">Lunch Break 🥗</div>
-            <div class="event-detail">Delicious lunch served. Network with fellow builders and mentors</div>
+            <div class="event-detail">Delicious lunch, network with builders</div>
           </div>
         </div>
         
@@ -330,7 +311,7 @@
           <div class="time">02:00 PM</div>
           <div class="event-content">
             <div class="event-name">Soldering Marathon & Events</div>
-            <div class="event-detail">Build your project, participate in challenges, and get help from mentors</div>
+            <div class="event-detail">Build projects, challenges, mentor help</div>
           </div>
         </div>
         
@@ -338,7 +319,7 @@
           <div class="time">06:30 PM</div>
           <div class="event-content">
             <div class="event-name">Project Demos & Winner Announcement</div>
-            <div class="event-detail">Show off your creation! Winners get special prizes and recognition</div>
+            <div class="event-detail">Show your creation, win prizes</div>
           </div>
         </div>
         
@@ -346,7 +327,7 @@
           <div class="time">07:00 PM</div>
           <div class="event-content">
             <div class="event-name">Surprise !!</div>
-            <div class="event-detail">Something special planned just for you — come and find out!</div>
+            <div class="event-detail">Something special planned — come find out!</div>
           </div>
         </div>
         
@@ -354,7 +335,7 @@
           <div class="time">07:30 PM</div>
           <div class="event-content">
             <div class="event-name">Closing & Group Photo</div>
-            <div class="event-detail">Wrap-up, group photo, and farewell. See you at the next Build Guild!</div>
+            <div class="event-detail">Wrap-up, group photo, farewell</div>
           </div>
         </div>
       </div>
