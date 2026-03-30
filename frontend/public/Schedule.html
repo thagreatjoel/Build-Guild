@@ -18,7 +18,10 @@
       overflow: hidden;
     }
     
-    body {
+    body {   
+      background-image:
+          linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
       background: var(--bp-dark);
       position: relative;
     }
@@ -83,6 +86,10 @@
     /* Card – fills remaining space */
     .schedule-card {
       background: var(--bp-darker);
+      background-image:
+           linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+           linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 50px 50px;
       border: 2px solid rgba(255,255,255,.14);
       padding: 1.5vh 2vw;
       flex: 1;
@@ -90,6 +97,9 @@
       flex-direction: column;
       overflow: hidden;
     }
+    .schedule-card {
+  
+}
     
     /* Timeline – evenly distributes events */
     .timeline {
