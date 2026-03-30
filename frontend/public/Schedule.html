@@ -25,6 +25,7 @@
       background: var(--bp-dark);
     }
     
+    /* Container – no top/left padding, so logo can touch the corner */
     .schedule-container {
       width: 100%;
       height: 100vh;
@@ -32,30 +33,32 @@
       margin: 0 auto;
       position: relative;
       z-index: 2;
-      padding: 2vh 4vw;
+      padding: 0 4vw 2vh 0;          /* top=0, left=0, right=4vw, bottom=2vh */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
     
-    /* Top bar: logo only – larger */
-   .top-bar {
-  display: flex;
-  justify-content: flex-start;   /* keep logo left */
-  align-items: center;
-}
-    
-    .hackclub-logo img {
-      height: 12vh;            /* increased from 6vh */
-      max-height: 100px;       /* increased from 60px */
-      width: auto;
+    /* Top bar – now gets the missing top/left padding to keep content aligned */
+    .top-bar {
+      flex-shrink: 0;
+      padding: 2vh 0 0 4vw;          /* top padding to match bottom, left padding for alignment */
+      margin-bottom: 1vh;
     }
     
-    /* Title + date – closer together */
+    .hackclub-logo img {
+      height: 8vh;                   /* keep responsive height */
+      max-height: 80px;
+      width: auto;
+      display: block;                /* remove any inline spacing */
+    }
+    
+    /* Title and date – get the same left/right padding as logo */
     .hero-title {
       text-align: center;
       flex-shrink: 0;
       margin-bottom: 2vh;
+      padding: 0 4vw;               /* add side padding */
     }
     
     .hero-title h1 {
@@ -80,10 +83,11 @@
       margin-top: 0;
     }
     
-    /* Card – takes all remaining space */
+    /* Card – same side padding */
     .schedule-card {
       background: var(--bp-darker);
       border: 2px solid rgba(255,255,255,.14);
+      margin: 0 4vw;                /* horizontal margin instead of padding */
       padding: 1.5vh 2vw;
       flex: 1;
       display: flex;
@@ -91,7 +95,7 @@
       overflow: hidden;
     }
     
-    /* Timeline – uses flex to distribute events evenly */
+    /* Timeline – distribute events evenly */
     .timeline {
       display: flex;
       flex-direction: column;
@@ -148,11 +152,11 @@
       color: rgba(255,200,87,0.7);
     }
     
-    /* Sponsors */
+    /* Sponsors – same side padding */
     .sponsors {
       flex-shrink: 0;
       text-align: center;
-      padding: 1vh 0;
+      padding: 1vh 4vw;
       border-top: 1px solid rgba(255,255,255,0.1);
       margin-top: 1vh;
     }
@@ -189,14 +193,14 @@
   </svg>
 
   <div class="schedule-container z1">
-    <!-- Top bar: larger Hack Club flag -->
+    <!-- Logo now sits in the top-left corner -->
     <div class="top-bar">
       <div class="hackclub-logo">
         <img src="https://assets.hackclub.com/flag-orpheus-top.svg" alt="Hack Club">
       </div>
     </div>
 
-    <!-- Title and date – now closer -->
+    <!-- Title and date -->
     <div class="hero-title">
       <h1>
         <span class="schedule-text">Event</span>
@@ -280,4 +284,4 @@
     </div>
   </div>
 </body>
-</html>
+</html>6
