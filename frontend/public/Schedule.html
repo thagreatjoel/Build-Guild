@@ -8,41 +8,52 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: var(--bp-dark);
+    }
+    
     .schedule-container {
-      max-width: 1100px;
+      max-width: 1200px;
       width: 100%;
       margin: 0 auto;
       position: relative;
       z-index: 2;
     }
     
-    /* Logo Header outside card - bigger logo */
+    /* Logo Header - Larger for TV */
     .logo-header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 48px;
       animation: rise 0.4s cubic-bezier(.16,1,.3,1);
     }
     
     .blueprint-logo {
       display: inline-block;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
     
     .blueprint-logo img {
-      height: 80px;
+      height: 100px;
       width: auto;
       filter: brightness(0) invert(1);
       transition: transform 0.2s;
     }
     
-    .blueprint-logo img:hover {
-      transform: scale(1.02);
-    }
-    
     .event-badge {
-      font-size: 32px;
+      font-size: 48px;
       font-weight: 800;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
     }
     
     .event-badge .kochi {
@@ -50,36 +61,33 @@
     }
     
     .event-date {
-      font-size: 16px;
+      font-size: 20px;
       color: rgba(255,255,255,0.6);
-      margin-top: 8px;
+      margin-top: 12px;
     }
     
-    /* Main card */
+    /* Wide Card - Single Column */
     .schedule-card {
       background: var(--bp-darker);
-      border: 2px solid var(--bp-warning);
-      padding: 36px 40px;
-      margin-bottom: 28px;
+      border: 3px solid var(--bp-warning);
+      padding: 48px 56px;
+      margin-bottom: 32px;
       animation: rise 0.5s cubic-bezier(.16,1,.3,1);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
     
-    /* Schedule grid */
-    .schedule-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-    }
-    
-    .time-column {
-      background: rgba(0,0,0,0.3);
-      padding: 24px;
-      border-left: 3px solid var(--bp-warning);
+    /* Single Column Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     
     .time-slot {
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: flex-start;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
     
     .time-slot:last-child {
@@ -87,23 +95,30 @@
     }
     
     .time {
-      font-weight: 700;
+      min-width: 180px;
+      font-weight: 800;
       color: var(--bp-warning);
-      font-size: 15px;
+      font-size: 28px;
       font-family: monospace;
-      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    
+    .event-content {
+      flex: 1;
+      padding-left: 32px;
+      border-left: 3px solid rgba(255,200,87,0.3);
     }
     
     .event-name {
-      font-weight: 700;
-      font-size: 16px;
+      font-weight: 800;
+      font-size: 26px;
       color: #fff;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
     
     .event-detail {
-      font-size: 12px;
-      color: rgba(255,255,255,0.55);
+      font-size: 18px;
+      color: rgba(255,255,255,0.65);
       line-height: 1.4;
     }
     
@@ -113,33 +128,33 @@
     }
     
     .time-slot.highlight .event-detail {
-      color: rgba(255,200,87,0.7);
+      color: rgba(255,200,87,0.8);
     }
     
     /* Footer */
     .footer {
       text-align: center;
-      padding: 24px 0 16px;
+      padding: 28px 0 16px;
       border-top: 1px solid rgba(255,255,255,0.1);
     }
     
     .footer-text {
-      font-size: 12px;
+      font-size: 14px;
       color: rgba(255,255,255,0.4);
     }
     
     .footer-links {
       display: flex;
       justify-content: center;
-      gap: 28px;
-      margin-top: 14px;
+      gap: 32px;
+      margin-top: 16px;
       flex-wrap: wrap;
     }
     
     .footer-links a {
       color: rgba(255,255,255,0.5);
       text-decoration: none;
-      font-size: 12px;
+      font-size: 14px;
       transition: color 0.2s;
     }
     
@@ -147,53 +162,75 @@
       color: var(--bp-warning);
     }
     
-    /* Responsive */
-    @media (max-width: 800px) {
+    /* Responsive - Adjust for smaller screens but keep readable */
+    @media (max-width: 900px) {
+      body {
+        padding: 20px;
+      }
       .schedule-card {
-        padding: 24px;
+        padding: 32px;
       }
-      .schedule-grid {
-        gap: 24px;
+      .time {
+        min-width: 140px;
+        font-size: 22px;
       }
-      .time-column {
-        padding: 16px;
+      .event-name {
+        font-size: 20px;
+      }
+      .event-detail {
+        font-size: 15px;
       }
       .event-badge {
-        font-size: 26px;
+        font-size: 36px;
       }
       .blueprint-logo img {
-        height: 60px;
+        height: 70px;
       }
     }
     
     @media (max-width: 700px) {
-      .schedule-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      .event-name {
-        font-size: 15px;
+      .time-slot {
+        flex-direction: column;
+        gap: 12px;
       }
       .time {
+        min-width: auto;
+      }
+      .event-content {
+        padding-left: 0;
+        border-left: none;
+        padding-top: 8px;
+        border-top: 2px solid rgba(255,200,87,0.3);
+      }
+      .schedule-card {
+        padding: 24px;
+      }
+      .event-name {
+        font-size: 18px;
+      }
+      .event-detail {
         font-size: 14px;
+      }
+      .event-badge {
+        font-size: 28px;
       }
     }
     
     @media (max-width: 480px) {
-      .schedule-card {
-        padding: 16px;
-      }
-      .time-column {
-        padding: 12px;
-      }
       .blueprint-logo img {
-        height: 48px;
+        height: 50px;
       }
-      .event-badge {
-        font-size: 22px;
+      .time {
+        font-size: 18px;
       }
-      .event-date {
-        font-size: 13px;
+      .event-name {
+        font-size: 16px;
+      }
+      .event-detail {
+        font-size: 12px;
+      }
+      .footer-links {
+        gap: 20px;
       }
     }
   </style>
@@ -208,7 +245,7 @@
   </svg>
 
   <div class="schedule-container z1">
-    <!-- Logo Header (outside card) - Bigger logo -->
+    <!-- Logo Header -->
     <div class="logo-header">
       <div class="blueprint-logo">
         <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
@@ -219,52 +256,76 @@
       <div class="event-date">April 15, 2026 · Kochi, India</div>
     </div>
 
-    <!-- Main Schedule Card -->
+    <!-- Wide Single Column Schedule Card -->
     <div class="schedule-card">
-      <div class="schedule-grid">
-        <!-- Left Column - Morning Events -->
-        <div class="time-column">
-          <div class="time-slot">
-            <div class="time">10:00 AM</div>
+      <div class="timeline">
+        <!-- 10:00 AM -->
+        <div class="time-slot">
+          <div class="time">10:00 AM</div>
+          <div class="event-content">
             <div class="event-name">Arrival & Check-in</div>
-            <div class="event-detail">Grab your badge, get your QR scanned, and collect your kit</div>
+            <div class="event-detail">Grab your badge, get your QR scanned, and collect your soldering kit</div>
           </div>
-          <div class="time-slot">
-            <div class="time">10:30 AM</div>
+        </div>
+        
+        <!-- 10:30 AM -->
+        <div class="time-slot">
+          <div class="time">10:30 AM</div>
+          <div class="event-content">
             <div class="event-name">Kickoff & Welcome</div>
-            <div class="event-detail">Opening ceremony, meet the mentors, and event overview</div>
+            <div class="event-detail">Opening ceremony, meet the mentors, event overview, and safety briefing</div>
           </div>
-          <div class="time-slot">
-            <div class="time">11:00 AM</div>
+        </div>
+        
+        <!-- 11:00 AM -->
+        <div class="time-slot">
+          <div class="time">11:00 AM</div>
+          <div class="event-content">
             <div class="event-name">Soldering 101</div>
             <div class="event-detail">Learn the basics of soldering with hands-on practice. All materials provided.</div>
           </div>
-          <div class="time-slot highlight">
-            <div class="time">01:00 PM</div>
+        </div>
+        
+        <!-- 01:00 PM - Highlight -->
+        <div class="time-slot highlight">
+          <div class="time">01:00 PM</div>
+          <div class="event-content">
             <div class="event-name">Lunch Break 🥗</div>
             <div class="event-detail">Delicious lunch served. Network with fellow builders and mentors</div>
           </div>
         </div>
-
-        <!-- Right Column - Afternoon Events -->
-        <div class="time-column">
-          <div class="time-slot">
-            <div class="time">02:00 PM</div>
+        
+        <!-- 02:00 PM -->
+        <div class="time-slot">
+          <div class="time">02:00 PM</div>
+          <div class="event-content">
             <div class="event-name">Soldering Marathon & Events</div>
             <div class="event-detail">Build your project, participate in challenges, and get help from mentors</div>
           </div>
-          <div class="time-slot">
-            <div class="time">06:30 PM</div>
+        </div>
+        
+        <!-- 06:30 PM -->
+        <div class="time-slot">
+          <div class="time">06:30 PM</div>
+          <div class="event-content">
             <div class="event-name">Project Demos & Winner Announcement</div>
             <div class="event-detail">Show off your creation! Winners get special prizes and recognition</div>
           </div>
-          <div class="time-slot highlight">
-            <div class="time">07:00 PM</div>
+        </div>
+        
+        <!-- 07:00 PM - Highlight -->
+        <div class="time-slot highlight">
+          <div class="time">07:00 PM</div>
+          <div class="event-content">
             <div class="event-name">Surprise !!</div>
             <div class="event-detail">Something special planned just for you — come and find out!</div>
           </div>
-          <div class="time-slot">
-            <div class="time">07:30 PM</div>
+        </div>
+        
+        <!-- 07:30 PM -->
+        <div class="time-slot">
+          <div class="time">07:30 PM</div>
+          <div class="event-content">
             <div class="event-name">Closing & Group Photo</div>
             <div class="event-detail">Wrap-up, group photo, and farewell. See you at the next Build Guild!</div>
           </div>
@@ -275,7 +336,7 @@
     <!-- Footer -->
     <div class="footer">
       <div class="footer-text">
-        Powered by Blueprint · Hack Club 
+        ⚡ Powered by Blueprint · Hack Club ⚡
       </div>
       <div class="footer-links">
         <a href="/">Register</a>
