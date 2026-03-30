@@ -5,28 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Build Guild Kochi — Schedule</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
   <style>
+    /* ── Exactly the same background as index.html ── */
+    @font-face {
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff');
+      font-weight:400;font-style:normal;font-display:swap;
+    }
+    @font-face {
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff') format('woff');
+      font-weight:700;font-style:normal;font-display:swap;
+    }
+
+    :root{
+      --bp-lighter:#344b6a;
+      --bp-dark:#0e305b;
+      --bp-darker:#081c35;
+      --bp-light:#dbe4ee;
+      --bp-danger:#fe8e86;
+      --bp-danger-darker:#bd4c44;
+      --bp-warning:#ffc857;
+      --bp-success:#a8f0ae;
+      --f:'Phantom Sans','Poppins',sans-serif;
+      --fh:'Poppins',sans-serif;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
-    html, body {
-      height: 100%;
-      overflow: hidden;
+
+    html {
+      font-size: 16px;
     }
-    
-    body {   
-      background-image:
-          linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+
+    body {
+      font-family: var(--f);
       background: var(--bp-dark);
+      color: #fff;
+      min-height: 100vh;
+      overscroll-behavior: none;
+      /* Grid background – exactly as in index.html */
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-position: 0 0, 0 0;
+      background-color: var(--bp-dark);
       position: relative;
     }
-    
-    /* Banner fixed at the top‑left corner */
+
+    /* Grain overlay – same as index.html */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse, #000000b1, transparent);
+      opacity: .4;
+      filter: url(#grainy);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .z1 {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Banner fixed top‑left */
     .banner-link {
       position: fixed;
       top: 0;
@@ -34,33 +85,30 @@
       z-index: 999;
     }
     .banner-link img {
-      width: 180px;          /* smaller size */
-      max-width: 25vw;       /* scales on narrow screens */
+      width: 180px;
+      max-width: 25vw;
       height: auto;
       border: 0;
     }
-    
-    /* Main container – full height with padding to clear the banner */
+
+    /* Main container – full height, padded to clear the banner */
     .schedule-container {
       width: 100%;
       height: 100vh;
       max-width: 1400px;
       margin: 0 auto;
-      position: relative;
-      z-index: 2;
       padding: clamp(80px, 12vh, 120px) 4vw 2vh 4vw;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
-    
+
     /* Title and date */
     .hero-title {
       text-align: center;
       flex-shrink: 0;
       margin-bottom: 2vh;
     }
-    
     .hero-title h1 {
       font-family: var(--fh);
       font-size: clamp(2rem, 6vh, 5rem);
@@ -68,28 +116,21 @@
       letter-spacing: 2px;
       margin-bottom: 0.25vh;
     }
-    
     .hero-title .kochi {
       color: var(--bp-warning);
     }
-    
     .hero-title .schedule-text {
       color: #fff;
     }
-    
     .event-date {
       font-size: clamp(0.8rem, 2vh, 1.2rem);
       color: rgba(255,255,255,0.6);
       margin-top: 0;
     }
-    
-    /* Card – fills remaining space */
+
+    /* Card – same dark background as index.html cards */
     .schedule-card {
       background: var(--bp-darker);
-      background-image:
-           linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
-           linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
-      background-size: 50px 50px;
       border: 2px solid rgba(255,255,255,.14);
       padding: 1.5vh 2vw;
       flex: 1;
@@ -97,10 +138,7 @@
       flex-direction: column;
       overflow: hidden;
     }
-    .schedule-card {
-  
-}
-    
+
     /* Timeline – evenly distributes events */
     .timeline {
       display: flex;
@@ -109,7 +147,6 @@
       height: 100%;
       gap: 0.2vh;
     }
-    
     .time-slot {
       display: flex;
       align-items: center;
@@ -117,11 +154,9 @@
       border-bottom: 1px solid rgba(255,255,255,0.08);
       min-height: 0;
     }
-    
     .time-slot:last-child {
       border-bottom: none;
     }
-    
     .time {
       min-width: 11vw;
       font-weight: 700;
@@ -129,13 +164,11 @@
       font-size: clamp(0.9rem, 2.2vh, 1.6rem);
       font-family: monospace;
     }
-    
     .event-content {
       flex: 1;
       padding-left: 1.5vw;
       border-left: 2px solid rgba(255,200,87,0.25);
     }
-    
     .event-name {
       font-family: var(--fh);
       font-weight: 700;
@@ -143,21 +176,18 @@
       color: #fff;
       margin-bottom: 0.2vh;
     }
-    
     .event-detail {
       font-size: clamp(0.7rem, 1.5vh, 0.9rem);
       color: rgba(255,255,255,0.6);
       line-height: 1.3;
     }
-    
     .time-slot.highlight .event-name {
       color: var(--bp-warning);
     }
-    
     .time-slot.highlight .event-detail {
       color: rgba(255,200,87,0.7);
     }
-    
+
     /* Sponsors */
     .sponsors {
       flex-shrink: 0;
@@ -166,7 +196,6 @@
       border-top: 1px solid rgba(255,255,255,0.1);
       margin-top: 1vh;
     }
-    
     .sponsors-label {
       font-size: clamp(0.6rem, 1.3vh, 0.8rem);
       text-transform: uppercase;
@@ -174,18 +203,34 @@
       color: rgba(255,255,255,0.4);
       margin-bottom: 0.5vh;
     }
-    
     .sponsor-logos {
       display: flex;
       justify-content: center;
       gap: clamp(1rem, 3vw, 3rem);
       flex-wrap: wrap;
     }
-    
     .sponsor {
       font-weight: 700;
       font-size: clamp(0.8rem, 1.8vh, 1.2rem);
       color: rgba(255,255,255,0.7);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 700px) {
+      .time-slot {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .time {
+        margin-bottom: 4px;
+      }
+      .event-content {
+        padding-left: 0;
+        border-left: none;
+        border-top: 1px solid rgba(255,200,87,0.25);
+        padding-top: 6px;
+        margin-top: 4px;
+      }
     }
   </style>
 </head>
@@ -198,13 +243,12 @@
     </filter>
   </svg>
 
-  <!-- Banner – fixed to the top‑left corner of the window -->
+  <!-- Banner fixed to top‑left -->
   <a href="https://hackclub.com/" class="banner-link">
     <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
   </a>
 
   <div class="schedule-container z1">
-    <!-- Title and date -->
     <div class="hero-title">
       <h1>
         <span class="schedule-text">Event</span>
@@ -213,7 +257,6 @@
       <div class="event-date">April 15, 2026 · Kochi, India</div>
     </div>
 
-    <!-- Schedule Card – updated with your new text -->
     <div class="schedule-card">
       <div class="timeline">
         <div class="time-slot">
@@ -275,7 +318,6 @@
       </div>
     </div>
 
-    <!-- Sponsors -->
     <div class="sponsors">
       <div class="sponsors-label">Proudly supported by</div>
       <div class="sponsor-logos">
