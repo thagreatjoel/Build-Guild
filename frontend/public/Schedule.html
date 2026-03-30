@@ -23,32 +23,29 @@
       position: relative;
     }
     
-    /* Banner fixed at the very top‑left of the window */
-    /* Banner fixed at top-left corner of viewport */
-.banner-link {
-  position: fixed;
-  top: 0;
-  left: 10px;
-  z-index: 999;
-}
-.banner-link img {
-  width: 200px;
-  max-width: 25vw; /* scale on very small screens */
-  height: auto;
-  border: 0;
-}
-
-
+    /* Banner fixed at the top‑left corner */
+    .banner-link {
+      position: fixed;
+      top: 0;
+      left: 10px;
+      z-index: 999;
+    }
+    .banner-link img {
+      width: 180px;          /* smaller size */
+      max-width: 25vw;       /* scales on narrow screens */
+      height: auto;
+      border: 0;
+    }
+    
     /* Main container – full height with padding to clear the banner */
     .schedule-container {
       width: 100%;
       height: 100vh;
-      margin-top: 100px;
       max-width: 1400px;
       margin: 0 auto;
       position: relative;
       z-index: 2;
-      padding: clamp(80px, 12vh, 120px) 4vw 2vh 4vw;  /* top padding avoids overlap */
+      padding: clamp(80px, 12vh, 120px) 4vw 2vh 4vw;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -206,63 +203,63 @@
       <div class="event-date">April 15, 2026 · Kochi, India</div>
     </div>
 
-    <!-- Schedule Card -->
+    <!-- Schedule Card – updated with your new text -->
     <div class="schedule-card">
       <div class="timeline">
         <div class="time-slot">
           <div class="time">10:00 AM</div>
           <div class="event-content">
-            <div class="event-name">Arrival & Check-in</div>
-            <div class="event-detail">Grab your badge, get QR scanned, collect kit</div>
+            <div class="event-name">Arrival and Check-in</div>
+            <div class="event-detail">Get your badge, scan the QR code, and pick up the kit</div>
           </div>
         </div>
         <div class="time-slot">
           <div class="time">10:30 AM</div>
           <div class="event-content">
-            <div class="event-name">Kickoff & Welcome</div>
-            <div class="event-detail">Opening ceremony, meet mentors, safety briefing</div>
+            <div class="event-name">Welcome & Kickoff</div>
+            <div class="event-detail">Opening ceremony, mentorship, and safety briefing</div>
           </div>
         </div>
         <div class="time-slot">
           <div class="time">11:00 AM</div>
           <div class="event-content">
-            <div class="event-name">Soldering 101</div>
-            <div class="event-detail">Hands-on soldering basics. All materials provided.</div>
+            <div class="event-name">Soldering Fundamentals</div>
+            <div class="event-detail">Practical soldering principles. All resources were supplied.</div>
           </div>
         </div>
         <div class="time-slot highlight">
           <div class="time">01:00 PM</div>
           <div class="event-content">
             <div class="event-name">Lunch Break 🥗</div>
-            <div class="event-detail">Delicious lunch, network with builders</div>
+            <div class="event-detail">Enjoy a tasty meal and connect with builders</div>
           </div>
         </div>
         <div class="time-slot">
           <div class="time">02:00 PM</div>
           <div class="event-content">
-            <div class="event-name">Soldering Marathon & Events</div>
-            <div class="event-detail">Build projects, challenges, mentor help</div>
+            <div class="event-name">Events & Soldering Marathon</div>
+            <div class="event-detail">Create challenges, projects, and mentorship</div>
           </div>
         </div>
         <div class="time-slot">
           <div class="time">06:30 PM</div>
           <div class="event-content">
-            <div class="event-name">Project Demos & Winner Announcement</div>
-            <div class="event-detail">Show your creation, win prizes</div>
+            <div class="event-name">Project Demos and Announcement of Winners</div>
+            <div class="event-detail">Show off your creation to win prizes!</div>
           </div>
         </div>
         <div class="time-slot highlight">
           <div class="time">07:00 PM</div>
           <div class="event-content">
-            <div class="event-name">Surprise !!</div>
-            <div class="event-detail">Something special planned — come find out!</div>
+            <div class="event-name">Surprise!</div>
+            <div class="event-detail">Come discover what's in store!</div>
           </div>
         </div>
         <div class="time-slot">
           <div class="time">07:30 PM</div>
           <div class="event-content">
-            <div class="event-name">Closing & Group Photo</div>
-            <div class="event-detail">Wrap-up, group photo, farewell</div>
+            <div class="event-name">Group Photo & Closing</div>
+            <div class="event-detail">Final thoughts, group photo, and goodbye</div>
           </div>
         </div>
       </div>
