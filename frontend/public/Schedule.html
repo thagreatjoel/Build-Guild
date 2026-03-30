@@ -32,37 +32,35 @@
       margin: 0 auto;
       position: relative;
       z-index: 2;
-      padding: 20px 40px;
+      padding: 2vh 4vw;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
     
-    /* Top bar: only logo on left */
+    /* Top bar: logo only */
     .top-bar {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
       flex-shrink: 0;
-      margin-bottom: 20px;
+      margin-bottom: 1.5vh;
     }
     
     .blueprint-logo img {
-      height: 48px;
+      height: 6vh;
+      max-height: 60px;
       width: auto;
       filter: brightness(0) invert(1);
     }
     
-    /* Title section with date underneath – plain text */
+    /* Title + date */
     .hero-title {
       text-align: center;
-      margin-bottom: 24px;
       flex-shrink: 0;
+      margin-bottom: 2vh;
     }
     
     .hero-title h1 {
       font-family: var(--fh);
-      font-size: 64px;
+      font-size: clamp(2rem, 6vh, 5rem);
       font-weight: 800;
       letter-spacing: 2px;
     }
@@ -76,35 +74,37 @@
     }
     
     .event-date {
-      font-size: 16px;
+      font-size: clamp(0.8rem, 2vh, 1.2rem);
       color: rgba(255,255,255,0.6);
-      margin-top: 12px;
-      /* No border, no background – just plain text */
+      margin-top: 1vh;
     }
     
-    /* Card takes remaining space, no scroll */
+    /* Card – takes all remaining space */
     .schedule-card {
       background: var(--bp-darker);
       border: 2px solid rgba(255,255,255,.14);
-      padding: 24px 40px;
+      padding: 1.5vh 2vw;
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
     
+    /* Timeline – uses flex to distribute events evenly */
     .timeline {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       height: 100%;
+      gap: 0.2vh;
     }
     
     .time-slot {
       display: flex;
       align-items: center;
-      padding: 8px 0;
+      flex: 1;                     /* each event gets equal height */
       border-bottom: 1px solid rgba(255,255,255,0.08);
+      min-height: 0;               /* allow shrinking */
     }
     
     .time-slot:last-child {
@@ -112,31 +112,31 @@
     }
     
     .time {
-      min-width: 130px;
+      min-width: 11vw;
       font-weight: 700;
       color: var(--bp-warning);
-      font-size: 22px;
+      font-size: clamp(0.9rem, 2.2vh, 1.6rem);
       font-family: monospace;
     }
     
     .event-content {
       flex: 1;
-      padding-left: 24px;
+      padding-left: 1.5vw;
       border-left: 2px solid rgba(255,200,87,0.25);
     }
     
     .event-name {
       font-family: var(--fh);
       font-weight: 700;
-      font-size: 20px;
+      font-size: clamp(0.9rem, 2.2vh, 1.5rem);
       color: #fff;
-      margin-bottom: 4px;
+      margin-bottom: 0.2vh;
     }
     
     .event-detail {
-      font-size: 13px;
+      font-size: clamp(0.7rem, 1.5vh, 0.9rem);
       color: rgba(255,255,255,0.6);
-      line-height: 1.4;
+      line-height: 1.3;
     }
     
     .time-slot.highlight .event-name {
@@ -147,63 +147,34 @@
       color: rgba(255,200,87,0.7);
     }
     
-    /* Sponsors section */
+    /* Sponsors */
     .sponsors {
       flex-shrink: 0;
       text-align: center;
-      padding: 16px 0 8px;
+      padding: 1vh 0;
       border-top: 1px solid rgba(255,255,255,0.1);
-      margin-top: 12px;
+      margin-top: 1vh;
     }
     
     .sponsors-label {
-      font-size: 11px;
+      font-size: clamp(0.6rem, 1.3vh, 0.8rem);
       text-transform: uppercase;
       letter-spacing: 2px;
       color: rgba(255,255,255,0.4);
-      margin-bottom: 10px;
+      margin-bottom: 0.5vh;
     }
     
     .sponsor-logos {
       display: flex;
       justify-content: center;
-      gap: 32px;
+      gap: clamp(1rem, 3vw, 3rem);
       flex-wrap: wrap;
     }
     
     .sponsor {
       font-weight: 700;
-      font-size: 16px;
+      font-size: clamp(0.8rem, 1.8vh, 1.2rem);
       color: rgba(255,255,255,0.7);
-    }
-    
-    /* Responsive adjustments to keep no scroll */
-    @media (max-height: 850px) {
-      .hero-title h1 { font-size: 54px; }
-      .time { font-size: 19px; min-width: 115px; }
-      .event-name { font-size: 18px; }
-      .event-detail { font-size: 12px; }
-      .schedule-card { padding: 18px 30px; }
-      .time-slot { padding: 6px 0; }
-    }
-    
-    @media (max-height: 750px) {
-      .hero-title h1 { font-size: 48px; margin-bottom: 8px; }
-      .time { font-size: 17px; min-width: 100px; }
-      .event-name { font-size: 16px; }
-      .event-detail { font-size: 11px; }
-      .schedule-card { padding: 14px 25px; }
-      .blueprint-logo img { height: 40px; }
-      .sponsor { font-size: 14px; }
-      .sponsors-label { font-size: 10px; margin-bottom: 6px; }
-    }
-    
-    @media (max-height: 650px) {
-      .hero-title h1 { font-size: 42px; }
-      .time { font-size: 15px; min-width: 90px; }
-      .event-name { font-size: 15px; }
-      .event-detail { font-size: 10px; }
-      .schedule-card { padding: 12px 20px; }
     }
   </style>
 </head>
@@ -217,14 +188,14 @@
   </svg>
 
   <div class="schedule-container z1">
-    <!-- Top bar: only Blueprint logo on left -->
+    <!-- Top bar: Blueprint logo -->
     <div class="top-bar">
       <div class="blueprint-logo">
         <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
       </div>
     </div>
 
-    <!-- Title and date under it – date now plain text -->
+    <!-- Title and date -->
     <div class="hero-title">
       <h1>
         <span class="schedule-text">Event</span>
@@ -233,9 +204,10 @@
       <div class="event-date">April 15, 2026 · Kochi, India</div>
     </div>
 
-    <!-- Schedule Card -->
+    <!-- Schedule Card – will flex to fit exactly -->
     <div class="schedule-card">
       <div class="timeline">
+        <!-- Each time-slot will automatically scale -->
         <div class="time-slot">
           <div class="time">10:00 AM</div>
           <div class="event-content">
@@ -243,7 +215,6 @@
             <div class="event-detail">Grab your badge, get QR scanned, collect kit</div>
           </div>
         </div>
-        
         <div class="time-slot">
           <div class="time">10:30 AM</div>
           <div class="event-content">
@@ -251,7 +222,6 @@
             <div class="event-detail">Opening ceremony, meet mentors, safety briefing</div>
           </div>
         </div>
-        
         <div class="time-slot">
           <div class="time">11:00 AM</div>
           <div class="event-content">
@@ -259,7 +229,6 @@
             <div class="event-detail">Hands-on soldering basics. All materials provided.</div>
           </div>
         </div>
-        
         <div class="time-slot highlight">
           <div class="time">01:00 PM</div>
           <div class="event-content">
@@ -267,7 +236,6 @@
             <div class="event-detail">Delicious lunch, network with builders</div>
           </div>
         </div>
-        
         <div class="time-slot">
           <div class="time">02:00 PM</div>
           <div class="event-content">
@@ -275,7 +243,6 @@
             <div class="event-detail">Build projects, challenges, mentor help</div>
           </div>
         </div>
-        
         <div class="time-slot">
           <div class="time">06:30 PM</div>
           <div class="event-content">
@@ -283,7 +250,6 @@
             <div class="event-detail">Show your creation, win prizes</div>
           </div>
         </div>
-        
         <div class="time-slot highlight">
           <div class="time">07:00 PM</div>
           <div class="event-content">
@@ -291,7 +257,6 @@
             <div class="event-detail">Something special planned — come find out!</div>
           </div>
         </div>
-        
         <div class="time-slot">
           <div class="time">07:30 PM</div>
           <div class="event-content">
