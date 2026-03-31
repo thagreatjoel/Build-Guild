@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
   <title>Build Guild Kochi — Event Access</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
   <style>
     .otp-container {
       max-width: 500px;
@@ -63,7 +65,6 @@
   </style>
 </head>
 <body>
-  <!-- Hack Club Banner -->
   <a href="https://hackclub.com/" class="hackclub-banner">
     <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
   </a>
@@ -82,7 +83,6 @@
       <div class="card-h1">Event <span style="color:var(--bp-warning)">Access</span></div>
       <div class="card-sub">Enter your email to receive a one-time password</div>
 
-      <!-- Email Step -->
       <div id="email-step">
         <div class="field">
           <label>Email Address</label>
@@ -92,7 +92,6 @@
         <div class="msg err" id="err-msg"></div>
       </div>
 
-      <!-- OTP Step (hidden initially) -->
       <div id="otp-step" style="display: none;">
         <div class="email-display" id="email-display"></div>
         <div class="field">
@@ -117,7 +116,6 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    // Pre-approved emails list
     const approvedEmails = new Set([
       "joeljonah06@gmail.com",
       "albinanil813@gmail.com",
@@ -151,7 +149,6 @@
     ]);
 
     let currentEmail = "";
-    let currentOTP = "";
 
     function toast(msg, type = 'info') {
       const t = document.getElementById('toast');
@@ -177,46 +174,32 @@
         return;
       }
 
-      // Generate 6-digit OTP
-      currentOTP = Math.floor(100000 + Math.random() * 900000).toString();
-      currentEmail = email;
-
-      // For demo: show OTP in console and toast
-      console.log(`OTP for ${email}: ${currentOTP}`);
-      toast(`Your OTP is: ${currentOTP}`, 'ok');
-
-      // In production, send via email:
-      /*
       try {
-        const res = await fetch('/api/user/send-otp', {
+        const res = await fetch(`${API_BASE_URL}/api/user/send-otp`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
         });
         const data = await res.json();
         if (res.ok) {
+          currentEmail = email;
           toast('OTP sent to your email!', 'ok');
+          document.getElementById('email-step').style.display = 'none';
+          document.getElementById('otp-step').style.display = 'block';
+          document.getElementById('email-display').textContent = email;
+          document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
+          document.querySelector('.otp-digit').focus();
         } else {
-          toast(data.msg || 'Failed to send OTP', 'err');
-          return;
+          errDiv.textContent = data.msg || 'Failed to send OTP';
+          errDiv.style.display = 'block';
         }
       } catch (err) {
-        toast('Network error', 'err');
-        return;
+        errDiv.textContent = 'Network error. Please try again.';
+        errDiv.style.display = 'block';
       }
-      */
-
-      // Show OTP input step
-      document.getElementById('email-step').style.display = 'none';
-      document.getElementById('otp-step').style.display = 'block';
-      document.getElementById('email-display').textContent = email;
-      
-      // Clear OTP inputs
-      document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
-      document.querySelector('.otp-digit').focus();
     }
 
-    function verifyOTP() {
+    async function verifyOTP() {
       const digits = document.querySelectorAll('.otp-digit');
       const enteredOTP = Array.from(digits).map(d => d.value).join('');
       const errDiv = document.getElementById('otp-err-msg');
@@ -228,27 +211,51 @@
         return;
       }
 
-      if (enteredOTP === currentOTP) {
-        // Login successful - store session
-        localStorage.setItem('eventAccess', JSON.stringify({
-          email: currentEmail,
-          loggedIn: true,
-          timestamp: Date.now()
-        }));
-        toast('Login successful! Redirecting...', 'ok');
-        setTimeout(() => {
-          window.location.href = '/event-dashboard.html';
-        }, 1500);
-      } else {
-        errDiv.textContent = 'Invalid OTP. Please try again.';
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail, otp: enteredOTP })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('eventAccess', JSON.stringify({
+            email: currentEmail,
+            loggedIn: true,
+            timestamp: Date.now()
+          }));
+          toast('Login successful! Redirecting...', 'ok');
+          setTimeout(() => {
+            window.location.href = '/event-dashboard.html';
+          }, 1500);
+        } else {
+          errDiv.textContent = data.msg || 'Invalid OTP';
+          errDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errDiv.textContent = 'Network error. Please try again.';
         errDiv.style.display = 'block';
       }
     }
 
-    function resendOTP() {
-      currentOTP = Math.floor(100000 + Math.random() * 900000).toString();
-      console.log(`New OTP for ${currentEmail}: ${currentOTP}`);
-      toast(`New OTP: ${currentOTP}`, 'info');
+    async function resendOTP() {
+      if (!currentEmail) return;
+      toast('Resending OTP...', 'info');
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/send-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          toast('New OTP sent to your email!', 'ok');
+        } else {
+          toast(data.msg || 'Failed to resend', 'err');
+        }
+      } catch (err) {
+        toast('Network error', 'err');
+      }
     }
 
     function goBack() {
