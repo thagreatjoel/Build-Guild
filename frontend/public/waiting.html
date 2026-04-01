@@ -8,19 +8,17 @@
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
   <style>
-    .waiting-container {
-      text-align: center;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    .status-message {
-      font-size: 20px;
-      margin: 20px 0;
-      color: var(--bp-warning);
-    }
+    .waiting-container { text-align: center; max-width: 500px; margin: 0 auto; }
+    .status-message { font-size: 20px; margin: 20px 0; color: var(--bp-warning); }
+    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
+    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
   </style>
 </head>
 <body>
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
   <svg width="0" height="0" style="position:fixed">
     <filter id="grainy" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
@@ -59,7 +57,6 @@
       }
     }
 
-    // Check every 5 seconds
     setInterval(checkEventStatus, 5000);
     checkEventStatus();
   </script>
