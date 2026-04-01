@@ -6,6 +6,7 @@
   <title>Event Dashboard — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
   <style>
     .dashboard-container {
       max-width: 800px;
@@ -107,19 +108,23 @@
     // Display user email in console (optional)
     console.log(`Logged in as: ${session.email}`);
 
-    function logout() {
-  // Record logout in database
+    async function logout() {
   const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
   if (session.email) {
-    fetch(`${API_BASE_URL}/api/user/login-status`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: session.email, loggedIn: false })
-    }).catch(console.error);
+    try {
+      await fetch(`${API_BASE_URL}/api/user/login-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: session.email, loggedIn: false })
+      });
+    } catch (err) {
+      console.error('Failed to record logout:', err);
+    }
   }
   localStorage.removeItem('eventAccess');
   window.location.href = '/';
 }
+    
   </script>
 </body>
 </html>
