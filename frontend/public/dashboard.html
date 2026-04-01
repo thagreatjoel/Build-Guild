@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
     .stats-grid { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
     .stat-card { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 16px 24px; flex: 1; text-align: center; }
@@ -20,8 +19,6 @@
     .user-table th { background: rgba(0,0,0,.3); }
     .btn-small { padding: 4px 12px; font-size: 12px; margin: 2px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
-    .scan-area { margin-bottom: 20px; }
-    #reader { width: 100%; max-width: 400px; margin: 0 auto; }
     .score-input { width: 60px; padding: 4px; margin-right: 5px; background: var(--bp-dark); border: 1px solid rgba(255,255,255,.2); color: #fff; }
     .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
     .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
@@ -54,32 +51,10 @@
       </div>
 
       <div class="section">
-        <h2>📷 Scan QR Code</h2>
-        <div class="scan-area">
-          <div id="reader"></div>
-          <div id="scan-result" class="msg" style="margin-top: 12px; display: none;"></div>
-        </div>
-        <div style="text-align: center; margin-top: 15px;">
-          <button class="btn btn-outline" onclick="window.open('scan.html', '_blank')">🔍 Open Full‑screen Scanner</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2>✍️ Manual Walk‑in Registration</h2>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <input type="text" id="man-name" placeholder="Full Name" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <input type="email" id="man-email" placeholder="Email" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <input type="tel" id="man-phone" placeholder="Phone (optional)" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <button class="btn btn-primary" onclick="manualRegister()">Register</button>
-        </div>
-        <div id="man-msg" class="msg" style="margin-top: 12px;"></div>
-      </div>
-
-      <div class="section">
         <h2>👥 User Management</h2>
-        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-          <input type="email" id="new-user-email" placeholder="New user email" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <input type="text" id="new-user-name" placeholder="Name" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+          <input type="email" id="new-user-email" placeholder="Email" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <input type="text" id="new-user-name" placeholder="Full Name" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
           <input type="text" id="new-user-username" placeholder="Username" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
           <button class="btn btn-primary" onclick="addUser()">Add User</button>
         </div>
@@ -331,86 +306,9 @@
       window.location.href = '/admin.html';
     }
 
-    // QR Scanner
-    let scanner;
-    function startScanner() {
-      scanner = new Html5Qrcode("reader");
-      scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (decoded) => {
-        handleScan(decoded);
-      }, (err) => { console.log(err); });
-    }
-
-    async function handleScan(token) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/scan`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token })
-        });
-        const data = await res.json();
-        const resultDiv = document.getElementById('scan-result');
-        if (res.ok) {
-          resultDiv.textContent = `✅ ${data.msg}`;
-          resultDiv.className = 'msg ok';
-          resultDiv.style.display = 'block';
-          loadStats();
-          loadUsers();
-          setTimeout(() => resultDiv.style.display = 'none', 3000);
-        } else {
-          resultDiv.textContent = `❌ ${data.msg}`;
-          resultDiv.className = 'msg err';
-          resultDiv.style.display = 'block';
-          setTimeout(() => resultDiv.style.display = 'none', 3000);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    async function manualRegister() {
-      const name = document.getElementById('man-name').value.trim();
-      const email = document.getElementById('man-email').value.trim();
-      const phone = document.getElementById('man-phone').value.trim();
-      const msgDiv = document.getElementById('man-msg');
-      msgDiv.style.display = 'none';
-      if (!name || !email) {
-        msgDiv.textContent = 'Name and email are required.';
-        msgDiv.className = 'msg err';
-        msgDiv.style.display = 'block';
-        return;
-      }
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/manual-register`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, phone })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          msgDiv.textContent = data.msg + ' QR sent to email.';
-          msgDiv.className = 'msg ok';
-          msgDiv.style.display = 'block';
-          document.getElementById('man-name').value = '';
-          document.getElementById('man-email').value = '';
-          document.getElementById('man-phone').value = '';
-          loadStats();
-          loadUsers();
-        } else {
-          msgDiv.textContent = data.msg || 'Registration failed';
-          msgDiv.className = 'msg err';
-          msgDiv.style.display = 'block';
-        }
-      } catch (err) {
-        msgDiv.textContent = 'Network error.';
-        msgDiv.className = 'msg err';
-        msgDiv.style.display = 'block';
-      }
-    }
-
     loadStats();
     loadUsers();
     loadEventStatus();
-    startScanner();
   </script>
 </body>
 </html>
