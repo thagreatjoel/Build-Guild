@@ -62,4 +62,28 @@ router.get('/users', async (req, res) => {
   }
 });
 
+// Get event status
+router.get('/event-status', async (req, res) => {
+  const EventStatus = require('../models/EventStatus');
+  let status = await EventStatus.findOne();
+  if (!status) {
+    status = new EventStatus({ isOpen: false });
+    await status.save();
+  }
+  res.json({ isOpen: status.isOpen });
+});
+
+// Toggle event status (admin only)
+router.post('/event-status/toggle', async (req, res) => {
+  const EventStatus = require('../models/EventStatus');
+  let status = await EventStatus.findOne();
+  if (!status) {
+    status = new EventStatus({ isOpen: false });
+  }
+  status.isOpen = !status.isOpen;
+  status.updatedAt = new Date();
+  await status.save();
+  res.json({ isOpen: status.isOpen });
+});
+
 module.exports = router; 
