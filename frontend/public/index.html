@@ -92,41 +92,60 @@
     }
 
     async function sendOTP() {
-      const email = document.getElementById('email').value.trim().toLowerCase();
-      const errDiv = document.getElementById('err-msg');
-      errDiv.style.display = 'none';
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const errDiv = document.getElementById('err-msg');
+  errDiv.style.display = 'none';
 
-      if (!email) {
-        errDiv.textContent = 'Please enter your email';
-        errDiv.style.display = 'block';
-        return;
-      }
+  if (!email) {
+    errDiv.textContent = 'Please enter your email';
+    errDiv.style.display = 'block';
+    return;
+  }
 
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/send-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          currentEmail = email;
-          toast('OTP sent to your email!', 'ok');
-          document.getElementById('email-step').style.display = 'none';
-          document.getElementById('otp-step').style.display = 'block';
-          document.getElementById('email-display').textContent = email;
-          document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
-          document.querySelector('.otp-digit').focus();
-        } else {
-          errDiv.textContent = data.msg || 'Failed to send OTP';
-          errDiv.style.display = 'block';
-        }
-      } catch (err) {
-        errDiv.textContent = 'Network error. Please try again.';
-        errDiv.style.display = 'block';
+  // Disable button while sending
+  const btn = event.target;
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/send-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    
+    const data = await res.json();
+    console.log('OTP Response:', data); // Log the response for debugging
+    
+    if (res.ok) {
+      currentEmail = email;
+      // Store the OTP temporarily in session for debugging
+      if (data.otp) {
+        console.log(`OTP for ${email}: ${data.otp}`);
+        toast(`OTP sent! Check your email. (Demo: ${data.otp})`, 'ok');
+      } else {
+        toast('OTP sent to your email!', 'ok');
       }
+      
+      document.getElementById('email-step').style.display = 'none';
+      document.getElementById('otp-step').style.display = 'block';
+      document.getElementById('email-display').textContent = email;
+      document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
+      document.querySelector('.otp-digit').focus();
+    } else {
+      errDiv.textContent = data.msg || 'Failed to send OTP';
+      errDiv.style.display = 'block';
     }
-
+  } catch (err) {
+    console.error('Network error:', err);
+    errDiv.textContent = 'Network error. Please check your connection.';
+    errDiv.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
     async function verifyOTP() {
       const digits = document.querySelectorAll('.otp-digit');
       const enteredOTP = Array.from(digits).map(d => d.value).join('');
