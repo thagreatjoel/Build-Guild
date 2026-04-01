@@ -167,4 +167,15 @@ router.get('/users-with-scores', auth, async (req, res) => {
   }
 });
 
+// Public leaderboard: only checked-in users with score > 0
+router.get('/public-leaderboard', async (req, res) => {
+  try {
+    const users = await User.find({ checkedIn: true, score: { $gt: 0 } }).sort({ score: -1 });
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});666666666666666666666666666666
+
 module.exports = router;

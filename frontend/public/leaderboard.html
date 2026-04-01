@@ -60,15 +60,20 @@
   <script>
     async function loadLeaderboard() {
       try {
-        // Fetch all users (with scores) from backend
-        const res = await fetch(`${API_BASE_URL}/api/admin/users-with-scores`);
-        const allUsers = await res.json();
+        const res = await fetch(`${API_BASE_URL}/api/admin/public-leaderboard`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const users = await res.json();
         
-        // Filter: only checked in AND score > 0
-        const qualified = allUsers.filter(u => u.checkedIn === true && (u.score || 0) > 0);
+        // Ensure users is an array
+        if (!Array.isArray(users)) {
+          throw new Error('Invalid response format');
+        }
         
-        // Sort by score descending
-        const sorted = [...qualified].sort((a, b) => (b.score || 0) - (a.score || 0));
+        // Filter: only checked in AND score > 0 (backend already does this, but double-check)
+        const qualified = users.filter(u => u.checkedIn === true && (u.score || 0) > 0);
+        
+        // Sort by score descending (backend already sorts)
+        const sorted = qualified;
         
         document.getElementById('total-users').textContent = sorted.length;
         
