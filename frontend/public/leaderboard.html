@@ -15,11 +15,9 @@
     .username { font-weight: bold; font-size: 16px; }
     .email { font-size: 11px; color: rgba(255,255,255,0.5); }
     .score { font-weight: bold; font-size: 20px; color: var(--bp-warning); width: 80px; text-align: right; }
-    .check-status { width: 100px; text-align: right; font-size: 12px; }
-    .checked-in { color: var(--bp-success); }
-    .not-checked { color: rgba(255,255,255,0.4); }
-    .refresh-btn { margin-bottom: 20px; }
     .top-3 { background: rgba(255,200,87,0.1); border-left: 3px solid var(--bp-warning); }
+    .refresh-btn { margin-bottom: 20px; }
+    .empty-message { text-align: center; padding: 40px; color: rgba(255,255,255,0.5); }
     .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
     .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
   </style>
@@ -42,15 +40,14 @@
       <div class="card">
         <div class="card-eyebrow">Build Guild Kochi · April 15, 2026</div>
         <div class="card-h1">🏆 Points <span style="color:var(--bp-warning)">Leaderboard</span></div>
-        <div class="card-sub">Top scorers and check-in status</div>
+        <div class="card-sub">Top scorers who have checked in</div>
         
         <div class="refresh-btn">
           <button class="btn btn-outline" onclick="loadLeaderboard()">⟳ Refresh</button>
         </div>
         
         <div id="stats" style="margin-bottom: 20px; text-align: center;">
-          <strong>Total Participants:</strong> <span id="total-users">-</span> | 
-          <strong>Checked In:</strong> <span id="checked-in-count">-</span>
+          <strong>Qualified Users:</strong> <span id="total-users">-</span>
         </div>
         
         <div id="leaderboard-list">Loading...</div>
@@ -63,21 +60,21 @@
   <script>
     async function loadLeaderboard() {
       try {
-        const usersRes = await fetch(`${API_BASE_URL}/api/admin/users-with-scores`);
-        const users = await usersRes.json();
+        // Fetch all users (with scores) from backend
+        const res = await fetch(`${API_BASE_URL}/api/admin/users-with-scores`);
+        const allUsers = await res.json();
         
-        const total = users.length;
-        const checkedIn = users.filter(u => u.checkedIn).length;
+        // Filter: only checked in AND score > 0
+        const qualified = allUsers.filter(u => u.checkedIn === true && (u.score || 0) > 0);
         
-        document.getElementById('total-users').textContent = total;
-        document.getElementById('checked-in-count').textContent = checkedIn;
+        // Sort by score descending
+        const sorted = [...qualified].sort((a, b) => (b.score || 0) - (a.score || 0));
         
-        // Sort by score (highest first)
-        const sorted = [...users].sort((a, b) => (b.score || 0) - (a.score || 0));
+        document.getElementById('total-users').textContent = sorted.length;
         
         const container = document.getElementById('leaderboard-list');
         if (sorted.length === 0) {
-          container.innerHTML = '<div style="text-align: center;">No users yet</div>';
+          container.innerHTML = '<div class="empty-message">No participants yet.<br>Check back after the event starts!</div>';
           return;
         }
         
@@ -89,15 +86,12 @@
               <div class="email">${escapeHtml(user.email)}</div>
             </div>
             <div class="score">${user.score || 0} pts</div>
-            <div class="check-status ${user.checkedIn ? 'checked-in' : 'not-checked'}">
-              ${user.checkedIn ? '✅ Checked In' : '⏳ Waiting'}
-            </div>
           </div>
         `).join('');
         
       } catch (err) {
         console.error('Failed to load leaderboard:', err);
-        document.getElementById('leaderboard-list').innerHTML = '<div style="text-align: center;">Failed to load leaderboard</div>';
+        document.getElementById('leaderboard-list').innerHTML = '<div class="empty-message">Failed to load leaderboard. Please try again later.</div>';
       }
     }
     
