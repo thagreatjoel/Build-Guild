@@ -29,17 +29,29 @@
 
   <div class="view active z1">
     <div class="card waiting-container">
-      <div class="card-eyebrow">Build Guild Kochi · April 15, 2026</div>
-      <div class="card-h1">Event <span style="color:var(--bp-warning)">Not Yet Started</span></div>
-      <div class="status-message">Event will start at 10:00 AM IST on April 15, 2026</div>
-      <div class="card-sub">Please check back later. You will be automatically redirected when the event opens.</div>
-      <button class="btn btn-outline" onclick="logout()">Logout</button>
-    </div>
+  <div class="card-eyebrow">Build Guild Kochi · April 15, 2026</div>
+  <div class="card-h1">Welcome, <span id="user-name" style="color:var(--bp-warning)">...</span></div>
+  <div class="status-message">Event will start at 10:00 AM IST on April 15, 2026</div>
+  <div class="card-sub">You'll be automatically redirected when the event opens.</div>
+  <button class="btn btn-outline" onclick="logout()">Logout</button>
+</div>
+
   </div>
 
   <div id="toast" class="toast"></div>
 
   <script>
+    
+  const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
+  if (session.displayName) {
+    document.getElementById('user-name').textContent = session.displayName;
+  } else if (session.username) {
+    document.getElementById('user-name').textContent = session.username;
+  } else {
+    document.getElementById('user-name').textContent = 'Guest';
+  }
+
+  
     function logout() {
       localStorage.removeItem('eventAccess');
       window.location.href = '/';
