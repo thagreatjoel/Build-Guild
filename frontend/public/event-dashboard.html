@@ -8,39 +8,20 @@
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
   <style>
-    .dashboard-container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .info-card {
-      background: var(--bp-darker);
-      border: 2px solid rgba(255,255,255,.14);
-      padding: 30px;
-      margin-bottom: 20px;
-      animation: rise 0.4s ease;
-    }
-    .logout-btn {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 999;
-    }
-    .timeline-item {
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .timeline-item:last-child {
-      border-bottom: none;
-    }
-    .timeline-time {
-      color: var(--bp-warning);
-      font-weight: 700;
-      display: inline-block;
-      width: 100px;
-    }
+    .dashboard-container { max-width: 800px; margin: 0 auto; }
+    .info-card { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 30px; margin-bottom: 20px; animation: rise 0.4s ease; }
+    .logout-btn { position: fixed; top: 20px; right: 20px; z-index: 999; }
+    .timeline-item { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .timeline-time { color: var(--bp-warning); font-weight: 700; display: inline-block; width: 100px; }
+    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
+    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
   </style>
 </head>
 <body>
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
   <svg width="0" height="0" style="position:fixed">
     <filter id="grainy" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
@@ -61,37 +42,20 @@
 
       <div class="info-card">
         <h3 style="color: var(--bp-warning); margin-bottom: 15px;">📋 Event Schedule</h3>
-        <div class="timeline-item">
-          <span class="timeline-time">10:00 AM</span> Arrival & Check-in
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-time">10:30 AM</span> Welcome & Kickoff
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-time">11:00 AM</span> Soldering Fundamentals
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-time">01:00 PM</span> Lunch Break 🥗
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-time">02:00 PM</span> Soldering Marathon & Events
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-time">06:30 PM</span> Project Demos & Winners
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-time">07:00 PM</span> Surprise!
-        </div>
-        <div class="timeline-item">
-          <span class="timeline-time">07:30 PM</span> Group Photo & Closing
-        </div>
+        <div class="timeline-item"><span class="timeline-time">10:00 AM</span> Arrival & Check-in</div>
+        <div class="timeline-item"><span class="timeline-time">10:30 AM</span> Welcome & Kickoff</div>
+        <div class="timeline-item"><span class="timeline-time">11:00 AM</span> Soldering Fundamentals</div>
+        <div class="timeline-item"><span class="timeline-time">01:00 PM</span> Lunch Break 🥗</div>
+        <div class="timeline-item"><span class="timeline-time">02:00 PM</span> Soldering Marathon & Events</div>
+        <div class="timeline-item"><span class="timeline-time">06:30 PM</span> Project Demos & Winners</div>
+        <div class="timeline-item"><span class="timeline-time">07:00 PM</span> Surprise!</div>
+        <div class="timeline-item"><span class="timeline-time">07:30 PM</span> Group Photo & Closing</div>
       </div>
 
       <div class="info-card">
         <h3 style="color: var(--bp-warning); margin-bottom: 15px;">📍 Important Info</h3>
         <p><strong>Venue:</strong> Kochi, India</p>
         <p><strong>What to bring:</strong> Laptop (optional), curiosity, and excitement!</p>
-        <p><strong>Contact:</strong> For questions, reach out to the event organizers.</p>
       </div>
     </div>
   </div>
@@ -99,32 +63,26 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    // Check if user is logged in
     const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
     if (!session.loggedIn || Date.now() - session.timestamp > 24 * 60 * 60 * 1000) {
       window.location.href = '/';
     }
 
-    // Display user email in console (optional)
-    console.log(`Logged in as: ${session.email}`);
-
     async function logout() {
-  const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
-  if (session.email) {
-    try {
-      await fetch(`${API_BASE_URL}/api/user/login-status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: session.email, loggedIn: false })
-      });
-    } catch (err) {
-      console.error('Failed to record logout:', err);
+      if (session.email) {
+        try {
+          await fetch(`${API_BASE_URL}/api/user/login-status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: session.email, loggedIn: false })
+          });
+        } catch (err) {
+          console.error('Failed to record logout:', err);
+        }
+      }
+      localStorage.removeItem('eventAccess');
+      window.location.href = '/';
     }
-  }
-  localStorage.removeItem('eventAccess');
-  window.location.href = '/';
-}
-    
   </script>
 </body>
 </html>
