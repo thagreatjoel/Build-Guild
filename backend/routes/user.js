@@ -92,4 +92,25 @@ router.post('/verify-otp', (req, res) => {
   res.json({ msg: 'OTP verified successfully' });
 });
 
+// Mark user as logged in (store in MongoDB)
+router.post('/login-status', async (req, res) => {
+  const { email, loggedIn } = req.body;
+  if (!email) return res.status(400).json({ msg: 'Email required' });
+
+  try {
+    await User.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      { 
+        lastLogin: loggedIn ? new Date() : null,
+        loggedIn: loggedIn || false
+      },
+      { upsert: true, new: true }
+    );
+    res.json({ msg: 'Login status updated' });
+  } catch (err) {
+    console.error('Error updating login status:', err);
+    res.status(500).json({ msg: 'Failed to update login status' });
+  }
+});
+
 module.exports = router;

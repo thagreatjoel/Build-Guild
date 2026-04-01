@@ -108,9 +108,18 @@
     console.log(`Logged in as: ${session.email}`);
 
     function logout() {
-      localStorage.removeItem('eventAccess');
-      window.location.href = '/';
-    }
+  // Record logout in database
+  const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
+  if (session.email) {
+    fetch(`${API_BASE_URL}/api/user/login-status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: session.email, loggedIn: false })
+    }).catch(console.error);
+  }
+  localStorage.removeItem('eventAccess');
+  window.location.href = '/';
+}
   </script>
 </body>
 </html>
