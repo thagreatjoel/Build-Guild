@@ -8,18 +8,130 @@
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
   <style>
-    .leaderboard-container { max-width: 800px; margin: 0 auto; }
-    .leaderboard-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .rank { font-weight: bold; color: var(--bp-warning); width: 60px; font-size: 18px; }
-    .user-info { flex: 3; }
-    .username { font-weight: bold; font-size: 16px; }
-    .email { font-size: 11px; color: rgba(255,255,255,0.5); }
-    .score { font-weight: bold; font-size: 20px; color: var(--bp-warning); width: 80px; text-align: right; }
-    .top-3 { background: rgba(255,200,87,0.1); border-left: 3px solid var(--bp-warning); }
-    .refresh-btn { margin-bottom: 20px; }
-    .empty-message { text-align: center; padding: 40px; color: rgba(255,255,255,0.5); }
-    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
-    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
+    /* Leaderboard custom styles – Blueprint inspired */
+    .leaderboard-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffc857, #ff9f1c);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      color: rgba(255,255,255,0.7);
+      font-size: 1.1rem;
+    }
+    .leaderboard-card {
+      background: var(--bp-darker);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(8px);
+    }
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .stats-row span:first-child {
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+    }
+    .stats-row span:last-child {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--bp-warning);
+    }
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.2s;
+    }
+    .leaderboard-item:hover {
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+    }
+    .rank {
+      width: 70px;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+    .rank.top-1 { color: #ffd700; }
+    .rank.top-2 { color: #c0c0c0; }
+    .rank.top-3 { color: #cd7f32; }
+    .user-info {
+      flex: 1;
+    }
+    .username {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .email {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+    }
+    .score {
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--bp-warning);
+      background: rgba(255,200,87,0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 40px;
+      min-width: 80px;
+      text-align: center;
+    }
+    .refresh-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .refresh-btn:hover {
+      background: rgba(255,200,87,0.2);
+      border-color: var(--bp-warning);
+    }
+    .empty-message {
+      text-align: center;
+      padding: 3rem;
+      color: rgba(255,255,255,0.5);
+      font-size: 1.1rem;
+    }
+    .banner-link {
+      position: fixed;
+      top: 20px;
+      left: 0px;
+      z-index: 999;
+    }
+    .banner-link img {
+      width: 180px;
+      max-width: 25vw;
+      height: auto;
+      border: 0;
+    }
+    @media (max-width: 600px) {
+      .rank { width: 50px; font-size: 1rem; }
+      .score { font-size: 1rem; min-width: 60px; }
+      .username { font-size: 0.9rem; }
+      .hero h1 { font-size: 2rem; }
+    }
   </style>
 </head>
 <body>
@@ -37,19 +149,19 @@
 
   <div class="view active z1">
     <div class="leaderboard-container">
-      <div class="card">
-        <div class="card-eyebrow">Build Guild Kochi · April 15, 2026</div>
-        <div class="card-h1">🏆 Points <span style="color:var(--bp-warning)">Leaderboard</span></div>
-        <div class="card-sub">Top scorers who have checked in</div>
-        
-        <div class="refresh-btn">
-          <button class="btn btn-outline" onclick="loadLeaderboard()">⟳ Refresh</button>
+      <div class="hero">
+        <h1>🏆 Leaderboard</h1>
+        <p>Top builders who've checked in and scored points</p>
+      </div>
+
+      <div class="leaderboard-card">
+        <div class="stats-row">
+          <span>🏅 Qualified Participants</span>
+          <span id="total-users">—</span>
         </div>
-        
-        <div id="stats" style="margin-bottom: 20px; text-align: center;">
-          <strong>Qualified Users:</strong> <span id="total-users">-</span>
+        <div style="text-align: right; margin-bottom: 1rem;">
+          <button class="refresh-btn" onclick="loadLeaderboard()">⟳ Refresh</button>
         </div>
-        
         <div id="leaderboard-list">Loading...</div>
       </div>
     </div>
@@ -60,53 +172,49 @@
   <script>
     async function loadLeaderboard() {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/public-leaderboard`);
+        const res = await fetch(`${API_BASE_URL}/api/user/leaderboard`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const users = await res.json();
-        
-        // Ensure users is an array
-        if (!Array.isArray(users)) {
-          throw new Error('Invalid response format');
-        }
-        
-        // Filter: only checked in AND score > 0 (backend already does this, but double-check)
-        const qualified = users.filter(u => u.checkedIn === true && (u.score || 0) > 0);
-        
-        // Sort by score descending (backend already sorts)
-        const sorted = qualified;
-        
-        document.getElementById('total-users').textContent = sorted.length;
-        
+
+        document.getElementById('total-users').textContent = users.length;
+
         const container = document.getElementById('leaderboard-list');
-        if (sorted.length === 0) {
+        if (users.length === 0) {
           container.innerHTML = '<div class="empty-message">No participants yet.<br>Check back after the event starts!</div>';
           return;
         }
-        
-        container.innerHTML = sorted.map((user, index) => `
-          <div class="leaderboard-item ${index < 3 ? 'top-3' : ''}">
-            <div class="rank">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}</div>
-            <div class="user-info">
-              <div class="username">${escapeHtml(user.username || user.name || user.email.split('@')[0])}</div>
-              <div class="email">${escapeHtml(user.email)}</div>
+
+        container.innerHTML = users.map((user, index) => {
+          let rankClass = '';
+          if (index === 0) rankClass = 'top-1';
+          else if (index === 1) rankClass = 'top-2';
+          else if (index === 2) rankClass = 'top-3';
+          const rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+          return `
+            <div class="leaderboard-item">
+              <div class="rank ${rankClass}">${rankIcon}</div>
+              <div class="user-info">
+                <div class="username">${escapeHtml(user.username || user.name || user.email.split('@')[0])}</div>
+                <div class="email">${escapeHtml(user.email)}</div>
+              </div>
+              <div class="score">${user.score || 0} pts</div>
             </div>
-            <div class="score">${user.score || 0} pts</div>
-          </div>
-        `).join('');
-        
+          `;
+        }).join('');
       } catch (err) {
-        console.error('Failed to load leaderboard:', err);
+        console.error('Leaderboard error:', err);
         document.getElementById('leaderboard-list').innerHTML = '<div class="empty-message">Failed to load leaderboard. Please try again later.</div>';
       }
     }
-    
+
     function escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
     }
-    
+
     loadLeaderboard();
+    // Auto-refresh every 30 seconds
     setInterval(loadLeaderboard, 30000);
   </script>
 </body>
