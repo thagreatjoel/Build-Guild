@@ -1,13 +1,10 @@
 const { Resend } = require('resend');
 
-// Initialize Resend with API key
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOTPEmail = async (userEmail, otp) => {
   try {
     console.log(`📧 Attempting to send OTP to: ${userEmail}`);
-    console.log(`🔑 Resend API Key: ${process.env.RESEND_API_KEY ? 'Present' : 'MISSING!'}`);
-    
     const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: userEmail,
@@ -24,19 +21,12 @@ const sendOTPEmail = async (userEmail, otp) => {
         </div>
       `,
     });
-
-    if (error) {
-      console.error('❌ Resend API Error:', error);
-      throw new Error(error.message);
-    }
-    
-    console.log(`✅ OTP email sent successfully to ${userEmail}`);
-    console.log(`📨 Email ID: ${data?.id}`);
+    if (error) throw new Error(error.message);
+    console.log(`✅ OTP email sent to ${userEmail}`);
     return true;
   } catch (err) {
     console.error('❌ OTP email error:', err.message);
-    console.error('Full error:', err);
-    throw new Error(`Failed to send OTP: ${err.message}`);
+    throw err;
   }
 };
 
