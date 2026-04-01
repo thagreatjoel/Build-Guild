@@ -104,23 +104,28 @@ router.post('/send-otp', async (req, res) => {
     console.log(`Reusing OTP for ${email}: ${existing.otp}`);
     try {
       await sendOTPEmail(email, existing.otp);
-      res.json({ msg: 'OTP resent (same code). Check your email.' });
+      return res.json({ 
+        msg: 'OTP resent (same code). Check your email.',
+        otp: existing.otp  // Include OTP in response for debugging
+      });
     } catch (err) {
       console.error('Email error:', err);
-      res.status(500).json({ msg: 'Failed to resend OTP' });
+      return res.status(500).json({ msg: 'Failed to resend OTP' });
     }
-    return;
   }
 
   // Generate new OTP (valid for 5 minutes)
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = now + 5 * 60 * 1000; // 5 minutes
+  const expiresAt = now + 5 * 60 * 1000;
   otpStore.set(email.toLowerCase(), { otp, expiresAt });
 
   try {
     await sendOTPEmail(email, otp);
     console.log(`New OTP sent to ${email}: ${otp}`);
-    res.json({ msg: 'OTP sent to your email' });
+    res.json({ 
+      msg: 'OTP sent to your email',
+      otp: otp  // Include OTP in response for debugging
+    });
   } catch (err) {
     console.error('Email error:', err);
     res.status(500).json({ msg: 'Failed to send OTP' });
