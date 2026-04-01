@@ -4,72 +4,176 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leaderboard — Build Guild Kochi</title>
+  <!-- Phantom Sans (Hack Club's font) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script src="config.js"></script>
   <style>
-    /* Leaderboard custom styles – Blueprint inspired */
-    .leaderboard-container {
+    /* ── Phantom Sans (Hack Club's actual font) ── */
+    @font-face {
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff');
+      font-weight:400;font-style:normal;font-display:swap;
+    }
+    @font-face {
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff') format('woff');
+      font-weight:700;font-style:normal;font-display:swap;
+    }
+
+    :root {
+      --bp-dark: #0e305b;
+      --bp-darker: #081c35;
+      --bp-warning: #ffc857;
+      --bp-success: #a8f0ae;
+      --font-content: 'Phantom Sans', 'Poppins', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: var(--font-content);
+      background: var(--bp-dark);
+      color: #fff;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-position: 0 0, 0 0;
+      background-color: var(--bp-dark);
+      position: relative;
+    }
+
+    /* Grain overlay (exactly as Blueprint) */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse, #000000b1, transparent);
+      opacity: .4;
+      filter: url(#grainy);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* SVG filter (grain) */
+    svg {
+      position: fixed;
+      width: 0;
+      height: 0;
+    }
+
+    .z1 {
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
       max-width: 800px;
       margin: 0 auto;
+      padding: 2rem 1.5rem;
     }
+
+    /* Header */
     .hero {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
     .hero h1 {
+      font-family: var(--font-content);
       font-size: 3rem;
       font-weight: 800;
       background: linear-gradient(135deg, #ffc857, #ff9f1c);
-      -webkit-background-clip: text;
       background-clip: text;
+      -webkit-background-clip: text;
       color: transparent;
       letter-spacing: -0.02em;
     }
     .hero p {
+      font-size: 1rem;
       color: rgba(255,255,255,0.7);
-      font-size: 1.1rem;
+      margin-top: 0.5rem;
     }
-    .leaderboard-card {
+
+    /* Leaderboard card (same style as Blueprint cards) */
+    .card {
       background: var(--bp-darker);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,.14);
       border-radius: 24px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      backdrop-filter: blur(8px);
+      padding: 2rem 1.5rem;
+      backdrop-filter: blur(2px);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .stats-row {
+
+    .stats {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      padding-bottom: 1rem;
       margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
-    .stats-row span:first-child {
-      font-weight: 600;
+    .stats span:first-child {
+      font-weight: 500;
       color: rgba(255,255,255,0.6);
     }
-    .stats-row span:last-child {
-      font-size: 1.5rem;
+    .stats span:last-child {
+      font-size: 1.8rem;
       font-weight: 800;
       color: var(--bp-warning);
     }
+
+    .refresh-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 40px;
+      padding: 0.5rem 1rem;
+      font-family: var(--font-content);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+    .refresh-btn:hover {
+      background: rgba(255,200,87,0.2);
+      border-color: var(--bp-warning);
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
     .leaderboard-item {
       display: flex;
       align-items: center;
-      padding: 1rem 0;
+      padding: 0.75rem 0;
       border-bottom: 1px solid rgba(255,255,255,0.05);
       transition: background 0.2s;
     }
     .leaderboard-item:hover {
       background: rgba(255,255,255,0.03);
       border-radius: 12px;
+      padding-left: 8px;
     }
     .rank {
       width: 70px;
       font-weight: 800;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
     }
     .rank.top-1 { color: #ffd700; }
     .rank.top-2 { color: #c0c0c0; }
@@ -79,41 +183,31 @@
     }
     .username {
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
     .email {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: rgba(255,255,255,0.5);
     }
     .score {
       font-weight: 800;
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       color: var(--bp-warning);
       background: rgba(255,200,87,0.1);
-      padding: 0.25rem 0.75rem;
+      padding: 0.2rem 0.6rem;
       border-radius: 40px;
-      min-width: 80px;
+      min-width: 70px;
       text-align: center;
     }
-    .refresh-btn {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 0.5rem 1rem;
-      border-radius: 40px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-weight: 500;
-    }
-    .refresh-btn:hover {
-      background: rgba(255,200,87,0.2);
-      border-color: var(--bp-warning);
-    }
+
     .empty-message {
       text-align: center;
       padding: 3rem;
       color: rgba(255,255,255,0.5);
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
+
+    /* Fixed Hack Club banner */
     .banner-link {
       position: fixed;
       top: 20px;
@@ -126,19 +220,18 @@
       height: auto;
       border: 0;
     }
+
     @media (max-width: 600px) {
-      .rank { width: 50px; font-size: 1rem; }
-      .score { font-size: 1rem; min-width: 60px; }
-      .username { font-size: 0.9rem; }
+      .container { padding: 1rem; }
       .hero h1 { font-size: 2rem; }
+      .rank { width: 50px; font-size: 1rem; }
+      .score { font-size: 0.9rem; min-width: 60px; }
+      .username { font-size: 0.9rem; }
+      .stats span:last-child { font-size: 1.3rem; }
     }
   </style>
 </head>
 <body>
-  <a href="https://hackclub.com/" class="banner-link">
-    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
-  </a>
-
   <svg width="0" height="0" style="position:fixed">
     <filter id="grainy" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
@@ -147,28 +240,29 @@
     </filter>
   </svg>
 
-  <div class="view active z1">
-    <div class="leaderboard-container">
-      <div class="hero">
-        <h1>🏆 Leaderboard</h1>
-        <p>Top builders who've checked in and scored points</p>
-      </div>
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
 
-      <div class="leaderboard-card">
-        <div class="stats-row">
-          <span>🏅 Qualified Participants</span>
-          <span id="total-users">—</span>
-        </div>
-        <div style="text-align: right; margin-bottom: 1rem;">
-          <button class="refresh-btn" onclick="loadLeaderboard()">⟳ Refresh</button>
-        </div>
-        <div id="leaderboard-list">Loading...</div>
+  <div class="container z1">
+    <div class="hero">
+      <h1>🏆 Leaderboard</h1>
+      <p>Top builders who've checked in</p>
+    </div>
+
+    <div class="card">
+      <div class="stats">
+        <span>✨ Qualified Participants</span>
+        <span id="total-users">—</span>
       </div>
+      <div style="text-align: right;">
+        <button class="refresh-btn" onclick="loadLeaderboard()">⟳ Refresh</button>
+      </div>
+      <div id="leaderboard-list" class="leaderboard-list">Loading...</div>
     </div>
   </div>
 
-  <div id="toast" class="toast"></div>
-
+  <script src="config.js"></script>
   <script>
     async function loadLeaderboard() {
       try {
@@ -203,7 +297,7 @@
         }).join('');
       } catch (err) {
         console.error('Leaderboard error:', err);
-        document.getElementById('leaderboard-list').innerHTML = '<div class="empty-message">Failed to load leaderboard. Please try again later.</div>';
+        container.innerHTML = '<div class="empty-message">Failed to load leaderboard. Please try again later.</div>';
       }
     }
 
@@ -214,7 +308,6 @@
     }
 
     loadLeaderboard();
-    // Auto-refresh every 30 seconds
     setInterval(loadLeaderboard, 30000);
   </script>
 </body>
