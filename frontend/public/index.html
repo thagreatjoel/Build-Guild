@@ -15,12 +15,12 @@
     .resend-btn { background: none; border: none; color: var(--bp-warning); cursor: pointer; font-size: 14px; margin-top: 10px; }
     .resend-btn:hover { text-decoration: underline; }
     .email-display { background: rgba(255,200,87,0.1); padding: 10px; border-radius: 8px; margin: 15px 0; text-align: center; }
-    .hackclub-banner { position: fixed; top: 10px; left: 10px; z-index: 999; }
-    .hackclub-banner img { width: 150px; height: auto; }
+    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
+    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
   </style>
 </head>
 <body>
-  <a href="https://hackclub.com/" class="hackclub-banner">
+  <a href="https://hackclub.com/" class="banner-link">
     <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
   </a>
 
@@ -71,44 +71,12 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const approvedEmails = new Set([
-      "joeljonah06@gmail.com",
-      "albinanil813@gmail.com",
-      "dark1234abc@gmail.com",
-      "sohannd00@gmail.com",
-      "navaneeth3029@gmail.com",
-      "zeofrostergaming@gmail.com",
-      "realjakeojeff@gmail.com",
-      "drkkraken22@gmail.com",
-      "hardrikthomasshaji@gmail.com",
-      "hannasusanshaji@gmail.com",
-      "akshaimanoj117@gmail.com",
-      "sivanandkuttikkol@gmail.com",
-      "tthejusr@gmail.com",
-      "fmuhammed344@gmail.com",
-      "pelbe7365@gmail.com",
-      "myaseenmc@aol.com",
-      "johanabraham345@gmail.com",
-      "misbahudheen123k@gmail.com",
-      "brightitkumbazha@gmail.com",
-      "lastsurvivor857@gmail.com",
-      "krisazhoor@gmail.com",
-      "arjunmanoj117@gmail.com",
-      "mhdameenamz@gmail.com",
-      "gopuabhayan5@gmail.com",
-      "aimanezumangad@gmail.com",
-      "intheknightriders@gmail.com",
-      "danielzanthosh@gmail.com",
-      "arungeorgesaji@gmail.com",
-      "albinrstalin4@gmail.com"
-    ]);
-
     let currentEmail = "";
 
     // Check if already logged in
     const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
     if (session.loggedIn && Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
-      window.location.href = '/event-dashboard.html';
+      window.location.href = '/waiting.html';
     }
 
     async function recordLogin(email) {
@@ -130,12 +98,6 @@
 
       if (!email) {
         errDiv.textContent = 'Please enter your email';
-        errDiv.style.display = 'block';
-        return;
-      }
-
-      if (!approvedEmails.has(email)) {
-        errDiv.textContent = 'This email is not registered for this event.';
         errDiv.style.display = 'block';
         return;
       }
@@ -185,17 +147,16 @@
         });
         const data = await res.json();
         if (res.ok) {
-  await recordLogin(currentEmail);
-  localStorage.setItem('eventAccess', JSON.stringify({
-    email: currentEmail,
-    loggedIn: true,
-    timestamp: Date.now()
-  }));
-  toast('Login successful!', 'ok');
-  setTimeout(() => {
-    window.location.href = '/waiting.html';
-  }, 1500);
-
+          await recordLogin(currentEmail);
+          localStorage.setItem('eventAccess', JSON.stringify({
+            email: currentEmail,
+            loggedIn: true,
+            timestamp: Date.now()
+          }));
+          toast('Login successful! Redirecting...', 'ok');
+          setTimeout(() => {
+            window.location.href = '/waiting.html';
+          }, 1500);
         } else {
           errDiv.textContent = data.msg || 'Invalid OTP';
           errDiv.style.display = 'block';
