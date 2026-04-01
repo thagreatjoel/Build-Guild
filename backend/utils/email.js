@@ -1,25 +1,15 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Gmail SMTP configuration
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  tls: {
-    rejectUnauthorized: false
-  }
-});
+// Initialize Resend with API key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOTPEmail = async (userEmail, otp) => {
   try {
     console.log(`📧 Attempting to send OTP to: ${userEmail}`);
+    console.log(`🔑 Resend API Key: ${process.env.RESEND_API_KEY ? 'Present' : 'MISSING!'}`);
     
-    const mailOptions = {
-      from: `"Build Guild Kochi" <${process.env.EMAIL_USER}>`,
+    const { data, error } = await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: userEmail,
       subject: '🔐 Your OTP for Build Guild Kochi',
       html: `
@@ -33,11 +23,15 @@ const sendOTPEmail = async (userEmail, otp) => {
           <p style="font-size: 12px; text-align: center;">Build Guild Kochi · April 15, 2026 · Kochi, India</p>
         </div>
       `,
-    };
+    });
 
-    const info = await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error('❌ Resend API Error:', error);
+      throw new Error(error.message);
+    }
+    
     console.log(`✅ OTP email sent successfully to ${userEmail}`);
-    console.log(`📨 Message ID: ${info.messageId}`);
+    console.log(`📨 Email ID: ${data?.id}`);
     return true;
   } catch (err) {
     console.error('❌ OTP email error:', err.message);
