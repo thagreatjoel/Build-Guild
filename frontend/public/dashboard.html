@@ -97,6 +97,34 @@
       document.getElementById('total-checked').innerText = data.checkedIn;
     }
 
+
+
+async function loadEventStatus() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/event-status`, { headers });
+    const data = await res.json();
+    document.getElementById('event-status').innerHTML = `Event is currently <strong>${data.isOpen ? 'OPEN' : 'CLOSED'}</strong>`;
+  } catch (err) {
+    console.error('Failed to load event status', err);
+  }
+}
+
+async function toggleEvent() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/event-status/toggle`, { method: 'POST', headers });
+    const data = await res.json();
+    loadEventStatus();
+    toast(`Event is now ${data.isOpen ? 'OPEN' : 'CLOSED'}`, 'info');
+  } catch (err) {
+    toast('Failed to toggle event status', 'err');
+  }
+}
+
+
+
+
+
+    
     async function loadUsers() {
       const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
       const users = await res.json();
