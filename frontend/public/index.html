@@ -185,16 +185,17 @@
         });
         const data = await res.json();
         if (res.ok) {
-          await recordLogin(currentEmail);
-          localStorage.setItem('eventAccess', JSON.stringify({
-            email: currentEmail,
-            loggedIn: true,
-            timestamp: Date.now()
-          }));
-          toast('Login successful! Redirecting...', 'ok');
-          setTimeout(() => {
-            window.location.href = '/event-dashboard.html';
-          }, 1500);
+  await recordLogin(currentEmail);
+  localStorage.setItem('eventAccess', JSON.stringify({
+    email: currentEmail,
+    loggedIn: true,
+    timestamp: Date.now()
+  }));
+  toast('Login successful!', 'ok');
+  setTimeout(() => {
+    window.location.href = '/waiting.html';
+  }, 1500);
+
         } else {
           errDiv.textContent = data.msg || 'Invalid OTP';
           errDiv.style.display = 'block';
