@@ -53,16 +53,26 @@
       </div>
 
       <div class="info-card">
-        <h3 style="color: var(--bp-warning); margin-bottom: 15px;">📍 Important Info</h3>
-        <p><strong>Venue:</strong> Kochi, India</p>
-        <p><strong>What to bring:</strong> Laptop (optional), curiosity, and excitement!</p>
-      </div>
+  <div class="card-eyebrow">Welcome, <span id="user-welcome">...</span></div>
+  <div class="card-h1">Build Guild <span style="color:var(--bp-warning)">Kochi</span></div>
+  <div class="card-sub">April 15, 2026 · Kochi, India</div>
+</div>
+
     </div>
   </div>
 
   <div id="toast" class="toast"></div>
 
   <script>
+    
+
+  const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
+  if (session.displayName) {
+    document.getElementById('user-welcome').textContent = session.displayName;
+  } else if (session.username) {
+    document.getElementById('user-welcome').textContent = session.username;
+  }
+
     const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
     if (!session.loggedIn || Date.now() - session.timestamp > 24 * 60 * 60 * 1000) {
       window.location.href = '/';
