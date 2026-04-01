@@ -86,4 +86,29 @@ router.post('/event-status/toggle', async (req, res) => {
   res.json({ isOpen: status.isOpen });
 });
 
+// Manual check-in by admin (mark user as checked in)
+router.post('/manual-checkin', auth, async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ msg: 'Email required' });
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    if (user.checkedIn) {
+      return res.status(400).json({ msg: 'User already checked in' });
+    }
+
+    user.checkedIn = true;
+    user.checkedInAt = new Date();
+    await user.save();
+
+    res.json({ msg: `${user.name} has been checked in successfully` });
+  } catch (err) {
+    console.error('Manual check-in error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+
 module.exports = router; 

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check-in Leaderboard — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <style>
+    .leaderboard-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .rank {
+      font-weight: bold;
+      color: var(--bp-warning);
+      width: 50px;
+    }
+    .name {
+      flex: 2;
+    }
+    .email {
+      flex: 2;
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+    }
+    .status {
+      width: 100px;
+      text-align: right;
+    }
+    .checked-in {
+      color: var(--bp-success);
+    }
+    .not-checked {
+      color: rgba(255,255,255,0.4);
+    }
+    .refresh-btn {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <div class="view active z1">
+    <div class="leaderboard-container">
+      <div class="card">
+        <div class="card-eyebrow">Build Guild Kochi · April 15, 2026</div>
+        <div class="card-h1">Check-in <span style="color:var(--bp-warning)">Leaderboard</span></div>
+        <div class="card-sub">See who has checked in</div>
+        
+        <div class="refresh-btn">
+          <button class="btn btn-outline" onclick="loadLeaderboard()">⟳ Refresh</button>
+        </div>
+        
+        <div id="stats" style="margin-bottom: 20px; text-align: center;">
+          <strong>Total Users:</strong> <span id="total-users">-</span> | 
+          <strong>Checked In:</strong> <span id="checked-in-count">-</span>
+        </div>
+        
+        <div id="leaderboard-list">
+          Loading...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    async function loadLeaderboard() {
+      try {
+        // Get all approved emails
+        const emailsRes = await fetch(`${API_BASE_URL}/api/user/approved-emails`);
+        const emailsData = await emailsRes.json();
+        
+        // Get all users from database (with check-in status)
+        const usersRes = await fetch(`${API_BASE_URL}/api/admin/users`);
+        const usersData = await usersRes.json();
+        
+        // Create a map of email -> user data
+        const userMap = {};
+        usersData.forEach(u => {
+          userMap[u.email.toLowerCase()] = u;
+        });
+        
+        // Combine approved emails with user data
+        const leaderboard = emailsData.emails.map(email => {
+          const user = userMap[email.toLowerCase()];
+          return {
+            email: email,
+            name: user ? user.name : email.split('@')[0],
+            checkedIn: user ? user.checkedIn : false,
+            checkedInAt: user ? user.checkedInAt : null
+          };
+        }).sort((a, b) => {
+          // Sort by checked in status (checked in first) then by name
+          if (a.checkedIn !== b.checkedIn) return b.checkedIn ? 1 : -1;
+          return a.name.localeCompare(b.name);
+        });
+        
+        const total = leaderboard.length;
+        const checkedIn = leaderboard.filter(u => u.checkedIn).length;
+        
+        document.getElementById('total-users').textContent = total;
+        document.getElementById('checked-in-count').textContent = checkedIn;
+        
+        const container = document.getElementById('leaderboard-list');
+        if (leaderboard.length === 0) {
+          container.innerHTML = '<div style="text-align: center;">No users registered yet</div>';
+          return;
+        }
+        
+        container.innerHTML = leaderboard.map((user, index) => `
+          <div class="leaderboard-item">
+            <div class="rank">${index + 1}</div>
+            <div class="name">${escapeHtml(user.name)}</div>
+            <div class="email">${escapeHtml(user.email)}</div>
+            <div class="status ${user.checkedIn ? 'checked-in' : 'not-checked'}">
+              ${user.checkedIn ? '✅ Checked In' : '⏳ Waiting'}
+            </div>
+          </div>
+        `).join('');
+        
+      } catch (err) {
+        console.error('Failed to load leaderboard:', err);
+        document.getElementById('leaderboard-list').innerHTML = '<div style="text-align: center;">Failed to load leaderboard</div>';
+      }
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    loadLeaderboard();
+    // Auto-refresh every 30 seconds
+    setInterval(loadLeaderboard, 30000);
+  </script>
+</body>
+</html>

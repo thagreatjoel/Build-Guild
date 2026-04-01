@@ -3,8 +3,38 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const User = require('../models/User');
 const { sendQREmail, sendOTPEmail } = require('../utils/email');
+const { isApprovedEmail, addApprovedEmail, getAllApprovedEmails } = require('../utils/emailList');
+
+// Temporary OTP storage (in-memory)
+const otpStore = new Map();
+
+// ========== EMAIL MANAGEMENT (Admin Routes) ==========
+
+// Get all approved emails (admin only)
+router.get('/approved-emails', (req, res) => {
+  res.json({ emails: getAllApprovedEmails() });
+});
+
+// Add new approved email (admin only)
+router.post('/add-approved-email', (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ msg: 'Email required' });
+  if (addApprovedEmail(email)) {
+    res.json({ msg: `Email ${email} added successfully` });
+  } else {
+    res.status(400).json({ msg: 'Email already exists' });
+  }
+});
+
+// Check if email is approved
+router.post('/check-email', (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ msg: 'Email required' });
+  res.json({ approved: isApprovedEmail(email) });
+});
 
 // ========== USER REGISTRATION & QR ==========
+
 router.post('/register', async (req, res) => {
   try {
     const { name, email, phone } = req.body;
@@ -55,13 +85,16 @@ router.get('/by-email', async (req, res) => {
 });
 
 // ========== OTP ROUTES ==========
-// Temporary OTP storage (in‑memory)
-const otpStore = new Map(); // key: email, value: { otp, expiresAt }
 
-// Send OTP – reuse if still valid
+// Send OTP (with email approval check and 5-minute reuse)
 router.post('/send-otp', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ msg: 'Email required' });
+
+  // Check if email is approved
+  if (!isApprovedEmail(email)) {
+    return res.status(403).json({ msg: 'This email is not registered for this event.' });
+  }
 
   const now = Date.now();
   const existing = otpStore.get(email.toLowerCase());
@@ -94,8 +127,8 @@ router.post('/send-otp', async (req, res) => {
   }
 });
 
-// Verify OTP
-router.post('/verify-otp', (req, res) => {
+// Verify OTP and create user in MongoDB if needed
+router.post('/verify-otp', async (req, res) => {
   const { email, otp } = req.body;
   if (!email || !otp) return res.status(400).json({ msg: 'Email and OTP required' });
 
@@ -107,10 +140,38 @@ router.post('/verify-otp', (req, res) => {
   }
   if (record.otp !== otp) return res.status(400).json({ msg: 'Invalid OTP' });
 
-  otpStore.delete(email.toLowerCase()); // remove after successful use
+  otpStore.delete(email.toLowerCase());
+
+  // Ensure user exists in MongoDB for check-in tracking
+  try {
+    let user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      user = new User({
+        email: email.toLowerCase(),
+        name: email.split('@')[0],
+        phone: '',
+        qrToken: '',
+        checkedIn: false,
+        loggedIn: true,
+        lastLogin: new Date()
+      });
+      await user.save();
+      console.log(`✅ New user created from OTP login: ${email}`);
+    } else {
+      // Update login status
+      user.loggedIn = true;
+      user.lastLogin = new Date();
+      await user.save();
+    }
+  } catch (err) {
+    console.error('Error creating/updating user:', err);
+    // Still return success for OTP even if user save fails
+  }
+
   res.json({ msg: 'OTP verified successfully' });
 });
-// Mark user as logged in (store in MongoDB)
+
+// Mark user as logged in (for session tracking)
 router.post('/login-status', async (req, res) => {
   const { email, loggedIn } = req.body;
   if (!email) return res.status(400).json({ msg: 'Email required' });

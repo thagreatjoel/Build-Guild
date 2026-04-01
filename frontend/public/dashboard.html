@@ -67,18 +67,23 @@
         <div id="man-msg" class="msg" style="margin-top: 12px;"></div>
       </div>
 
+
+
       <div class="section">
-        <div class="flex-between">
-          <h2>👥 Attendees</h2>
-          <button class="btn btn-outline btn-small" onclick="exportCSV()">Export CSV</button>
-        </div>
-        <div style="overflow-x: auto;">
-          <table class="user-table" id="user-table">
-            <thead>汽<th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Checked In At</th></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+  <h2>👥 User Management</h2>
+  <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+    <input type="email" id="new-user-email" placeholder="New user email" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+    <button class="btn btn-primary" onclick="addUser()">Add User</button>
+  </div>
+  <div id="user-emails-list" style="max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px;">
+    Loading...
+  </div>
+</div>
+
+
+
+
+
     </div>
   </div>
 
@@ -236,6 +241,139 @@ async function toggleEvent() {
       a.click();
       URL.revokeObjectURL(a.href);
     }
+
+
+   async function loadUsers() {
+  const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
+  const users = await res.json();
+  const tbody = document.querySelector('#user-table tbody');
+  tbody.innerHTML = '';
+  
+  users.forEach(u => {
+    const tr = document.createElement('tr');
+    
+    // Name column
+    const tdName = document.createElement('td');
+    tdName.textContent = u.name;
+    tr.appendChild(tdName);
+    
+    // Email column
+    const tdEmail = document.createElement('td');
+    tdEmail.textContent = u.email;
+    tr.appendChild(tdEmail);
+    
+    // Phone column
+    const tdPhone = document.createElement('td');
+    tdPhone.textContent = u.phone || '-';
+    tr.appendChild(tdPhone);
+    
+    // Status column
+    const tdStatus = document.createElement('td');
+    tdStatus.textContent = u.checkedIn ? '✅ Checked In' : '❌ Not Checked In';
+    tr.appendChild(tdStatus);
+    
+    // Checked In At column
+    const tdTime = document.createElement('td');
+    tdTime.textContent = u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '-';
+    tr.appendChild(tdTime);
+    
+    // Actions column (Check-in button)
+    const tdActions = document.createElement('td');
+    if (!u.checkedIn) {
+      const checkinBtn = document.createElement('button');
+      checkinBtn.textContent = '✅ Check-in';
+      checkinBtn.className = 'btn-small';
+      checkinBtn.style.background = 'var(--bp-success)';
+      checkinBtn.style.color = '#081c35';
+      checkinBtn.style.border = 'none';
+      checkinBtn.style.padding = '4px 12px';
+      checkinBtn.style.cursor = 'pointer';
+      checkinBtn.style.borderRadius = '4px';
+      checkinBtn.onclick = () => manualCheckin(u.email, u.name);
+      tdActions.appendChild(checkinBtn);
+    } else {
+      tdActions.textContent = '✓';
+      tdActions.style.color = 'var(--bp-success)';
+    }
+    tr.appendChild(tdActions);
+    
+    tbody.appendChild(tr);
+  });
+}
+
+async function manualCheckin(email, name) {
+  if (!confirm(`Are you sure ${name} (${email}) has checked in to the event?`)) return;
+  
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/manual-checkin`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(`✅ ${data.msg}`, 'ok');
+      loadStats();
+      loadUsers();
+    } else {
+      toast(data.msg || 'Check-in failed', 'err');
+    }
+  } catch (err) {
+    toast('Network error', 'err');
+  }
+}
+
+
+
+async function loadUserEmails() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/approved-emails`, { headers });
+    const data = await res.json();
+    const container = document.getElementById('user-emails-list');
+    if (data.emails && data.emails.length > 0) {
+      container.innerHTML = data.emails.map(email => `
+        <div style="padding: 5px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+          ${email}
+        </div>
+      `).join('');
+    } else {
+      container.innerHTML = '<div style="padding: 10px;">No users added yet</div>';
+    }
+  } catch (err) {
+    console.error('Failed to load users:', err);
+  }
+}
+
+async function addUser() {
+  const email = document.getElementById('new-user-email').value.trim().toLowerCase();
+  if (!email) {
+    toast('Please enter an email', 'err');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/add-approved-email`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(`✅ ${data.msg}`, 'ok');
+      document.getElementById('new-user-email').value = '';
+      loadUserEmails();
+      // Reload the main user list to show the new user
+      loadUsers();
+    } else {
+      toast(data.msg || 'Failed to add user', 'err');
+    }
+  } catch (err) {
+    toast('Network error', 'err');
+  }
+}
+
+
+
 
     function logout() {
       localStorage.removeItem('adminToken');
