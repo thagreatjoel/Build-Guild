@@ -156,5 +156,41 @@ router.get('/leaderboard', async (req, res) => {
   }
 });
 
+// Get user profile (public data)
+router.get('/profile', async (req, res) => {
+  const { email } = req.query;
+  if (!email) return res.status(400).json({ msg: 'Email required' });
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() }).select('name username email profilePicture score checkedIn');
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// Update user profile (name and profile picture)
+router.post('/update-profile', async (req, res) => {
+  const { email, name, profilePicture } = req.body;
+  if (!email) return res.status(400).json({ msg: 'Email required' });
+
+  try {
+    const update = {};
+    if (name) update.name = name;
+    if (profilePicture) update.profilePicture = profilePicture;
+
+    const user = await User.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      update,
+      { new: true, runValidators: true }
+    );
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+    res.json({ msg: 'Profile updated', user: { name: user.name, profilePicture: user.profilePicture } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 
 module.exports = router;

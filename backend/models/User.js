@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
   checkedIn: { type: Boolean, default: false },
   checkedInAt: { type: Date, default: null },
   score: { type: Number, default: 0 },
+  profilePicture: { type: String, default: '' }, // base64 image
   createdAt: { type: Date, default: Date.now },
   loggedIn: { type: Boolean, default: false },
   lastLogin: { type: Date, default: null }

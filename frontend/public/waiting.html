@@ -62,7 +62,7 @@
         const res = await fetch(`${API_BASE_URL}/api/admin/event-status`);
         const data = await res.json();
         if (data.isOpen) {
-          window.location.href = '/event-dashboard.html';
+          window.location.href = '/dashboard.html';
         }
       } catch (err) {
         console.error('Failed to check event status:', err);

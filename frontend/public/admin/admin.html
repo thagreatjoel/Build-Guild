@@ -63,7 +63,7 @@
         const data = await res.json();
         if (res.ok) {
           localStorage.setItem('adminToken', data.token);
-          window.location.href = '/dashboard.html';
+          window.location.href = 'admin/dashboard.html';
         } else {
           errDiv.textContent = data.msg || 'Invalid credentials';
           errDiv.style.display = 'block';

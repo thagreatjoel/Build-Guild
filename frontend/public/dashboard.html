@@ -3,33 +3,255 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Admin Dashboard — Build Guild Kochi</title>
+  <title>Dashboard — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script src="config.js"></script>
   <style>
-    .stats-grid { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-    .stat-card { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 16px 24px; flex: 1; text-align: center; }
-    .stat-number { font-size: 32px; font-weight: 800; color: var(--bp-warning); }
-    .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; }
-    .section { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 20px; margin-bottom: 24px; }
-    .section h2 { font-size: 18px; margin-bottom: 16px; }
-    .user-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .user-table th, .user-table td { border: 1px solid rgba(255,255,255,.2); padding: 8px; text-align: left; }
-    .user-table th { background: rgba(0,0,0,.3); }
-    .btn-small { padding: 4px 12px; font-size: 12px; margin: 2px; }
-    .flex-between { display: flex; justify-content: space-between; align-items: center; }
-    .score-input { width: 60px; padding: 4px; margin-right: 5px; background: var(--bp-dark); border: 1px solid rgba(255,255,255,.2); color: #fff; }
-    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
-    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
-    @media (max-width: 600px) { .stats-grid { flex-direction: column; } .stat-card { margin-bottom: 10px; } }
+    /* ── Exactly the same background as index.html ── */
+    @font-face {
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff');
+      font-weight:400;font-style:normal;font-display:swap;
+    }
+    @font-face {
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff') format('woff');
+      font-weight:700;font-style:normal;font-display:swap;
+    }
+
+    :root{
+      --bp-lighter:#344b6a;
+      --bp-dark:#0e305b;
+      --bp-darker:#081c35;
+      --bp-light:#dbe4ee;
+      --bp-danger:#fe8e86;
+      --bp-danger-darker:#bd4c44;
+      --bp-warning:#ffc857;
+      --bp-success:#a8f0ae;
+      --f:'Phantom Sans','Poppins',sans-serif;
+      --fh:'Poppins',sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--f);
+      background: var(--bp-dark);
+      color: #fff;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-position: 0 0, 0 0;
+      background-color: var(--bp-dark);
+      position: relative;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse, #000000b1, transparent);
+      opacity: .4;
+      filter: url(#grainy);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    svg {
+      position: fixed;
+      width: 0;
+      height: 0;
+    }
+
+    .z1 {
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner-link {
+      position: fixed;
+      top: 20px;
+      left: 0px;
+      z-index: 999;
+    }
+    .banner-link img {
+      width: 180px;
+      max-width: 25vw;
+      height: auto;
+      border: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Top navigation */
+    .nav {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 0.75rem;
+    }
+    .nav a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav a:hover, .nav a.active {
+      color: var(--bp-warning);
+    }
+
+    /* Grid layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bp-darker);
+      border: 2px solid rgba(255,255,255,.14);
+      border-radius: 24px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--bp-warning);
+    }
+
+    /* Profile section */
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--bp-warning);
+      margin-bottom: 1rem;
+    }
+    .profile-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+    .profile-name span {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .profile-name input {
+      background: var(--bp-dark);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 0.25rem 0.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .profile-email {
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 1rem;
+    }
+    .btn-edit, .btn-save, .btn-upload {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 40px;
+      padding: 0.25rem 1rem;
+      font-family: var(--fh);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #fff;
+    }
+    .btn-edit:hover, .btn-save:hover, .btn-upload:hover {
+      background: rgba(255,200,87,0.2);
+      border-color: var(--bp-warning);
+    }
+    .hidden {
+      display: none;
+    }
+    .file-input {
+      display: none;
+    }
+
+    /* Event info */
+    .event-info-item {
+      margin-bottom: 1rem;
+    }
+    .event-info-label {
+      font-weight: 600;
+      color: var(--bp-warning);
+    }
+
+    /* Staff picks */
+    .staff-picks {
+      background: rgba(0,0,0,0.2);
+      border-radius: 16px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    .staff-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .staff-name {
+      font-weight: 600;
+    }
+    .staff-score {
+      background: var(--bp-warning);
+      color: var(--bp-darker);
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* Logout button */
+    .logout-btn {
+      margin-top: 1rem;
+      width: 100%;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 40px;
+      padding: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #fff;
+    }
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--bp-warning);
+    }
+
+    @media (max-width: 800px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .container {
+        padding: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <a href="https://hackclub.com/" class="banner-link">
-    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
-  </a>
-
   <svg width="0" height="0" style="position:fixed">
     <filter id="grainy" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
@@ -38,277 +260,195 @@
     </filter>
   </svg>
 
-  <div class="view active z1" style="padding-top: 40px;">
-    <div style="width:100%; max-width: 1200px;">
-      <div class="flex-between" style="margin-bottom: 20px;">
-        <h1 style="font-size: 28px;">📋 Admin Dashboard</h1>
-        <button class="btn btn-outline btn-small" onclick="logout()">Logout</button>
-      </div>
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
 
-      <div class="stats-grid" id="stats">
-        <div class="stat-card"><div class="stat-number" id="total-reg">-</div><div class="stat-label">Total Registered</div></div>
-        <div class="stat-card"><div class="stat-number" id="total-checked">-</div><div class="stat-label">Checked In</div></div>
-      </div>
+  <div class="container z1">
+    <div class="nav">
+      <a href="#" class="active" id="nav-dashboard">Dashboard</a>
+      <a href="leaderboard.html" id="nav-leaderboard">Leaderboard</a>
+    </div>
 
-      <div class="section">
-        <h2>👥 User Management</h2>
-        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-          <input type="email" id="new-user-email" placeholder="Email" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <input type="text" id="new-user-name" placeholder="Full Name" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <input type="text" id="new-user-username" placeholder="Username" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <button class="btn btn-primary" onclick="addUser()">Add User</button>
+    <div class="dashboard-grid">
+      <!-- Left column: Profile -->
+      <div>
+        <div class="card">
+          <div style="text-align: center;">
+            <img id="profile-avatar" class="profile-avatar" src="" alt="Profile">
+            <input type="file" id="avatar-input" accept="image/*" class="file-input">
+            <button id="upload-btn" class="btn-upload">Change Picture</button>
+          </div>
+          <div class="profile-name" id="profile-name-display">
+            <span id="display-name"></span>
+            <button id="edit-name-btn" class="btn-edit">Edit</button>
+          </div>
+          <div class="profile-name hidden" id="profile-name-edit">
+            <input type="text" id="edit-name-input">
+            <button id="save-name-btn" class="btn-save">Save</button>
+            <button id="cancel-name-btn" class="btn-edit">Cancel</button>
+          </div>
+          <div class="profile-email" id="profile-email"></div>
+          <div class="event-info-item"><span class="event-info-label">🏅 Score:</span> <span id="user-score">0</span></div>
+          <div class="event-info-item"><span class="event-info-label">✅ Checked in:</span> <span id="user-checked">No</span></div>
+          <button id="logout-btn" class="logout-btn">Log out</button>
         </div>
       </div>
 
-      <div class="section">
-        <div class="flex-between">
-          <h2>🏆 Attendees & Scores</h2>
-          <button class="btn btn-outline btn-small" onclick="exportCSV()">Export CSV</button>
+      <!-- Right column: Event info & Staff picks -->
+      <div>
+        <div class="card">
+          <h2>📅 Upcoming Events</h2>
+          <div class="announcement" style="background: rgba(255,200,87,0.1); border-left: 4px solid var(--bp-warning); padding: 1rem; border-radius: 12px;">
+            <h3 style="color: var(--bp-warning);">Build Guild Kochi is LIVE!</h3>
+            <p>April 15, 2026, 10:00 AM IST – Tinkerspace, Kochi. Don't miss the surprise at 7 PM!</p>
+          </div>
         </div>
-        <div style="overflow-x: auto;">
-          <table class="user-table" id="user-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Score</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
 
-      <div class="section">
-        <h2>🎛️ Event Control</h2>
-        <div id="event-status" style="margin-bottom: 15px;">Loading...</div>
-        <button class="btn btn-primary" onclick="toggleEvent()">Toggle Event Status</button>
+        <div class="card">
+          <h2>🏆 Staff Picks!</h2>
+          <div id="staff-picks-list" class="staff-picks">Loading...</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div id="toast" class="toast"></div>
-
+  <script src="config.js"></script>
   <script>
-    let token = localStorage.getItem('adminToken');
-    if (!token) window.location.href = '/admin.html';
-
-    const headers = { 'x-auth-token': token };
-
-    async function loadStats() {
-      const res = await fetch(`${API_BASE_URL}/api/admin/stats`, { headers });
-      const data = await res.json();
-      document.getElementById('total-reg').innerText = data.total;
-      document.getElementById('total-checked').innerText = data.checkedIn;
+    const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
+    if (!session.loggedIn || Date.now() - session.timestamp > 24 * 60 * 60 * 1000) {
+      window.location.href = '/';
     }
 
-    async function loadUsers() {
-      const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
-      const users = await res.json();
-      const tbody = document.querySelector('#user-table tbody');
-      tbody.innerHTML = '';
-      
-      users.forEach(u => {
-        const tr = document.createElement('tr');
-        
-        // Name
-        const tdName = document.createElement('td');
-        tdName.textContent = u.name || u.email.split('@')[0];
-        tr.appendChild(tdName);
-        
-        // Username
-        const tdUsername = document.createElement('td');
-        tdUsername.textContent = u.username || '-';
-        tr.appendChild(tdUsername);
-        
-        // Email
-        const tdEmail = document.createElement('td');
-        tdEmail.textContent = u.email;
-        tr.appendChild(tdEmail);
-        
-        // Status
-        const tdStatus = document.createElement('td');
-        tdStatus.textContent = u.checkedIn ? '✅ Checked In' : '❌ Not Checked In';
-        tr.appendChild(tdStatus);
-        
-        // Score
-        const tdScore = document.createElement('td');
-        tdScore.textContent = u.score || 0;
-        tr.appendChild(tdScore);
-        
-        // Actions
-        const tdActions = document.createElement('td');
-        
-        if (!u.checkedIn) {
-          const checkinBtn = document.createElement('button');
-          checkinBtn.textContent = '✅ Check-in';
-          checkinBtn.className = 'btn-small';
-          checkinBtn.style.background = '#4caf50';
-          checkinBtn.style.marginRight = '5px';
-          checkinBtn.onclick = () => manualCheckin(u.email, u.name);
-          tdActions.appendChild(checkinBtn);
-        }
-        
-        // Add score button
-        const scoreInput = document.createElement('input');
-        scoreInput.type = 'number';
-        scoreInput.placeholder = '+pts';
-        scoreInput.className = 'score-input';
-        scoreInput.style.width = '60px';
-        scoreInput.style.marginRight = '5px';
-        
-        const addScoreBtn = document.createElement('button');
-        addScoreBtn.textContent = '+ Add Score';
-        addScoreBtn.className = 'btn-small';
-        addScoreBtn.style.background = '#ffc857';
-        addScoreBtn.style.color = '#081c35';
-        addScoreBtn.onclick = () => addScore(u.email, scoreInput.value);
-        
-        tdActions.appendChild(scoreInput);
-        tdActions.appendChild(addScoreBtn);
-        
-        tr.appendChild(tdActions);
-        tbody.appendChild(tr);
-      });
-    }
+    const userEmail = session.email;
+    let currentUser = {};
 
-    async function manualCheckin(email, name) {
-      if (!confirm(`Are you sure ${name || email} has checked in to the event?`)) return;
+    // Load user profile
+    async function loadProfile() {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/manual-checkin`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          toast(`✅ ${data.msg}`, 'ok');
-          loadStats();
-          loadUsers();
+        const res = await fetch(`${API_BASE_URL}/api/user/profile?email=${encodeURIComponent(userEmail)}`);
+        if (!res.ok) throw new Error();
+        currentUser = await res.json();
+        document.getElementById('display-name').textContent = currentUser.name || currentUser.username || currentUser.email.split('@')[0];
+        document.getElementById('profile-email').textContent = currentUser.email;
+        document.getElementById('user-score').textContent = currentUser.score || 0;
+        document.getElementById('user-checked').textContent = currentUser.checkedIn ? 'Yes' : 'No';
+        if (currentUser.profilePicture) {
+          document.getElementById('profile-avatar').src = currentUser.profilePicture;
         } else {
-          toast(data.msg || 'Check-in failed', 'err');
+          document.getElementById('profile-avatar').src = 'https://via.placeholder.com/100?text=User';
         }
       } catch (err) {
-        toast('Network error', 'err');
+        console.error('Failed to load profile', err);
       }
     }
 
-    async function addScore(email, points) {
-      if (!points || points <= 0) {
-        toast('Please enter valid points', 'err');
-        return;
-      }
+    // Update profile (name or picture)
+    async function updateProfile(data) {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/add-score`, {
+        const res = await fetch(`${API_BASE_URL}/api/user/update-profile`, {
           method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, points: parseInt(points) })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail, ...data })
         });
-        const data = await res.json();
-        if (res.ok) {
-          toast(`✅ ${data.msg} (New Score: ${data.newScore})`, 'ok');
-          loadUsers();
+        if (!res.ok) throw new Error();
+        const result = await res.json();
+        if (result.user.name) document.getElementById('display-name').textContent = result.user.name;
+        if (result.user.profilePicture) document.getElementById('profile-avatar').src = result.user.profilePicture;
+        toast('Profile updated!', 'ok');
+      } catch (err) {
+        console.error('Update failed', err);
+        toast('Failed to update profile', 'err');
+      }
+    }
+
+    // Name editing
+    document.getElementById('edit-name-btn').addEventListener('click', () => {
+      document.getElementById('profile-name-display').classList.add('hidden');
+      document.getElementById('profile-name-edit').classList.remove('hidden');
+      document.getElementById('edit-name-input').value = currentUser.name || '';
+      document.getElementById('edit-name-input').focus();
+    });
+    document.getElementById('save-name-btn').addEventListener('click', async () => {
+      const newName = document.getElementById('edit-name-input').value.trim();
+      if (newName) {
+        await updateProfile({ name: newName });
+      }
+      document.getElementById('profile-name-display').classList.remove('hidden');
+      document.getElementById('profile-name-edit').classList.add('hidden');
+    });
+    document.getElementById('cancel-name-btn').addEventListener('click', () => {
+      document.getElementById('profile-name-display').classList.remove('hidden');
+      document.getElementById('profile-name-edit').classList.add('hidden');
+    });
+
+    // Avatar upload
+    document.getElementById('upload-btn').addEventListener('click', () => {
+      document.getElementById('avatar-input').click();
+    });
+    document.getElementById('avatar-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64 = event.target.result;
+        // Optionally resize image here (simple implementation)
+        await updateProfile({ profilePicture: base64 });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Load staff picks (top 5 scorers who have checked in)
+    async function loadStaffPicks() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/leaderboard`);
+        const users = await res.json();
+        const top5 = users.slice(0, 5);
+        const container = document.getElementById('staff-picks-list');
+        if (top5.length === 0) {
+          container.innerHTML = '<div class="staff-item">No picks yet – be the first!</div>';
         } else {
-          toast(data.msg || 'Failed to add score', 'err');
+          container.innerHTML = top5.map(u => `
+            <div class="staff-item">
+              <span class="staff-name">${escapeHtml(u.username || u.name || u.email.split('@')[0])}</span>
+              <span class="staff-score">${u.score} pts</span>
+            </div>
+          `).join('');
         }
       } catch (err) {
-        toast('Network error', 'err');
+        console.error('Staff picks error', err);
+        document.getElementById('staff-picks-list').innerHTML = '<div class="staff-item">Failed to load.</div>';
       }
     }
 
-    async function addUser() {
-      const email = document.getElementById('new-user-email').value.trim().toLowerCase();
-      const name = document.getElementById('new-user-name').value.trim();
-      const username = document.getElementById('new-user-username').value.trim();
-      
-      if (!email) {
-        toast('Please enter email', 'err');
-        return;
-      }
-      
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/add-approved-email`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name, username })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          toast(`✅ ${data.msg}`, 'ok');
-          document.getElementById('new-user-email').value = '';
-          document.getElementById('new-user-name').value = '';
-          document.getElementById('new-user-username').value = '';
-          loadUsers();
-        } else {
-          toast(data.msg || 'Failed to add user', 'err');
-        }
-      } catch (err) {
-        toast('Network error', 'err');
-      }
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
-    async function loadEventStatus() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/event-status`, { headers });
-        const data = await res.json();
-        document.getElementById('event-status').innerHTML = `Event is currently <strong>${data.isOpen ? 'OPEN' : 'CLOSED'}</strong>`;
-      } catch (err) {
-        console.error('Failed to load event status', err);
-      }
+    function toast(msg, type) {
+      const toastDiv = document.createElement('div');
+      toastDiv.className = `toast show t-${type}`;
+      toastDiv.textContent = msg;
+      document.body.appendChild(toastDiv);
+      setTimeout(() => toastDiv.remove(), 3000);
     }
 
-    async function toggleEvent() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/event-status/toggle`, { method: 'POST', headers });
-        const data = await res.json();
-        loadEventStatus();
-        toast(`Event is now ${data.isOpen ? 'OPEN' : 'CLOSED'}`, 'info');
-      } catch (err) {
-        toast('Failed to toggle event status', 'err');
-      }
-    }
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await fetch(`${API_BASE_URL}/api/user/login-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, loggedIn: false })
+      }).catch(console.error);
+      localStorage.removeItem('eventAccess');
+      window.location.href = '/';
+    });
 
-    async function exportCSV() {
-      const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
-      const users = await res.json();
-      const headersCSV = ['Name', 'Username', 'Email', 'Phone', 'Checked In', 'Checked In At', 'Score', 'Registered At'];
-      const rows = users.map(u => [
-        u.name || u.email.split('@')[0],
-        u.username || '',
-        u.email,
-        u.phone || '',
-        u.checkedIn ? 'Yes' : 'No',
-        u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '',
-        u.score || 0,
-        new Date(u.createdAt).toLocaleString()
-      ]);
-      const csv = [headersCSV, ...rows].map(row => row.join(',')).join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'attendees.csv';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-
-    function toast(msg, type = 'info') {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = `toast show t-${type}`;
-      setTimeout(() => t.classList.remove('show'), 3400);
-    }
-
-    function logout() {
-      localStorage.removeItem('adminToken');
-      window.location.href = '/admin.html';
-    }
-
-    loadStats();
-    loadUsers();
-    loadEventStatus();
+    loadProfile();
+    loadStaffPicks();
+    setInterval(loadStaffPicks, 30000);
   </script>
 </body>
 </html>
