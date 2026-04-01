@@ -142,13 +142,21 @@ router.post('/verify-otp', async (req, res) => {
 
   otpStore.delete(email.toLowerCase());
 
+  // Import username functions
+  const { getUsernameByEmail, getDisplayNameByEmail } = require('../utils/emailList');
+  
+  // Get username and display name
+  const username = getUsernameByEmail(email);
+  const displayName = getDisplayNameByEmail(email);
+
   // Ensure user exists in MongoDB for check-in tracking
   try {
     let user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       user = new User({
         email: email.toLowerCase(),
-        name: email.split('@')[0],
+        name: displayName || username || email.split('@')[0],
+        username: username || email.split('@')[0],
         phone: '',
         qrToken: '',
         checkedIn: false,
@@ -156,11 +164,13 @@ router.post('/verify-otp', async (req, res) => {
         lastLogin: new Date()
       });
       await user.save();
-      console.log(`✅ New user created from OTP login: ${email}`);
+      console.log(`✅ New user created from OTP login: ${email} (${displayName})`);
     } else {
-      // Update login status
+      // Update login status and username if changed
       user.loggedIn = true;
       user.lastLogin = new Date();
+      if (!user.username && username) user.username = username;
+      if (!user.name && displayName) user.name = displayName;
       await user.save();
     }
   } catch (err) {
@@ -168,9 +178,14 @@ router.post('/verify-otp', async (req, res) => {
     // Still return success for OTP even if user save fails
   }
 
-  res.json({ msg: 'OTP verified successfully' });
+  // Return username and display name with success response
+  res.json({ 
+    msg: 'OTP verified successfully',
+    username: username,
+    displayName: displayName,
+    email: email
+  });
 });
-
 // Mark user as logged in (for session tracking)
 router.post('/login-status', async (req, res) => {
   const { email, loggedIn } = req.body;
