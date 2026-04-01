@@ -3,64 +3,69 @@ const path = require('path');
 
 const usersFilePath = path.join(__dirname, '../data/users.json');
 
-// Load approved emails
-const loadApprovedEmails = () => {
+// Load all users with their usernames
+const loadUsers = () => {
   try {
     const data = fs.readFileSync(usersFilePath, 'utf8');
     const json = JSON.parse(data);
-    return new Set(json.approvedEmails);
+    return json.users || [];
   } catch (err) {
-    console.error('Error loading emails:', err);
-    return new Set();
+    console.error('Error loading users:', err);
+    return [];
   }
 };
 
-// Save approved emails
-const saveApprovedEmails = (emailsSet) => {
-  const data = {
-    approvedEmails: Array.from(emailsSet)
-  };
-  fs.writeFileSync(usersFilePath, JSON.stringify(data, null, 2));
-};
-
-// Add a new email
-const addApprovedEmail = (email) => {
-  const emails = loadApprovedEmails();
-  if (!emails.has(email.toLowerCase())) {
-    emails.add(email.toLowerCase());
-    saveApprovedEmails(emails);
-    return true;
-  }
-  return false;
-};
-
-// Remove an email
-const removeApprovedEmail = (email) => {
-  const emails = loadApprovedEmails();
-  if (emails.has(email.toLowerCase())) {
-    emails.delete(email.toLowerCase());
-    saveApprovedEmails(emails);
-    return true;
-  }
-  return false;
-};
-
-// Check if email is approved
-const isApprovedEmail = (email) => {
-  const emails = loadApprovedEmails();
-  return emails.has(email.toLowerCase());
+// Get user info by email
+const getUserByEmail = (email) => {
+  const users = loadUsers();
+  return users.find(u => u.email.toLowerCase() === email.toLowerCase());
 };
 
 // Get all approved emails
 const getAllApprovedEmails = () => {
-  return Array.from(loadApprovedEmails());
+  const users = loadUsers();
+  return users.map(u => u.email);
+};
+
+// Check if email is approved
+const isApprovedEmail = (email) => {
+  const users = loadUsers();
+  return users.some(u => u.email.toLowerCase() === email.toLowerCase());
+};
+
+// Add a new user with username
+const addUser = (email, username, name = '') => {
+  const users = loadUsers();
+  if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+    return false;
+  }
+  users.push({
+    email: email.toLowerCase(),
+    username: username || email.split('@')[0],
+    name: name || username || email.split('@')[0]
+  });
+  fs.writeFileSync(usersFilePath, JSON.stringify({ users }, null, 2));
+  return true;
+};
+
+// Get username by email
+const getUsernameByEmail = (email) => {
+  const user = getUserByEmail(email);
+  return user ? user.username : email.split('@')[0];
+};
+
+// Get display name by email
+const getDisplayNameByEmail = (email) => {
+  const user = getUserByEmail(email);
+  return user ? user.name : email.split('@')[0];
 };
 
 module.exports = {
-  loadApprovedEmails,
-  saveApprovedEmails,
-  addApprovedEmail,
-  removeApprovedEmail,
+  loadUsers,
+  getUserByEmail,
+  getAllApprovedEmails,
   isApprovedEmail,
-  getAllApprovedEmails
+  addUser,
+  getUsernameByEmail,
+  getDisplayNameByEmail
 };
