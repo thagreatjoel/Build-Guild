@@ -15,6 +15,11 @@ const loadUsers = () => {
   }
 };
 
+// Save users to file
+const saveUsers = (users) => {
+  fs.writeFileSync(usersFilePath, JSON.stringify({ users }, null, 2));
+};
+
 // Get user info by email
 const getUserByEmail = (email) => {
   const users = loadUsers();
@@ -33,7 +38,7 @@ const isApprovedEmail = (email) => {
   return users.some(u => u.email.toLowerCase() === email.toLowerCase());
 };
 
-// Add a new user with username
+// Add a new user with username and name
 const addUser = (email, username, name = '') => {
   const users = loadUsers();
   if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
@@ -42,9 +47,10 @@ const addUser = (email, username, name = '') => {
   users.push({
     email: email.toLowerCase(),
     username: username || email.split('@')[0],
-    name: name || username || email.split('@')[0]
+    name: name || username || email.split('@')[0],
+    score: 0
   });
-  fs.writeFileSync(usersFilePath, JSON.stringify({ users }, null, 2));
+  saveUsers(users);
   return true;
 };
 
@@ -60,6 +66,24 @@ const getDisplayNameByEmail = (email) => {
   return user ? user.name : email.split('@')[0];
 };
 
+// Get user score from file (fallback)
+const getUserScoreFromFile = (email) => {
+  const user = getUserByEmail(email);
+  return user ? user.score || 0 : 0;
+};
+
+// Update user score in file
+const updateUserScore = (email, newScore) => {
+  const users = loadUsers();
+  const index = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+  if (index !== -1) {
+    users[index].score = newScore;
+    saveUsers(users);
+    return true;
+  }
+  return false;
+};
+
 module.exports = {
   loadUsers,
   getUserByEmail,
@@ -67,5 +91,7 @@ module.exports = {
   isApprovedEmail,
   addUser,
   getUsernameByEmail,
-  getDisplayNameByEmail
+  getDisplayNameByEmail,
+  getUserScoreFromFile,
+  updateUserScore
 };
