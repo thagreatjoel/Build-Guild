@@ -150,6 +150,8 @@
           await recordLogin(currentEmail);
           localStorage.setItem('eventAccess', JSON.stringify({
             email: currentEmail,
+            username: userData.username,
+            displayName: userData.displayName,
             loggedIn: true,
             timestamp: Date.now()
           }));
