@@ -8,46 +8,24 @@
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
   <style>
-    .leaderboard-container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .leaderboard-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .rank {
-      font-weight: bold;
-      color: var(--bp-warning);
-      width: 50px;
-    }
-    .name {
-      flex: 2;
-    }
-    .email {
-      flex: 2;
-      color: rgba(255,255,255,0.6);
-      font-size: 12px;
-    }
-    .status {
-      width: 100px;
-      text-align: right;
-    }
-    .checked-in {
-      color: var(--bp-success);
-    }
-    .not-checked {
-      color: rgba(255,255,255,0.4);
-    }
-    .refresh-btn {
-      margin-bottom: 20px;
-    }
+    .leaderboard-container { max-width: 800px; margin: 0 auto; }
+    .leaderboard-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .rank { font-weight: bold; color: var(--bp-warning); width: 50px; }
+    .name { flex: 2; }
+    .email { flex: 2; color: rgba(255,255,255,0.6); font-size: 12px; }
+    .status { width: 100px; text-align: right; }
+    .checked-in { color: var(--bp-success); }
+    .not-checked { color: rgba(255,255,255,0.4); }
+    .refresh-btn { margin-bottom: 20px; }
+    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
+    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
   </style>
 </head>
 <body>
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
   <svg width="0" height="0" style="position:fixed">
     <filter id="grainy" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
@@ -72,9 +50,7 @@
           <strong>Checked In:</strong> <span id="checked-in-count">-</span>
         </div>
         
-        <div id="leaderboard-list">
-          Loading...
-        </div>
+        <div id="leaderboard-list">Loading...</div>
       </div>
     </div>
   </div>
@@ -84,21 +60,14 @@
   <script>
     async function loadLeaderboard() {
       try {
-        // Get all approved emails
         const emailsRes = await fetch(`${API_BASE_URL}/api/user/approved-emails`);
         const emailsData = await emailsRes.json();
-        
-        // Get all users from database (with check-in status)
         const usersRes = await fetch(`${API_BASE_URL}/api/admin/users`);
         const usersData = await usersRes.json();
         
-        // Create a map of email -> user data
         const userMap = {};
-        usersData.forEach(u => {
-          userMap[u.email.toLowerCase()] = u;
-        });
+        usersData.forEach(u => { userMap[u.email.toLowerCase()] = u; });
         
-        // Combine approved emails with user data
         const leaderboard = emailsData.emails.map(email => {
           const user = userMap[email.toLowerCase()];
           return {
@@ -108,16 +77,12 @@
             checkedInAt: user ? user.checkedInAt : null
           };
         }).sort((a, b) => {
-          // Sort by checked in status (checked in first) then by name
           if (a.checkedIn !== b.checkedIn) return b.checkedIn ? 1 : -1;
           return a.name.localeCompare(b.name);
         });
         
-        const total = leaderboard.length;
-        const checkedIn = leaderboard.filter(u => u.checkedIn).length;
-        
-        document.getElementById('total-users').textContent = total;
-        document.getElementById('checked-in-count').textContent = checkedIn;
+        document.getElementById('total-users').textContent = leaderboard.length;
+        document.getElementById('checked-in-count').textContent = leaderboard.filter(u => u.checkedIn).length;
         
         const container = document.getElementById('leaderboard-list');
         if (leaderboard.length === 0) {
@@ -135,7 +100,6 @@
             </div>
           </div>
         `).join('');
-        
       } catch (err) {
         console.error('Failed to load leaderboard:', err);
         document.getElementById('leaderboard-list').innerHTML = '<div style="text-align: center;">Failed to load leaderboard</div>';
@@ -149,7 +113,6 @@
     }
     
     loadLeaderboard();
-    // Auto-refresh every 30 seconds
     setInterval(loadLeaderboard, 30000);
   </script>
 </body>
