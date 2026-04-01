@@ -1,14 +1,25 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Gmail SMTP configuration
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+});
 
 const sendOTPEmail = async (userEmail, otp) => {
   try {
-    console.log(`📧 Sending OTP to: ${userEmail}`);
+    console.log(`📧 Attempting to send OTP to: ${userEmail}`);
     
-    const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev', // Resend's default verified domain
+    const mailOptions = {
+      from: `"Build Guild Kochi" <${process.env.EMAIL_USER}>`,
       to: userEmail,
       subject: '🔐 Your OTP for Build Guild Kochi',
       html: `
@@ -16,27 +27,23 @@ const sendOTPEmail = async (userEmail, otp) => {
           <h1 style="color: #ffc857; text-align: center;">Build Guild Kochi</h1>
           <h2 style="text-align: center;">Your OTP Code</h2>
           <div style="font-size: 40px; font-weight: bold; text-align: center; padding: 20px; background: #081c35; margin: 20px 0; letter-spacing: 8px; border-radius: 8px;">${otp}</div>
-          <p style="text-align: center;">Use this code to access the event dashboard. It expires in <strong>10 minutes</strong>.</p>
+          <p style="text-align: center;">Use this code to access the event dashboard. It expires in <strong>5 minutes</strong>.</p>
           <p style="text-align: center;">If you didn't request this, please ignore this email.</p>
           <hr style="border-color: #344b6a;">
           <p style="font-size: 12px; text-align: center;">Build Guild Kochi · April 15, 2026 · Kochi, India</p>
         </div>
       `,
-    });
+    };
 
-    if (error) throw new Error(error.message);
-    console.log(`✅ OTP sent to ${userEmail}`);
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ OTP email sent successfully to ${userEmail}`);
+    console.log(`📨 Message ID: ${info.messageId}`);
     return true;
   } catch (err) {
     console.error('❌ OTP email error:', err.message);
+    console.error('Full error:', err);
     throw new Error(`Failed to send OTP: ${err.message}`);
   }
 };
 
-// Keep QR email function for compatibility (if needed)
-const sendQREmail = async () => {
-  console.log('QR email function called but not implemented');
-  return true;
-};
-
-module.exports = { sendOTPEmail, sendQREmail };
+module.exports = { sendOTPEmail };
