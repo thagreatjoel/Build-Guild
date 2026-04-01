@@ -4,43 +4,51 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Dashboard — Build Guild Kochi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <style>
-    /* ── Exact same background as schedule/leaderboard ── */
-    @font-face {
-      font-family:'Phantom Sans';
-      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2') format('woff2'),
-          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff');
-      font-weight:400;font-style:normal;font-display:swap;
-    }
-    @font-face {
-      font-family:'Phantom Sans';
-      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2') format('woff2'),
-          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff') format('woff');
-      font-weight:700;font-style:normal;font-display:swap;
+    /* Modern CSS variables (from your design system) */
+    :root {
+      --ms-font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+      --ms-font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+      --ms-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+      --ms-color-white: #fff;
+      --ms-color-black: #000;
+      --ms-color-gray-50: oklch(0.985 0.002 247.839);
+      --ms-color-gray-100: oklch(0.967 0.003 264.542);
+      --ms-color-gray-200: oklch(0.928 0.006 264.531);
+      --ms-color-gray-300: oklch(0.872 0.01 258.338);
+      --ms-color-gray-400: oklch(0.707 0.022 261.325);
+      --ms-color-gray-500: oklch(0.551 0.027 264.364);
+      --ms-color-gray-600: oklch(0.446 0.03 256.802);
+      --ms-color-gray-700: oklch(0.373 0.034 259.733);
+      --ms-color-gray-800: oklch(0.278 0.033 256.848);
+      --ms-color-gray-900: oklch(0.21 0.034 264.665);
+      --ms-color-gray-950: oklch(0.13 0.028 261.692);
+      --ms-color-amber-500: oklch(0.769 0.188 70.08);
+      --ms-color-yellow-500: oklch(0.795 0.184 86.047);
+      --ms-color-emerald-500: oklch(0.696 0.17 162.48);
+      --ms-color-blue-600: oklch(0.546 0.245 262.881);
+      /* additional custom colours for the hack club theme */
+      --bp-dark: #0e305b;
+      --bp-darker: #081c35;
+      --bp-warning: #ffc857;
+      --bp-success: #a8f0ae;
+
+      --font-content: var(--ms-font-sans);
+      --default-transition-duration: 150ms;
+      --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    :root{
-      --bp-lighter:#344b6a;
-      --bp-dark:#0e305b;
-      --bp-darker:#081c35;
-      --bp-light:#dbe4ee;
-      --bp-danger:#fe8e86;
-      --bp-danger-darker:#bd4c44;
-      --bp-warning:#ffc857;
-      --bp-success:#a8f0ae;
-      --f:'Phantom Sans','Poppins',sans-serif;
-      --fh:'Poppins',sans-serif;
+    /* Grid background & grain – same as schedule */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html { font-size: 16px; }
 
     body {
-      font-family: var(--f);
+      font-family: var(--font-content);
       background: var(--bp-dark);
-      color: #fff;
+      color: var(--ms-color-white);
       min-height: 100vh;
       background-image:
         linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
@@ -63,7 +71,10 @@
       z-index: 0;
     }
 
-    .z1 { position: relative; z-index: 1; }
+    .z1 {
+      position: relative;
+      z-index: 1;
+    }
 
     /* Banner fixed top‑left */
     .banner-link {
@@ -102,9 +113,10 @@
       text-decoration: none;
       font-weight: 500;
       font-size: 1rem;
-      transition: color 0.2s;
+      transition: color var(--default-transition-duration) var(--default-transition-timing-function);
     }
-    .nav a:hover, .nav a.active {
+    .nav a:hover,
+    .nav a.active {
       color: var(--bp-warning);
     }
 
@@ -125,7 +137,7 @@
     }
     .card h2 {
       font-size: 1.2rem;
-      font-weight: 700;
+      font-weight: 600;
       margin-bottom: 1rem;
       color: var(--bp-warning);
     }
@@ -153,7 +165,7 @@
     .profile-name input {
       background: var(--bp-dark);
       border: 1px solid rgba(255,255,255,0.2);
-      color: #fff;
+      color: var(--ms-color-white);
       padding: 0.25rem 0.5rem;
       border-radius: 8px;
       font-size: 1rem;
@@ -163,23 +175,31 @@
       margin-bottom: 1rem;
       word-break: break-all;
     }
-    .btn-edit, .btn-save, .btn-upload {
+    .btn-edit,
+    .btn-save,
+    .btn-upload {
       background: transparent;
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 40px;
       padding: 0.25rem 1rem;
-      font-family: var(--fh);
+      font-family: var(--font-content);
       font-size: 0.8rem;
       cursor: pointer;
-      transition: all 0.2s;
-      color: #fff;
+      transition: all var(--default-transition-duration) var(--default-transition-timing-function);
+      color: var(--ms-color-white);
     }
-    .btn-edit:hover, .btn-save:hover, .btn-upload:hover {
+    .btn-edit:hover,
+    .btn-save:hover,
+    .btn-upload:hover {
       background: rgba(255,200,87,0.2);
       border-color: var(--bp-warning);
     }
-    .hidden { display: none; }
-    .file-input { display: none; }
+    .hidden {
+      display: none;
+    }
+    .file-input {
+      display: none;
+    }
 
     .event-info-item {
       margin-bottom: 1rem;
@@ -226,9 +246,9 @@
       border-radius: 40px;
       padding: 0.5rem;
       cursor: pointer;
-      transition: all 0.2s;
-      color: #fff;
-      font-family: var(--fh);
+      transition: all var(--default-transition-duration) var(--default-transition-timing-function);
+      color: var(--ms-color-white);
+      font-family: var(--font-content);
     }
     .logout-btn:hover {
       background: rgba(255,255,255,0.1);
@@ -240,7 +260,7 @@
       bottom: 20px;
       right: 20px;
       z-index: 999;
-      font-family: var(--fh);
+      font-family: var(--font-content);
       font-size: 13px;
       font-weight: 700;
       padding: 12px 18px;
@@ -251,14 +271,34 @@
       pointer-events: none;
       max-width: 280px;
     }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.t-ok  { background: rgba(168,240,174,.1); color: var(--bp-success); border-color: rgba(168,240,174,.35); }
-    .toast.t-err { background: rgba(254,142,134,.1); color: var(--bp-danger); border-color: var(--bp-danger-darker); }
-    .toast.t-info { background: var(--bp-darker); color: var(--bp-warning); border-color: var(--bp-warning); }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .toast.t-ok {
+      background: rgba(168,240,174,.1);
+      color: var(--bp-success);
+      border-color: rgba(168,240,174,.35);
+    }
+    .toast.t-err {
+      background: rgba(254,142,134,.1);
+      color: var(--bp-danger);
+      border-color: var(--bp-danger-darker);
+    }
+    .toast.t-info {
+      background: var(--bp-darker);
+      color: var(--bp-warning);
+      border-color: var(--bp-warning);
+    }
 
     @media (max-width: 800px) {
-      .dashboard-grid { grid-template-columns: 1fr; gap: 1rem; }
-      .nav { gap: 1rem; }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .nav {
+        gap: 1rem;
+      }
     }
   </style>
 </head>
