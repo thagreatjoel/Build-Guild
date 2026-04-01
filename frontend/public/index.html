@@ -15,7 +15,6 @@
     .resend-btn { background: none; border: none; color: var(--bp-warning); cursor: pointer; font-size: 14px; margin-top: 10px; }
     .resend-btn:hover { text-decoration: underline; }
     .email-display { background: rgba(255,200,87,0.1); padding: 10px; border-radius: 8px; margin: 15px 0; text-align: center; }
-    .debug-otp { background: rgba(255,200,87,0.2); padding: 10px; border-radius: 8px; margin: 10px 0; text-align: center; font-size: 18px; font-weight: bold; color: var(--bp-warning); }
     .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
     .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
   </style>
@@ -50,7 +49,6 @@
 
       <div id="otp-step" style="display: none;">
         <div class="email-display" id="email-display"></div>
-        <div id="debug-otp" class="debug-otp" style="display: none;"></div>
         <div class="field">
           <label>Enter 6-digit OTP</label>
           <div class="otp-input">
@@ -74,7 +72,6 @@
 
   <script>
     let currentEmail = "";
-    let currentOTP = "";
 
     const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
     if (session.loggedIn && Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
@@ -117,21 +114,10 @@
         });
         
         const data = await res.json();
-        console.log('OTP Response:', data);
         
-        if (res.ok || data.otp) {
+        if (res.ok) {
           currentEmail = email;
-          currentOTP = data.otp;
-          
-          if (data.otp) {
-            const debugDiv = document.getElementById('debug-otp');
-            debugDiv.innerHTML = `🔐 Your OTP: <span style="font-size: 24px;">${data.otp}</span><br>${data.emailError ? '⚠️ Email failed - use this code to login' : 'Check your email or use this code'}`;
-            debugDiv.style.display = 'block';
-            toast(`Your OTP is: ${data.otp}`, 'info');
-          } else {
-            toast('OTP sent to your email!', 'ok');
-          }
-          
+          toast('OTP sent to your email!', 'ok');
           document.getElementById('email-step').style.display = 'none';
           document.getElementById('otp-step').style.display = 'block';
           document.getElementById('email-display').textContent = email;
@@ -203,12 +189,8 @@
           body: JSON.stringify({ email: currentEmail })
         });
         const data = await res.json();
-        if (data.otp) {
-          currentOTP = data.otp;
-          const debugDiv = document.getElementById('debug-otp');
-          debugDiv.innerHTML = `🔐 Your OTP: <span style="font-size: 24px;">${data.otp}</span>`;
-          debugDiv.style.display = 'block';
-          toast(`New OTP: ${data.otp}`, 'info');
+        if (res.ok) {
+          toast('OTP resent! Check your email.', 'ok');
         } else {
           toast(data.msg || 'Failed to resend', 'err');
         }
@@ -222,7 +204,6 @@
       document.getElementById('otp-step').style.display = 'none';
       document.getElementById('email').value = '';
       document.getElementById('err-msg').style.display = 'none';
-      document.getElementById('debug-otp').style.display = 'none';
     }
 
     function toast(msg, type = 'info') {
