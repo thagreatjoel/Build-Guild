@@ -1,3 +1,29 @@
+const express = require('express');
+const router = express.Router();
+const { v4: uuidv4 } = require('uuid');
+const User = require('../models/User');
+const { sendOTPEmail } = require('../utils/email');
+const { isApprovedEmail, addApprovedEmail, getAllApprovedEmails, getUsernameByEmail, getDisplayNameByEmail } = require('../utils/emailList');
+
+// Temporary OTP storage
+const otpStore = new Map();
+
+// ========== EMAIL MANAGEMENT ==========
+router.get('/approved-emails', (req, res) => {
+  res.json({ emails: getAllApprovedEmails() });
+});
+
+router.post('/add-approved-email', (req, res) => {
+  const { email, name, username } = req.body;
+  if (!email) return res.status(400).json({ msg: 'Email required' });
+  if (addApprovedEmail(email, username, name)) {
+    res.json({ msg: `Email ${email} added successfully` });
+  } else {
+    res.status(400).json({ msg: 'Email already exists' });
+  }
+});
+
+// ========== OTP ROUTES ==========
 router.post('/send-otp', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ msg: 'Email required' });
@@ -46,3 +72,74 @@ router.post('/send-otp', async (req, res) => {
     });
   }
 });
+
+router.post('/verify-otp', async (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) return res.status(400).json({ msg: 'Email and OTP required' });
+
+  const record = otpStore.get(email.toLowerCase());
+  if (!record) return res.status(400).json({ msg: 'No OTP requested. Please request one.' });
+  if (Date.now() > record.expiresAt) {
+    otpStore.delete(email.toLowerCase());
+    return res.status(400).json({ msg: 'OTP expired. Request a new one.' });
+  }
+  if (record.otp !== otp) return res.status(400).json({ msg: 'Invalid OTP' });
+
+  otpStore.delete(email.toLowerCase());
+
+  const username = getUsernameByEmail(email);
+  const displayName = getDisplayNameByEmail(email);
+
+  try {
+    let user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      user = new User({
+        email: email.toLowerCase(),
+        name: displayName || username || email.split('@')[0],
+        username: username || email.split('@')[0],
+        phone: '',
+        qrToken: '',
+        checkedIn: false,
+        loggedIn: true,
+        lastLogin: new Date()
+      });
+      await user.save();
+      console.log(`✅ New user created: ${email} (${displayName || username})`);
+    } else {
+      user.loggedIn = true;
+      user.lastLogin = new Date();
+      if (!user.username && username) user.username = username;
+      if (!user.name && displayName) user.name = displayName;
+      await user.save();
+    }
+  } catch (err) {
+    console.error('Error updating user:', err);
+  }
+
+  res.json({ 
+    msg: 'OTP verified successfully',
+    username: username || email.split('@')[0],
+    displayName: displayName || username || email.split('@')[0],
+    email: email
+  });
+});
+
+// ========== LOGIN STATUS ==========
+router.post('/login-status', async (req, res) => {
+  const { email, loggedIn } = req.body;
+  if (!email) return res.status(400).json({ msg: 'Email required' });
+
+  try {
+    await User.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      { lastLogin: loggedIn ? new Date() : null, loggedIn: loggedIn || false },
+      { upsert: true, new: true }
+    );
+    res.json({ msg: 'Login status updated' });
+  } catch (err) {
+    console.error('Error updating login status:', err);
+    res.status(500).json({ msg: 'Failed to update login status' });
+  }
+});
+
+module.exports = router;
