@@ -55,27 +55,46 @@ router.get('/by-email', async (req, res) => {
 });
 
 // ========== OTP ROUTES ==========
-const otpStore = new Map();
+// Temporary OTP storage (in‑memory)
+const otpStore = new Map(); // key: email, value: { otp, expiresAt }
 
+// Send OTP – reuse if still valid
 router.post('/send-otp', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ msg: 'Email required' });
 
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+  const now = Date.now();
+  const existing = otpStore.get(email.toLowerCase());
 
+  if (existing && existing.expiresAt > now) {
+    // OTP still valid – reuse it
+    console.log(`Reusing OTP for ${email}: ${existing.otp}`);
+    try {
+      await sendOTPEmail(email, existing.otp);
+      res.json({ msg: 'OTP resent (same code). Check your email.' });
+    } catch (err) {
+      console.error('Email error:', err);
+      res.status(500).json({ msg: 'Failed to resend OTP' });
+    }
+    return;
+  }
+
+  // Generate new OTP (valid for 5 minutes)
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = now + 5 * 60 * 1000; // 5 minutes
   otpStore.set(email.toLowerCase(), { otp, expiresAt });
 
   try {
     await sendOTPEmail(email, otp);
-    console.log(`OTP sent to ${email}: ${otp}`);
+    console.log(`New OTP sent to ${email}: ${otp}`);
     res.json({ msg: 'OTP sent to your email' });
   } catch (err) {
     console.error('Email error:', err);
-    res.status(500).json({ msg: 'Failed to send OTP email' });
+    res.status(500).json({ msg: 'Failed to send OTP' });
   }
 });
 
+// Verify OTP
 router.post('/verify-otp', (req, res) => {
   const { email, otp } = req.body;
   if (!email || !otp) return res.status(400).json({ msg: 'Email and OTP required' });
@@ -88,10 +107,9 @@ router.post('/verify-otp', (req, res) => {
   }
   if (record.otp !== otp) return res.status(400).json({ msg: 'Invalid OTP' });
 
-  otpStore.delete(email.toLowerCase());
+  otpStore.delete(email.toLowerCase()); // remove after successful use
   res.json({ msg: 'OTP verified successfully' });
 });
-
 // Mark user as logged in (store in MongoDB)
 router.post('/login-status', async (req, res) => {
   const { email, loggedIn } = req.body;
