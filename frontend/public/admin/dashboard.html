@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Admin Dashboard — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script src="config.js"></script>
+  <link rel="stylesheet" href="../style.css">
+  <script src="../config.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
     .stats-grid { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
     .stat-card { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 16px 24px; flex: 1; text-align: center; }
@@ -19,6 +20,8 @@
     .user-table th { background: rgba(0,0,0,.3); }
     .btn-small { padding: 4px 12px; font-size: 12px; margin: 2px; }
     .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .scan-area { margin-bottom: 20px; }
+    #reader { width: 100%; max-width: 400px; margin: 0 auto; }
     .score-input { width: 60px; padding: 4px; margin-right: 5px; background: var(--bp-dark); border: 1px solid rgba(255,255,255,.2); color: #fff; }
     .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
     .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
@@ -41,7 +44,7 @@
   <div class="view active z1" style="padding-top: 40px;">
     <div style="width:100%; max-width: 1200px;">
       <div class="flex-between" style="margin-bottom: 20px;">
-        <h1 style="font-size: 28px;">📋 Admin Dashboard</h1>
+        <h1 style="font-size: 28px;">Admin Dashboard</h1>
         <button class="btn btn-outline btn-small" onclick="logout()">Logout</button>
       </div>
 
@@ -51,8 +54,30 @@
       </div>
 
       <div class="section">
-        <h2>👥 User Management</h2>
-        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+        <h2>QR Code Scanner</h2>
+        <div class="scan-area">
+          <div id="reader"></div>
+          <div id="scan-result" class="msg" style="margin-top: 12px; display: none;"></div>
+        </div>
+        <div style="text-align: center; margin-top: 15px;">
+          <button class="btn btn-outline" onclick="window.open('/scan.html', '_blank')">Open Full‑screen Scanner</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Manual Walk‑in Registration</h2>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <input type="text" id="man-name" placeholder="Full Name" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <input type="email" id="man-email" placeholder="Email" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <input type="tel" id="man-phone" placeholder="Phone (optional)" style="flex:1; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <button class="btn btn-primary" onclick="manualRegister()">Register</button>
+        </div>
+        <div id="man-msg" class="msg" style="margin-top: 12px;"></div>
+      </div>
+
+      <div class="section">
+        <h2>User Management</h2>
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
           <input type="email" id="new-user-email" placeholder="Email" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
           <input type="text" id="new-user-name" placeholder="Full Name" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
           <input type="text" id="new-user-username" placeholder="Username" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
@@ -62,28 +87,20 @@
 
       <div class="section">
         <div class="flex-between">
-          <h2>🏆 Attendees & Scores</h2>
+          <h2>Attendees & Scores</h2>
           <button class="btn btn-outline btn-small" onclick="exportCSV()">Export CSV</button>
         </div>
         <div style="overflow-x: auto;">
           <table class="user-table" id="user-table">
             <thead>
-              <tr>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Score</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+              <tr><th>Name</th><th>Username</th><th>Email</th><th>Status</th><th>Score</th><th>Actions</th></thead>
             <tbody></tbody>
           </table>
         </div>
       </div>
 
       <div class="section">
-        <h2>🎛️ Event Control</h2>
+        <h2>Event Control</h2>
         <div id="event-status" style="margin-bottom: 15px;">Loading...</div>
         <button class="btn btn-primary" onclick="toggleEvent()">Toggle Event Status</button>
       </div>
@@ -94,7 +111,7 @@
 
   <script>
     let token = localStorage.getItem('adminToken');
-    if (!token) window.location.href = '/admin.html';
+    if (!token) window.location.href = 'admin.html';
 
     const headers = { 'x-auth-token': token };
 
@@ -110,144 +127,54 @@
       const users = await res.json();
       const tbody = document.querySelector('#user-table tbody');
       tbody.innerHTML = '';
-      
       users.forEach(u => {
         const tr = document.createElement('tr');
-        
-        // Name
-        const tdName = document.createElement('td');
-        tdName.textContent = u.name || u.email.split('@')[0];
-        tr.appendChild(tdName);
-        
-        // Username
-        const tdUsername = document.createElement('td');
-        tdUsername.textContent = u.username || '-';
-        tr.appendChild(tdUsername);
-        
-        // Email
-        const tdEmail = document.createElement('td');
-        tdEmail.textContent = u.email;
-        tr.appendChild(tdEmail);
-        
-        // Status
-        const tdStatus = document.createElement('td');
-        tdStatus.textContent = u.checkedIn ? '✅ Checked In' : '❌ Not Checked In';
-        tr.appendChild(tdStatus);
-        
-        // Score
-        const tdScore = document.createElement('td');
-        tdScore.textContent = u.score || 0;
-        tr.appendChild(tdScore);
-        
-        // Actions
-        const tdActions = document.createElement('td');
-        
-        if (!u.checkedIn) {
-          const checkinBtn = document.createElement('button');
-          checkinBtn.textContent = '✅ Check-in';
-          checkinBtn.className = 'btn-small';
-          checkinBtn.style.background = '#4caf50';
-          checkinBtn.style.marginRight = '5px';
-          checkinBtn.onclick = () => manualCheckin(u.email, u.name);
-          tdActions.appendChild(checkinBtn);
-        }
-        
-        // Add score button
-        const scoreInput = document.createElement('input');
-        scoreInput.type = 'number';
-        scoreInput.placeholder = '+pts';
-        scoreInput.className = 'score-input';
-        scoreInput.style.width = '60px';
-        scoreInput.style.marginRight = '5px';
-        
-        const addScoreBtn = document.createElement('button');
-        addScoreBtn.textContent = '+ Add Score';
-        addScoreBtn.className = 'btn-small';
-        addScoreBtn.style.background = '#ffc857';
-        addScoreBtn.style.color = '#081c35';
-        addScoreBtn.onclick = () => addScore(u.email, scoreInput.value);
-        
-        tdActions.appendChild(scoreInput);
-        tdActions.appendChild(addScoreBtn);
-        
-        tr.appendChild(tdActions);
+        tr.innerHTML = `
+          <td>${escapeHtml(u.name || u.email.split('@')[0])}</td>
+          <td>${escapeHtml(u.username || '-')}</td>
+          <td>${escapeHtml(u.email)}</td>
+          <td>${u.checkedIn ? 'Checked In' : 'Not Checked In'}</td>
+          <td>${u.score || 0}</td>
+          <td>${!u.checkedIn ? `<button class="btn-small" style="background:#4caf50; margin-right:5px;" onclick="manualCheckin('${u.email}','${escapeHtml(u.name)}')">Check-in</button>` : ''}
+              <input type="number" id="score-${u._id}" placeholder="points" class="score-input" style="width:60px;">
+              <button class="btn-small" style="background:#ffc857; color:#081c35;" onclick="addScore('${u.email}', document.getElementById('score-${u._id}').value)">Add Score</button>
+          </td>
+        `;
         tbody.appendChild(tr);
       });
     }
 
     async function manualCheckin(email, name) {
-      if (!confirm(`Are you sure ${name || email} has checked in to the event?`)) return;
+      if (!confirm(`Are you sure ${name || email} has checked in?`)) return;
       try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/manual-checkin`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
+        const res = await fetch(`${API_BASE_URL}/api/admin/manual-checkin`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
         const data = await res.json();
-        if (res.ok) {
-          toast(`✅ ${data.msg}`, 'ok');
-          loadStats();
-          loadUsers();
-        } else {
-          toast(data.msg || 'Check-in failed', 'err');
-        }
-      } catch (err) {
-        toast('Network error', 'err');
-      }
+        if (res.ok) { toast(`Checked in successfully`, 'ok'); loadStats(); loadUsers(); }
+        else toast(data.msg || 'Check-in failed', 'err');
+      } catch(err) { toast('Network error', 'err'); }
     }
 
     async function addScore(email, points) {
-      if (!points || points <= 0) {
-        toast('Please enter valid points', 'err');
-        return;
-      }
+      if (!points || points <= 0) { toast('Enter valid points', 'err'); return; }
       try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/add-score`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, points: parseInt(points) })
-        });
+        const res = await fetch(`${API_BASE_URL}/api/admin/add-score`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, points: parseInt(points) }) });
         const data = await res.json();
-        if (res.ok) {
-          toast(`✅ ${data.msg} (New Score: ${data.newScore})`, 'ok');
-          loadUsers();
-        } else {
-          toast(data.msg || 'Failed to add score', 'err');
-        }
-      } catch (err) {
-        toast('Network error', 'err');
-      }
+        if (res.ok) { toast(`Added ${points} points (new score: ${data.newScore})`, 'ok'); loadUsers(); }
+        else toast(data.msg || 'Failed to add score', 'err');
+      } catch(err) { toast('Network error', 'err'); }
     }
 
     async function addUser() {
       const email = document.getElementById('new-user-email').value.trim().toLowerCase();
       const name = document.getElementById('new-user-name').value.trim();
       const username = document.getElementById('new-user-username').value.trim();
-      
-      if (!email) {
-        toast('Please enter email', 'err');
-        return;
-      }
-      
+      if (!email) { toast('Please enter email', 'err'); return; }
       try {
-        const res = await fetch(`${API_BASE_URL}/api/user/add-approved-email`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name, username })
-        });
+        const res = await fetch(`${API_BASE_URL}/api/user/add-approved-email`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, username }) });
         const data = await res.json();
-        if (res.ok) {
-          toast(`✅ ${data.msg}`, 'ok');
-          document.getElementById('new-user-email').value = '';
-          document.getElementById('new-user-name').value = '';
-          document.getElementById('new-user-username').value = '';
-          loadUsers();
-        } else {
-          toast(data.msg || 'Failed to add user', 'err');
-        }
-      } catch (err) {
-        toast('Network error', 'err');
-      }
+        if (res.ok) { toast(`User added`, 'ok'); document.getElementById('new-user-email').value = ''; document.getElementById('new-user-name').value = ''; document.getElementById('new-user-username').value = ''; loadUsers(); }
+        else toast(data.msg || 'Failed to add user', 'err');
+      } catch(err) { toast('Network error', 'err'); }
     }
 
     async function loadEventStatus() {
@@ -255,9 +182,7 @@
         const res = await fetch(`${API_BASE_URL}/api/admin/event-status`, { headers });
         const data = await res.json();
         document.getElementById('event-status').innerHTML = `Event is currently <strong>${data.isOpen ? 'OPEN' : 'CLOSED'}</strong>`;
-      } catch (err) {
-        console.error('Failed to load event status', err);
-      }
+      } catch(err) { console.error(err); }
     }
 
     async function toggleEvent() {
@@ -266,25 +191,14 @@
         const data = await res.json();
         loadEventStatus();
         toast(`Event is now ${data.isOpen ? 'OPEN' : 'CLOSED'}`, 'info');
-      } catch (err) {
-        toast('Failed to toggle event status', 'err');
-      }
+      } catch(err) { toast('Failed to toggle event status', 'err'); }
     }
 
     async function exportCSV() {
       const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
       const users = await res.json();
-      const headersCSV = ['Name', 'Username', 'Email', 'Phone', 'Checked In', 'Checked In At', 'Score', 'Registered At'];
-      const rows = users.map(u => [
-        u.name || u.email.split('@')[0],
-        u.username || '',
-        u.email,
-        u.phone || '',
-        u.checkedIn ? 'Yes' : 'No',
-        u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '',
-        u.score || 0,
-        new Date(u.createdAt).toLocaleString()
-      ]);
+      const headersCSV = ['Name','Username','Email','Phone','Checked In','Checked In At','Score','Registered At'];
+      const rows = users.map(u => [u.name || u.email.split('@')[0], u.username || '', u.email, u.phone || '', u.checkedIn ? 'Yes' : 'No', u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '', u.score || 0, new Date(u.createdAt).toLocaleString()]);
       const csv = [headersCSV, ...rows].map(row => row.join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
       const a = document.createElement('a');
@@ -294,7 +208,54 @@
       URL.revokeObjectURL(a.href);
     }
 
-    function toast(msg, type = 'info') {
+    let scanner;
+    function startScanner() {
+      scanner = new Html5Qrcode("reader");
+      scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (decoded) => handleScan(decoded), (err) => console.log(err));
+    }
+    async function handleScan(token) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/scan`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) });
+        const data = await res.json();
+        const resultDiv = document.getElementById('scan-result');
+        if (res.ok) {
+          resultDiv.textContent = `Checked in successfully: ${data.msg}`;
+          resultDiv.className = 'msg ok';
+          resultDiv.style.display = 'block';
+          loadStats(); loadUsers();
+          setTimeout(() => resultDiv.style.display = 'none', 3000);
+        } else {
+          resultDiv.textContent = `Error: ${data.msg}`;
+          resultDiv.className = 'msg err';
+          resultDiv.style.display = 'block';
+          setTimeout(() => resultDiv.style.display = 'none', 3000);
+        }
+      } catch(err) { console.error(err); }
+    }
+
+    async function manualRegister() {
+      const name = document.getElementById('man-name').value.trim();
+      const email = document.getElementById('man-email').value.trim();
+      const phone = document.getElementById('man-phone').value.trim();
+      const msgDiv = document.getElementById('man-msg');
+      msgDiv.style.display = 'none';
+      if (!name || !email) { msgDiv.textContent = 'Name and email required.'; msgDiv.className = 'msg err'; msgDiv.style.display = 'block'; return; }
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/manual-register`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, phone }) });
+        const data = await res.json();
+        if (res.ok) {
+          msgDiv.textContent = data.msg + ' QR sent to email.';
+          msgDiv.className = 'msg ok';
+          msgDiv.style.display = 'block';
+          document.getElementById('man-name').value = '';
+          document.getElementById('man-email').value = '';
+          document.getElementById('man-phone').value = '';
+          loadStats(); loadUsers();
+        } else { msgDiv.textContent = data.msg || 'Registration failed'; msgDiv.className = 'msg err'; msgDiv.style.display = 'block'; }
+      } catch(err) { msgDiv.textContent = 'Network error.'; msgDiv.className = 'msg err'; msgDiv.style.display = 'block'; }
+    }
+
+    function toast(msg, type) {
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.className = `toast show t-${type}`;
@@ -303,12 +264,12 @@
 
     function logout() {
       localStorage.removeItem('adminToken');
-      window.location.href = '/admin.html';
+      window.location.href = 'admin.html';
     }
 
-    loadStats();
-    loadUsers();
-    loadEventStatus();
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    loadStats(); loadUsers(); loadEventStatus(); startScanner();
   </script>
 </body>
 </html>

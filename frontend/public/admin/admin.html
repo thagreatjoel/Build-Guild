@@ -5,11 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script src="config.js"></script>
+  <link rel="stylesheet" href="../style.css">
+  <script src="../config.js"></script>
   <style>
-    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
-    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
+    .banner-link {
+      position: fixed;
+      top: 20px;
+      left: 0px;
+      z-index: 999;
+    }
+    .banner-link img {
+      width: 180px;
+      max-width: 25vw;
+      height: auto;
+      border: 0;
+    }
   </style>
 </head>
 <body>
@@ -63,7 +73,7 @@
         const data = await res.json();
         if (res.ok) {
           localStorage.setItem('adminToken', data.token);
-          window.location.href = 'admin/dashboard.html';
+          window.location.href = 'dashboard.html';
         } else {
           errDiv.textContent = data.msg || 'Invalid credentials';
           errDiv.style.display = 'block';
@@ -75,4 +85,4 @@
     }
   </script>
 </body>
-</html>
+</html>v
