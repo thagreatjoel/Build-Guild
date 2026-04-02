@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slide Viewer — Build Guild Kochi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Slide Viewer</title>
   <style>
     * {
       margin: 0;
@@ -12,84 +12,59 @@
     }
     body {
       background: #0e305b;
-      font-family: 'Poppins', sans-serif;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
       overflow: hidden;
     }
-    .controls {
-      background: #081c35;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #ffc857;
-      color: white;
-      z-index: 10;
-    }
-    .controls button {
-      background: transparent;
-      border: 1px solid #ffc857;
-      color: #ffc857;
-      padding: 6px 16px;
-      border-radius: 30px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
-    }
-    .controls button:hover {
-      background: #ffc857;
-      color: #081c35;
-    }
-    .slide-info {
-      font-size: 14px;
-    }
     iframe {
-      flex: 1;
       width: 100%;
+      height: 100%;
       border: none;
-      background: white;
+      display: block;
     }
-    .key-hint {
-      font-size: 12px;
+    /* Optional: a tiny non‑intrusive counter (comment out if not wanted) */
+    .slide-counter {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.5);
       color: rgba(255,255,255,0.6);
+      font-family: monospace;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      pointer-events: none;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
-   
   <iframe id="slideFrame" title="Slide Viewer"></iframe>
+  <div class="slide-counter" id="counter">1 / 0</div>
 
   <script>
     // ---------- CONFIGURATION ----------
-    // List all HTML files inside the "slide/" folder (relative to this page)
-    // Add your slide filenames in the order you want them.
+    // List your slide files in order (relative to the "slide/" folder)
     const slides = [
       "1.html",
-     
+      // add more files: "2.html", "3.html", ...
     ];
     // -----------------------------------
 
     let currentIndex = 0;
     const frame = document.getElementById('slideFrame');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const currentIdxSpan = document.getElementById('currentIdx');
-    const totalSlidesSpan = document.getElementById('totalSlides');
+    const counter = document.getElementById('counter');
 
-    totalSlidesSpan.textContent = slides.length;
+    function updateCounter() {
+      counter.textContent = `${currentIndex + 1} / ${slides.length}`;
+    }
 
     function loadSlide(index) {
       if (index < 0) index = 0;
       if (index >= slides.length) index = slides.length - 1;
       currentIndex = index;
       const slideFile = slides[currentIndex];
-      frame.src = `/slide/${slideFile}`;
-      currentIdxSpan.textContent = currentIndex + 1;
-      // Disable buttons at ends if desired
-      prevBtn.disabled = (currentIndex === 0);
-      nextBtn.disabled = (currentIndex === slides.length - 1);
+      frame.src = `slide/${slideFile}`;
+      updateCounter();
     }
 
     function nextSlide() {
@@ -104,9 +79,8 @@
       }
     }
 
-    // Keyboard shortcuts
+    // Keyboard shortcuts: 'a' for next, 'q' for previous
     window.addEventListener('keydown', (e) => {
-      // 'a' for next, 'q' for previous
       if (e.key === 'a' || e.key === 'A') {
         e.preventDefault();
         nextSlide();
@@ -116,14 +90,12 @@
       }
     });
 
-    prevBtn.addEventListener('click', prevSlide);
-    nextBtn.addEventListener('click', nextSlide);
-
-    // Load first slide
+    // Initial load
     if (slides.length > 0) {
       loadSlide(0);
     } else {
-      frame.srcdoc = '<html><body style="background:#0e305b; color:white; display:flex; justify-content:center; align-items:center;"><h1>No slides configured</h1><p>Edit the "slides" array in slide.html</p></body></html>';
+      frame.srcdoc = '<html><body style="background:#0e305b; color:white; display:flex; justify-content:center; align-items:center;"><h1>No slides configured</h1></body></html>';
+      counter.style.display = 'none';
     }
   </script>
 </body>
