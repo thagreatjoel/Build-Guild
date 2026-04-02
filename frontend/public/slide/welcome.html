@@ -85,19 +85,19 @@
       border: 0;
     }
 
-    /* Main container – full height, same as schedule */
+    /* Main container – reduced top padding to move content up */
     .welcome-container {
       width: 100%;
       height: 100vh;
       max-width: 1400px;
       margin: 0 auto;
-      padding: clamp(80px, 12vh, 120px) 4vw 2vh 4vw;
+      padding: clamp(60px, 8vh, 80px) 4vw 2vh 4vw;  /* less top padding */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
-    /* Centered content – no card, just text/logo */
+    /* Centered content – no card */
     .welcome-content {
       flex: 1;
       display: flex;
@@ -107,18 +107,20 @@
       text-align: center;
     }
 
+    /* Logo bigger */
     .blueprint-logo {
-      max-width: 280px;
-      margin-bottom: 2rem;
+      max-width: 340px;      /* increased from 280px */
+      margin-bottom: 1.5rem;
     }
     .blueprint-logo img {
       width: 100%;
       height: auto;
     }
 
+    /* Title text slightly smaller */
     .title {
       font-family: var(--fh);
-      font-size: clamp(2.5rem, 8vh, 5rem);
+      font-size: clamp(2rem, 6vh, 4rem);   /* reduced from 2.5rem,8vh,5rem */
       font-weight: 800;
       letter-spacing: 2px;
       margin-bottom: 0.5rem;
