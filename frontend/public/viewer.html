@@ -94,7 +94,7 @@
       if (index >= slides.length) index = slides.length - 1;
       currentIndex = index;
       const slideFile = slides[currentIndex];
-      frame.src = `slide/${slideFile}`;
+      frame.src = `/slide/${slideFile}`;
       currentIdxSpan.textContent = currentIndex + 1;
       // Disable buttons at ends if desired
       prevBtn.disabled = (currentIndex === 0);
