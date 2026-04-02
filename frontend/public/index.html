@@ -138,46 +138,56 @@
     }
 
     async function verifyOTP() {
-      const digits = document.querySelectorAll('.otp-digit');
-      const enteredOTP = Array.from(digits).map(d => d.value).join('');
-      const errDiv = document.getElementById('otp-err-msg');
-      errDiv.style.display = 'none';
+  const digits = document.querySelectorAll('.otp-digit');
+  const enteredOTP = Array.from(digits).map(d => d.value).join('');
+  const errDiv = document.getElementById('otp-err-msg');
+  errDiv.style.display = 'none';
 
-      if (enteredOTP.length !== 6) {
-        errDiv.textContent = 'Please enter complete 6-digit OTP';
-        errDiv.style.display = 'block';
-        return;
-      }
+  if (enteredOTP.length !== 6) {
+    errDiv.textContent = 'Please enter complete 6-digit OTP';
+    errDiv.style.display = 'block';
+    return;
+  }
 
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: currentEmail, otp: enteredOTP })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      await recordLogin(currentEmail);
+      localStorage.setItem('eventAccess', JSON.stringify({
+        email: currentEmail,
+        username: data.username,
+        displayName: data.displayName,
+        loggedIn: true,
+        timestamp: Date.now()
+      }));
+      
+      // Check event status before redirect
       try {
-        const res = await fetch(`${API_BASE_URL}/api/user/verify-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: currentEmail, otp: enteredOTP })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          await recordLogin(currentEmail);
-          localStorage.setItem('eventAccess', JSON.stringify({
-            email: currentEmail,
-            username: data.username,
-            displayName: data.displayName,
-            loggedIn: true,
-            timestamp: Date.now()
-          }));
-          toast(`Welcome ${data.displayName || data.username}! Login successful!`, 'ok');
-          setTimeout(() => {
-            window.location.href = '/waiting.html';
-          }, 1500);
+        const statusRes = await fetch(`${API_BASE_URL}/api/admin/event-status`);
+        const statusData = await statusRes.json();
+        if (statusData.isOpen) {
+          window.location.href = '/event-dashboard.html';
         } else {
-          errDiv.textContent = data.msg || 'Invalid OTP';
-          errDiv.style.display = 'block';
+          window.location.href = '/waiting.html';
         }
       } catch (err) {
-        errDiv.textContent = 'Network error. Please try again.';
-        errDiv.style.display = 'block';
+        // Fallback to waiting.html if status check fails
+        window.location.href = '/waiting.html';
       }
+    } else {
+      errDiv.textContent = data.msg || 'Invalid OTP';
+      errDiv.style.display = 'block';
     }
+  } catch (err) {
+    errDiv.textContent = 'Network error. Please try again.';
+    errDiv.style.display = 'block';
+  }
+}
 
     async function resendOTP() {
       if (!currentEmail) return;
