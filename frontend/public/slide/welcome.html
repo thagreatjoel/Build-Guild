@@ -6,7 +6,7 @@
   <title>Welcome — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <style>
-    /* ── Same background as schedule.html ── */
+    /* ── Exactly the same background as schedule.html ── */
     @font-face {
       font-family:'Phantom Sans';
       src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2') format('woff2'),
@@ -48,6 +48,7 @@
       background: var(--bp-dark);
       color: #fff;
       min-height: 100vh;
+      overscroll-behavior: none;
       background-image:
         linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
@@ -55,12 +56,8 @@
       background-position: 0 0, 0 0;
       background-color: var(--bp-dark);
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    /* Grain overlay */
     body::after {
       content: "";
       position: fixed;
@@ -78,7 +75,6 @@
       z-index: 1;
     }
 
-    /* Hack Club banner fixed top‑left */
     .banner-link {
       position: fixed;
       top: 20px;
@@ -92,38 +88,66 @@
       border: 0;
     }
 
-    /* Main container – no card, just centered content */
+    /* Main container – exactly like schedule.html */
     .welcome-container {
       width: 100%;
-      max-width: 800px;
+      height: 100vh;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: clamp(80px, 12vh, 120px) 2rem;
+      padding: clamp(80px, 12vh, 120px) 4vw 2vh 4vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Title and date – same styling */
+    .hero-title {
       text-align: center;
+      flex-shrink: 0;
+      margin-bottom: 2vh;
+    }
+    .hero-title h1 {
+      font-family: var(--fh);
+      font-size: clamp(2rem, 6vh, 5rem);
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 0.25vh;
+    }
+    .hero-title .welcome-text {
+      color: #fff;
+    }
+    .hero-title .kochi {
+      color: var(--bp-warning);
+    }
+    .event-date {
+      font-size: clamp(0.8rem, 2vh, 1.2rem);
+      color: rgba(255,255,255,0.6);
+      margin-top: 0;
+    }
+
+    /* Card – same dark background as schedule card */
+    .welcome-card {
+      background: var(--bp-darker);
+      border: 2px solid rgba(255,255,255,.14);
+      padding: 1.5vh 2vw;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
     }
 
     .blueprint-logo {
       max-width: 240px;
-      margin: 0 auto 1.5rem;
+      margin-bottom: 2vh;
     }
     .blueprint-logo img {
       width: 100%;
       height: auto;
     }
 
-    .event-title {
-      font-family: var(--fh);
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--bp-warning);
-      margin-bottom: 0.5rem;
-    }
-    .event-subtitle {
-      font-size: 1rem;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 2rem;
-    }
-
-    /* Button */
     .btn-continue {
       background: transparent;
       border: 1px solid var(--bp-warning);
@@ -136,7 +160,7 @@
       color: #fff;
       text-decoration: none;
       display: inline-block;
-      margin-top: 1rem;
+      margin: 2vh 0 1vh;
     }
     .btn-continue:hover {
       background: rgba(255,200,87,0.2);
@@ -144,38 +168,31 @@
       color: var(--bp-warning);
     }
 
-    /* Sponsor footer */
+    /* Sponsors – same as schedule */
     .sponsors {
-      margin-top: 2rem;
-      padding-top: 1rem;
+      flex-shrink: 0;
+      text-align: center;
+      padding: 1vh 0;
       border-top: 1px solid rgba(255,255,255,0.1);
+      margin-top: 1vh;
     }
     .sponsors-label {
-      font-size: 0.7rem;
+      font-size: clamp(0.6rem, 1.3vh, 0.8rem);
       text-transform: uppercase;
       letter-spacing: 2px;
       color: rgba(255,255,255,0.4);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.5vh;
     }
     .sponsor-logos {
       display: flex;
       justify-content: center;
-      gap: 1.5rem;
+      gap: clamp(1rem, 3vw, 3rem);
       flex-wrap: wrap;
     }
     .sponsor {
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: clamp(0.8rem, 1.8vh, 1.2rem);
       color: rgba(255,255,255,0.7);
-    }
-
-    @media (max-width: 600px) {
-      .event-title {
-        font-size: 1.8rem;
-      }
-      .welcome-container {
-        padding: clamp(80px, 12vh, 120px) 1rem;
-      }
     }
   </style>
 </head>
@@ -193,13 +210,20 @@
   </a>
 
   <div class="welcome-container z1">
-    <div class="blueprint-logo">
-      <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
+    <div class="hero-title">
+      <h1>
+        <span class="welcome-text">Welcome to</span>
+        <span class="kochi"> Build Guild</span>
+      </h1>
+      <div class="event-date">April 15, 2026 | Tinkerspace, Kochi</div>
     </div>
-    <div class="event-title">Build Guild Kochi</div>
-    <div class="event-subtitle">April 15, 2026 · Tinkerspace, Kochi</div>
 
-    <a href="/" class="btn-continue">Enter Event Portal →</a>
+    <div class="welcome-card">
+      <div class="blueprint-logo">
+        <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
+      </div>
+      <a href="/" class="btn-continue">Enter Event Portal →</a>
+    </div>
 
     <div class="sponsors">
       <div class="sponsors-label">Proudly supported by</div>
