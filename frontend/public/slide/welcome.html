@@ -92,32 +92,13 @@
       border: 0;
     }
 
-    /* Main container – same size and padding as schedule.html */
+    /* Main container – no card, just centered content */
     .welcome-container {
       width: 100%;
-      max-width: 1400px;
+      max-width: 800px;
       margin: 0 auto;
-      padding: clamp(80px, 12vh, 120px) 4vw 2vh 4vw;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* Card – with 70% opacity */
-    .welcome-card {
-      background: rgba(8, 28, 53, 0.7);  /* 70% opacity */
-      border: 2px solid rgba(255,255,255,.14);
-      padding: 3rem 4rem;
-      max-width: 700px;
-      width: 100%;
+      padding: clamp(80px, 12vh, 120px) 2rem;
       text-align: center;
-      animation: rise 0.5s cubic-bezier(.16,1,.3,1);
-      backdrop-filter: blur(2px); /* optional: helps readability */
-    }
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .blueprint-logo {
@@ -163,7 +144,7 @@
       color: var(--bp-warning);
     }
 
-    /* Sponsor footer – same as schedule.html */
+    /* Sponsor footer */
     .sponsors {
       margin-top: 2rem;
       padding-top: 1rem;
@@ -189,11 +170,11 @@
     }
 
     @media (max-width: 600px) {
-      .welcome-card {
-        padding: 2rem 1.5rem;
-      }
       .event-title {
         font-size: 1.8rem;
+      }
+      .welcome-container {
+        padding: clamp(80px, 12vh, 120px) 1rem;
       }
     }
   </style>
@@ -212,24 +193,22 @@
   </a>
 
   <div class="welcome-container z1">
-    <div class="welcome-card">
-      <div class="blueprint-logo">
-        <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
-      </div>
-      <div class="event-title">Build Guild Kochi</div>
-      <div class="event-subtitle">April 15, 2026 · Tinkerspace, Kochi</div>
+    <div class="blueprint-logo">
+      <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
+    </div>
+    <div class="event-title">Build Guild Kochi</div>
+    <div class="event-subtitle">April 15, 2026 · Tinkerspace, Kochi</div>
 
-      <a href="/" class="btn-continue">Enter Event Portal →</a>
+    <a href="/" class="btn-continue">Enter Event Portal →</a>
 
-      <div class="sponsors">
-        <div class="sponsors-label">Proudly supported by</div>
-        <div class="sponsor-logos">
-          <span class="sponsor">HACKCLUB</span>
-          <span class="sponsor">BLUEPRINT</span>
-          <span class="sponsor">JLCPCB</span>
-          <span class="sponsor">OSHWELD</span>
-          <span class="sponsor">EASYEDA</span>
-        </div>
+    <div class="sponsors">
+      <div class="sponsors-label">Proudly supported by</div>
+      <div class="sponsor-logos">
+        <span class="sponsor">HACKCLUB</span>
+        <span class="sponsor">BLUEPRINT</span>
+        <span class="sponsor">JLCPCB</span>
+        <span class="sponsor">OSHWELD</span>
+        <span class="sponsor">EASYEDA</span>
       </div>
     </div>
   </div>
