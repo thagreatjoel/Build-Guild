@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Page Not Found — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ── Same background as leaderboard ── */
+    @font-face {
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff');
+      font-weight:400;font-style:normal;font-display:swap;
+    }
+    @font-face {
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff') format('woff');
+      font-weight:700;font-style:normal;font-display:swap;
+    }
+
+    :root{
+      --bp-dark:#0e305b;
+      --bp-darker:#081c35;
+      --bp-warning:#ffc857;
+      --f:'Phantom Sans','Poppins',sans-serif;
+      --fh:'Poppins',sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--f);
+      background: var(--bp-dark);
+      color: #fff;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-position: 0 0, 0 0;
+      background-color: var(--bp-dark);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse, #000000b1, transparent);
+      opacity: .4;
+      filter: url(#grainy);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .z1 {
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner-link {
+      position: fixed;
+      top: 20px;
+      left: 0px;
+      z-index: 999;
+    }
+    .banner-link img {
+      width: 180px;
+      max-width: 25vw;
+      height: auto;
+      border: 0;
+    }
+
+    .error-card {
+      background: var(--bp-darker);
+      border: 2px solid rgba(255,255,255,.14);
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      animation: rise 0.5s cubic-bezier(.16,1,.3,1);
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .error-code {
+      font-size: 6rem;
+      font-weight: 800;
+      color: var(--bp-warning);
+      margin-bottom: 0.5rem;
+      letter-spacing: 4px;
+    }
+    .error-message {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .error-description {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 2rem;
+    }
+    .btn-home {
+      background: transparent;
+      border: 1px solid var(--bp-warning);
+      border-radius: 40px;
+      padding: 0.5rem 1.5rem;
+      font-family: var(--fh);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #fff;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-home:hover {
+      background: rgba(255,200,87,0.2);
+      border-color: var(--bp-warning);
+      color: var(--bp-warning);
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
+  <div class="error-card z1">
+    <div class="error-code">404</div>
+    <div class="error-message">Page Not Found</div>
+    <div class="error-description">
+      The page you're looking for doesn't exist or has been moved.
+    </div>
+    <a href="/" class="btn-home">← Return to Home</a>
+  </div>
+</body>
+</html>
