@@ -7,34 +7,35 @@ const sendOTPEmail = async (userEmail, otp) => {
     const { data, error } = await resend.emails.send({
   from: 'Build Guild Kochi <greatclub@thagreatjoel.me>',
   to: userEmail,
-  subject: 'Your OTP for Build Guild Kochi',
+  subject: 'Your OTP — Build Guild Kochi',
   html: `
-  <div style="margin:0; padding:0; background:#0e305b; font-family:Poppins, Arial, sans-serif;">
+  <div style="margin:0; padding:30px; background:#0e305b; font-family:Poppins, Arial, sans-serif;">
 
     <div style="
       max-width:500px;
-      margin:40px auto;
+      margin:auto;
       padding:28px;
       border-radius:12px;
-      background-color:#0e305b;
+      background:#0e305b;
       color:#ffffff;
-
-      /* Static grid */
       background-image:
         linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
       background-size:50px 50px;
     ">
 
-      <h1 style="text-align:center; font-weight:800; letter-spacing:1px;">
+      <!-- Header -->
+      <h1 style="margin:0; text-align:center; font-size:22px; font-weight:800;">
         Build Guild <span style="color:#ffc857;">Kochi</span>
       </h1>
 
-      <p style="text-align:center; color:#b8c7db; font-size:14px;">
-        One-time password
+      <!-- Subtitle -->
+      <p style="margin:18px 0 6px; text-align:center; font-size:14px; color:#b8c7db;">
+        Secure access verification
       </p>
 
-      <div style="text-align:center; margin:20px 0;">
+      <!-- OTP Box -->
+      <div style="text-align:center; margin:20px 0 24px;">
         <span style="
           display:inline-block;
           font-size:38px;
@@ -49,20 +50,34 @@ const sendOTPEmail = async (userEmail, otp) => {
         </span>
       </div>
 
-      <p style="text-align:center; font-size:13px; color:#b8c7db;">
-        Valid for 5 minutes
+      <!-- Info -->
+      <p style="text-align:center; font-size:13px; color:#b8c7db; margin:0;">
+        This code is valid for <strong>5 minutes</strong> and can be used only once.
       </p>
 
-      <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin:24px 0;">
+      <!-- Extra details -->
+      <div style="margin:20px 0; padding:14px; border-radius:8px; background:rgba(255,255,255,0.04); font-size:12px; color:#9fb3d1;">
+        <p style="margin:0;">Requested for: <strong>${userEmail}</strong></p>
+        <p style="margin:6px 0 0;">Time: <strong>${new Date().toLocaleString()}</strong></p>
+      </div>
 
-      <p style="text-align:center; font-size:11px; color:#6f86a8;">
+      <!-- Warning -->
+      <p style="text-align:center; font-size:12px; color:#8ea2c0; margin:0;">
+        If you did not request this code, you can safely ignore this email.
+      </p>
+
+      <!-- Footer -->
+      <hr style="margin:24px 0; border:none; border-top:1px solid rgba(255,255,255,0.1);">
+
+      <p style="text-align:center; font-size:11px; color:#6f86a8; margin:0;">
         Build Guild Kochi · April 15, 2026 · Kochi, India
       </p>
 
     </div>
   </div>
   `
-});   
+});
+    
     if (error) throw new Error(error.message);
     console.log(`✅ OTP email sent to ${userEmail}`);
     return true;
