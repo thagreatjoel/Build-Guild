@@ -16,7 +16,14 @@
       src: url('../font/rc-fullbasic.ttf') format('truetype');
       font-weight: 700; font-style: normal; font-display: swap;
     }
-
+@keyframes moveGrid {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 100px 100px, 100px 100px;
+  }
+}
     :root {
       --bp-lighter: #344b6a;
       --bp-dark: #0e305b;
@@ -46,6 +53,7 @@
       background-size: 50px 50px;
       background-position: 0 0, 0 0;
       background-color: var(--bp-dark);
+      animation: moveGrid 10s linear infinite;
       position: relative;
     }
 

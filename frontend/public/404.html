@@ -19,7 +19,14 @@
           url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff') format('woff');
       font-weight:700;font-style:normal;font-display:swap;
     }
-
+@keyframes moveGrid {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 100px 100px, 100px 100px;
+  }
+}
     :root{
       --bp-dark:#0e305b;
       --bp-darker:#081c35;
@@ -48,6 +55,7 @@
       position: relative;
       display: flex;
       align-items: center;
+      animation: moveGrid 10s linear infinite;
       justify-content: center;
     }
 
