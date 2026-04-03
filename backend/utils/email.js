@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendOTPEmail = async (userEmail, otp) => {
   try {
     const { data, error } = await resend.emails.send({
-  from: 'greatclub@thagreatjoel.me',
+  from: 'Build Guild Kochi <greatclub@thagreatjoel.me>',
   to: userEmail,
   subject: 'Your OTP for Build Guild Kochi',
   html: `
