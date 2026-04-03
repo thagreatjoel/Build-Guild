@@ -171,7 +171,7 @@
         const statusRes = await fetch(`${API_BASE_URL}/api/admin/event-status`);
         const statusData = await statusRes.json();
         if (statusData.isOpen) {
-          window.location.href = '/event-dashboard.html';
+          window.location.href = '/dashboard.html';
         } else {
           window.location.href = '/waiting.html';
         }
