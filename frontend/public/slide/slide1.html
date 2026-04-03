@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Build Guild Kochi — Slides</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ====== Base styles (same as your schedule.html) ====== */
+    @font-face {
+      font-family:'Phantom Sans';
+      src: url('../font/rc-fullbasic.ttf') format('truetype');
+      font-weight:400;font-style:normal;font-display:swap;
+    }
+    @font-face {
+      font-family:'Phantom Sans';
+      src: url('../font/rc-fullbasic.ttf') format('truetype');
+      font-weight:700;font-style:normal;font-display:swap;
+    }
+
+    :root{
+      --bp-lighter:#344b6a;
+      --bp-dark:#0e305b;
+      --bp-darker:#081c35;
+      --bp-light:#dbe4ee;
+      --bp-warning:#ffc857;
+      --f:'Phantom Sans','Poppins',sans-serif;
+      --fh:'Poppins',sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--f);
+      background: var(--bp-dark);
+      color: #fff;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-position: 0 0, 0 0;
+      background-color: var(--bp-dark);
+      position: relative;
+      overflow: hidden;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse, #000000b1, transparent);
+      opacity: .4;
+      filter: url(#grainy);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .z1 { position: relative; z-index: 1; }
+
+    /* Banner */
+    .banner-link {
+      position: fixed;
+      top: 40px;
+      left: 0px;
+      z-index: 999;
+    }
+    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
+
+    /* Main container */
+    .slides-container {
+      width: 100%;
+      height: 100vh;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: clamp(40px, 5vh, 60px) 4vw 2vh 4vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    /* The element that holds the animated logo + title */
+    .animated-header {
+      position: relative;
+      flex-shrink: 0;
+      text-align: center;
+      transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      margin-bottom: 2vh;
+    }
+
+    .blueprint-logo {
+      transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      margin: 0 auto;
+    }
+    .blueprint-logo img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .title {
+      transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      font-family: var(--fh);
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+    .title .build { color: #fff; }
+    .title .kochi { color: var(--bp-warning); }
+
+    /* Two different states */
+    .slide-welcome .animated-header {
+      /* position & size for slide 1 */
+      transform: translateY(0) scale(1);
+    }
+    .slide-welcome .blueprint-logo {
+      max-width: 800px;
+      margin-bottom: -1.2rem;
+    }
+    .slide-welcome .title {
+      font-size: clamp(2rem, 6vh, 4rem);
+      margin-bottom: -1.2rem;
+    }
+
+    .slide-chitchat .animated-header {
+      transform: translateY(-10vh) scale(0.4);
+    }
+    .slide-chitchat .blueprint-logo {
+      max-width: 280px;
+      margin-bottom: 0.5rem;
+    }
+    .slide-chitchat .title {
+      font-size: clamp(0.9rem, 3vh, 1.5rem);
+      letter-spacing: 4px;
+      margin-bottom: 0;
+    }
+
+    /* Content card that fades */
+    .content-card {
+      background: var(--bp-darker);
+      border: 2px solid rgba(255,255,255,.14);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: opacity 0.4s ease;
+    }
+    .welcome-content, .chitchat-content {
+      transition: opacity 0.4s ease;
+    }
+    .slide-welcome .chitchat-content { display: none; }
+    .slide-chitchat .welcome-content { display: none; }
+
+    /* Welcome card inner */
+    .welcome-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 1.5vh 2vw;
+    }
+
+    /* Chitchat card inner */
+    .chitchat-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5vh 2vw;
+    }
+    .chitchat-heading {
+      font-family: var(--fh);
+      font-size: clamp(1.8rem, 5vh, 3.2rem);
+      font-weight: 800;
+      color: var(--bp-warning);
+      text-align: center;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+      margin-bottom: 2vh;
+    }
+    .prompt-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      gap: 1.5vh;
+    }
+    .prompt {
+      font-size: clamp(1.1rem, 2.6vh, 2.2rem);
+      line-height: 1.55;
+      padding-left: 1.5vw;
+      border-left: 3px solid var(--bp-warning);
+      color: rgba(255,255,255,0.95);
+    }
+    .prompt::before { content: "“"; margin-right: 0.25rem; color: var(--bp-warning); }
+    .prompt::after  { content: "”"; margin-left: 0.25rem; color: var(--bp-warning); }
+
+    /* Sponsors (identical) */
+    .sponsors {
+      flex-shrink: 0;
+      text-align: center;
+      padding: 1vh 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin-top: 1vh;
+    }
+    .sponsors-label {
+      font-size: clamp(0.6rem, 1.3vh, 0.8rem);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 0.5vh;
+    }
+    .sponsor-logos {
+      display: flex;
+      justify-content: center;
+      gap: clamp(1rem, 3vw, 3rem);
+      flex-wrap: wrap;
+    }
+    .sponsor {
+      font-weight: 700;
+      font-size: clamp(0.8rem, 1.8vh, 1.2rem);
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Keyboard hint */
+    .key-hint {
+      position: fixed;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
+  <div class="slides-container z1" id="app">
+    <!-- Animated logo + title (shared) -->
+    <div class="animated-header" id="animatedHeader">
+      <div class="blueprint-logo" id="logo">
+        <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
+      </div>
+      <div class="title" id="title">
+        <span class="build">Build Guild</span>
+        <span class="kochi"> Kochi</span>
+      </div>
+    </div>
+
+    <!-- Card content that changes -->
+    <div class="content-card">
+      <!-- Welcome slide content -->
+      <div class="welcome-content" id="welcomeContent">
+        <!-- empty; only the animated header already shows the logo+title -->
+        <!-- we keep the structure but no extra text -->
+      </div>
+      <!-- Chitchat slide content -->
+      <div class="chitchat-content" id="chitchatContent" style="display: none;">
+        <div class="chitchat-heading">CHIT CHAT !</div>
+        <div class="prompt-list">
+          <div class="prompt">Look to your person next to you and share what projects you're excited about this year!</div>
+          <div class="prompt">Connect with someone new: what are you looking forward to learning in the Build Guild?</div>
+          <div class="prompt">Introverts and extroverts alike, say hello to your neighbor!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sponsors (same for both slides) -->
+    <div class="sponsors">
+      <div class="sponsors-label">Proudly supported by</div>
+      <div class="sponsor-logos">
+        <span class="sponsor">HACKCLUB</span>
+        <span class="sponsor">BLUEPRINT</span>
+        <span class="sponsor">JLCPCB</span>
+        <span class="sponsor">OSHWELD</span>
+        <span class="sponsor">EASYEDA</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="key-hint">Press <kbd>a</kbd> → next &nbsp;&nbsp;|&nbsp;&nbsp; <kbd>q</kbd> ← previous</div>
+
+  <script>
+    let currentSlide = 0; // 0 = welcome, 1 = chitchat
+    const container = document.getElementById('app');
+    const welcomeDiv = document.getElementById('welcomeContent');
+    const chitchatDiv = document.getElementById('chitchatContent');
+
+    function setSlide(index) {
+      if (index === 0) {
+        container.classList.remove('slide-chitchat');
+        container.classList.add('slide-welcome');
+        welcomeDiv.style.display = 'flex';
+        chitchatDiv.style.display = 'none';
+      } else {
+        container.classList.remove('slide-welcome');
+        container.classList.add('slide-chitchat');
+        welcomeDiv.style.display = 'none';
+        chitchatDiv.style.display = 'flex';
+      }
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      if (currentSlide === 0) setSlide(1);
+      else setSlide(0); // loop back
+    }
+    function prevSlide() {
+      if (currentSlide === 1) setSlide(0);
+      else setSlide(1);
+    }
+
+    // Keyboard: a / q
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'q' || e.key === 'Q') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    // Initial state
+    setSlide(0);
+  </script>
+</body>
+</html>
