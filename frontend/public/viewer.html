@@ -20,8 +20,9 @@
       height: 100%;
       border: none;
       display: block;
+      transition: opacity 0.2s ease;
+      opacity: 1;
     }
-    /* Optional: a tiny non‑intrusive counter (comment out if not wanted) */
     .slide-counter {
       position: fixed;
       bottom: 12px;
@@ -35,38 +36,71 @@
       pointer-events: none;
       z-index: 10;
     }
+    .flash-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,200,87,0.3);
+      pointer-events: none;
+      z-index: 20;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
   </style>
 </head>
 <body>
   <iframe id="slideFrame" title="Slide Viewer"></iframe>
   <div class="slide-counter" id="counter">1 / 0</div>
+  <div class="flash-overlay" id="flashOverlay"></div>
 
   <script>
     // ---------- CONFIGURATION ----------
     // List your slide files in order (relative to the "slide/" folder)
     const slides = [
-      "slide1.html",
       "1.html",
       "2.html",
-      // add more files: "2.html", "3.html", ...
+      "3.html",
+      // add more as needed
     ];
     // -----------------------------------
 
     let currentIndex = 0;
     const frame = document.getElementById('slideFrame');
     const counter = document.getElementById('counter');
+    const flash = document.getElementById('flashOverlay');
 
     function updateCounter() {
       counter.textContent = `${currentIndex + 1} / ${slides.length}`;
     }
 
-    function loadSlide(index) {
+    // Helper: wait for ms
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Fade iframe out, change src, fade in
+    async function loadSlide(index) {
       if (index < 0) index = 0;
       if (index >= slides.length) index = slides.length - 1;
+      if (index === currentIndex) return;
+
+      // Fade out iframe and show flash
+      frame.style.opacity = '0';
+      flash.style.opacity = '0.6';
+      await delay(150);
+
+      // Load new slide
       currentIndex = index;
       const slideFile = slides[currentIndex];
       frame.src = `slide/${slideFile}`;
       updateCounter();
+
+      // Wait a bit for the iframe to start loading, then fade back
+      await delay(200);
+      frame.style.opacity = '1';
+      flash.style.opacity = '0';
     }
 
     function nextSlide() {
@@ -81,7 +115,7 @@
       }
     }
 
-    // Keyboard shortcuts: 'a' for next, 'q' for previous
+    // Keyboard shortcuts: 'a' next, 'q' previous
     window.addEventListener('keydown', (e) => {
       if (e.key === 'a' || e.key === 'A') {
         e.preventDefault();
@@ -94,7 +128,10 @@
 
     // Initial load
     if (slides.length > 0) {
-      loadSlide(0);
+      frame.src = `slide/${slides[0]}`;
+      currentIndex = 0;
+      updateCounter();
+      frame.style.opacity = '1';
     } else {
       frame.srcdoc = '<html><body style="background:#0e305b; color:white; display:flex; justify-content:center; align-items:center;"><h1>No slides configured</h1></body></html>';
       counter.style.display = 'none';
