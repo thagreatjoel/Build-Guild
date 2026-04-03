@@ -3,29 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Welcome — Build Guild Kochi</title>
+  <title>ChitChat — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <style>
-    /* ── Same background as schedule.html ── */
+    /* ── Exactly the same background as schedule.html ── */
     @font-face {
-      font-family:'Phantom Sans';
-      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2') format('woff2'),
-          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff');
-      font-weight:400;font-style:normal;font-display:swap;
-    }
-    @font-face {
-      font-family:'Phantom Sans';
-      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2') format('woff2'),
-          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff') format('woff');
-      font-weight:700;font-style:normal;font-display:swap;
-    }
+  font-family:'Phantom Sans';
+  src: url('../font/rc-fullbasic.ttf') format('truetype');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face {
+  font-family:'Phantom Sans';
+  src: url('../font/rc-fullbasic.ttf') format('truetype');
+  font-weight:700;font-style:normal;font-display:swap;
+}
 
     :root{
       --bp-lighter:#344b6a;
       --bp-dark:#0e305b;
       --bp-darker:#081c35;
       --bp-light:#dbe4ee;
+      --bp-danger:#fe8e86;
+      --bp-danger-darker:#bd4c44;
       --bp-warning:#ffc857;
+      --bp-success:#a8f0ae;
       --f:'Phantom Sans','Poppins',sans-serif;
       --fh:'Poppins',sans-serif;
     }
@@ -85,59 +86,82 @@
       border: 0;
     }
 
-    /* Main container – reduced top padding to move content up */
-    .welcome-container {
+    .chitchat-container {
       width: 100%;
       height: 100vh;
       max-width: 1400px;
       margin: 0 auto;
-      padding: clamp(60px, 8vh, 80px) 4vw 2vh 4vw;  /* less top padding */
+      padding: clamp(20px, 2vh, 120px) 4vw 2vh 4vw;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
-    /* Centered content – no card */
-    .welcome-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    .hero-logo {
       text-align: center;
+      flex-shrink: 0;
+      margin-bottom: 2vh;
     }
-
-    /* Logo bigger */
     .blueprint-logo {
-      max-width: 340px;      /* increased from 280px */
-      margin-bottom: 1.5rem;
+      max-width: 420px;
+      margin: 0 auto -1.3rem;
     }
     .blueprint-logo img {
       width: 100%;
       height: auto;
     }
-
-    /* Title text slightly smaller */
-    .title {
-      font-family: var(--fh);
-      font-size: clamp(2rem, 6vh, 4rem);   /* reduced from 2.5rem,8vh,5rem */
-      font-weight: 800;
-      letter-spacing: 2px;
-      margin-bottom: 0.5rem;
-    }
-    .title .build {
-      color: #fff;
-    }
-    .title .kochi {
+    .main-title {
+  font-family: var(--fh);
+  font-size: clamp(0.9rem, 3vh, 1.5rem);
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+    .main-title .kochi {
       color: var(--bp-warning);
     }
-    .event-date {
-      font-size: clamp(1rem, 2.5vh, 1.4rem);
-      color: rgba(255,255,255,0.6);
-      margin-top: 0.5rem;
+
+    /* Card – content starts at the top */
+    .content-card {
+      background: var(--bp-darker);
+      border: 2px solid rgba(255,255,255,.14);
+      padding: 4vh 2vw;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;  /* title at the top */
+      overflow: hidden;
     }
 
-    /* Sponsors – same as schedule */
+    .chitchat-heading {
+      font-family: var(--fh);
+      font-size: clamp(2rem, 6vh, 3.5rem);
+      font-weight: 800;
+      color: var(--bp-warning);
+      text-align: center;
+      margin-bottom: 5vh;  /* space after title */
+    }
+
+    .prompt {
+  font-size: clamp(1.8rem, 3.7vh, 2.8rem);
+  line-height: 1.5;
+  margin: 2vh 0;
+  padding-left: 1.5vw;
+  border-left: 3px solid var(--bp-warning);
+  color: rgba(255,255,255,0.95);
+}
+    .prompt::before {
+      content: "“";
+      font-size: 1.2em;
+      margin-right: 0.3rem;
+      color: var(--bp-warning);
+    }
+    .prompt::after {
+      content: "”";
+      font-size: 1.2em;
+      margin-left: 0.3rem;
+      color: var(--bp-warning);
+    }
+
     .sponsors {
       flex-shrink: 0;
       text-align: center;
@@ -163,6 +187,15 @@
       font-size: clamp(0.8rem, 1.8vh, 1.2rem);
       color: rgba(255,255,255,0.7);
     }
+
+    @media (max-width: 700px) {
+      .prompt {
+        padding-left: 3vw;
+      }
+      .chitchat-heading {
+        margin-bottom: 1.5vh;
+      }
+    }
   </style>
 </head>
 <body>
@@ -178,16 +211,21 @@
     <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
   </a>
 
-  <div class="welcome-container z1">
-    <div class="welcome-content">
+  <div class="chitchat-container z1">
+    <div class="hero-logo">
       <div class="blueprint-logo">
         <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
       </div>
-      <div class="title">
-        <span class="build">Build Guild</span>
-        <span class="kochi"> Kochi</span>
+      <div class="main-title">
+        Build Guild <span class="kochi">Kochi</span>
       </div>
-      <div class="event-date">April 15, 2026 · Tinkerspace, Kochi</div>
+    </div>
+
+    <div class="content-card">
+      <div class="chitchat-heading">CHIT CHAT !</div>
+      <div class="prompt">Look to your person next to you and share what projects you're excited about this year!</div>
+      <div class="prompt">Connect with someone new: what are you looking forward to learning in the Build Guild?</div>
+      <div class="prompt">Introverts and extroverts alike, say hello to your neighbor!</div>
     </div>
 
     <div class="sponsors">
