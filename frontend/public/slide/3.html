@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Meet the Organizers — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/rc-fullbasic.ttf') format('truetype');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/rc-fullbasic.ttf') format('truetype');
+      font-weight: 700; font-style: normal; font-display: swap;
+    }
+
+    :root {
+      --bp-lighter: #344b6a;
+      --bp-dark: #0e305b;
+      --bp-darker: #081c35;
+      --bp-light: #dbe4ee;
+      --bp-danger: #fe8e86;
+      --bp-danger-darker: #bd4c44;
+      --bp-warning: #ffc857;
+      --bp-success: #a8f0ae;
+      --f: 'Phantom Sans', 'Poppins', sans-serif;
+      --fh: 'Poppins', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: var(--f);
+      background: var(--bp-dark);
+      color: #fff;
+      min-height: 100vh;
+      overscroll-behavior: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-position: 0 0, 0 0;
+      background-color: var(--bp-dark);
+      position: relative;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse, #000000b1, transparent);
+      opacity: .4;
+      filter: url(#grainy);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .z1 { position: relative; z-index: 1; }
+
+    .banner-link {
+      position: fixed;
+      top: 20px;
+      left: 0;
+      z-index: 999;
+    }
+    .banner-link img {
+      width: 180px;
+      max-width: 25vw;
+      height: auto;
+      border: 0;
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: clamp(16px, 3vh, 80px) clamp(24px, 5vw, 80px) clamp(16px, 2.5vh, 40px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2.5vh, 28px);
+    }
+
+    .hero-logo {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(6px, 1vh, 14px);
+    }
+    .blueprint-logo {
+      max-width: clamp(200px, 30vw, 380px);
+    }
+    .blueprint-logo img { width: 100%; height: auto; display: block; }
+    .main-title {
+      font-family: var(--fh);
+      font-size: clamp(0.75rem, 2vh, 1.2rem);
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+    .main-title .kochi { color: var(--bp-warning); }
+
+    .content-card {
+      background: rgba(8, 28, 53, 0.5); /* semi‑transparent */
+      border: 2px solid rgba(255,255,255,.14);
+      padding: clamp(24px, 4vh, 56px) clamp(32px, 5vw, 72px);
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .card-heading {
+      font-family: var(--fh);
+      font-size: clamp(1.8rem, 5vh, 3.2rem);
+      font-weight: 800;
+      color: var(--bp-warning);
+      text-align: center;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+      text-decoration-thickness: 2px;
+      flex-shrink: 0;
+      margin-bottom: clamp(16px, 3vh, 40px);
+    }
+
+    .organizer-image {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .organizer-image img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 20px;
+      transition: transform 0.2s ease;
+    }
+    .organizer-image img:hover {
+      transform: scale(1.02);
+    }
+
+    .sponsors {
+      flex-shrink: 0;
+      text-align: center;
+      padding-top: clamp(10px, 1.5vh, 20px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .sponsors-label {
+      font-size: clamp(0.55rem, 1.1vh, 0.75rem);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: clamp(6px, 0.8vh, 12px);
+    }
+    .sponsor-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(16px, 3vw, 48px);
+      flex-wrap: wrap;
+    }
+    .sponsor {
+      font-weight: 700;
+      font-size: clamp(0.7rem, 1.5vh, 1rem);
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 1px;
+    }
+
+    /* Audio element hidden */
+    audio {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .card-heading { font-size: clamp(1.4rem, 6vw, 2rem); }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
+  <div class="container z1">
+    <div class="hero-logo">
+      <div class="blueprint-logo">
+        <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
+      </div>
+      <div class="main-title">
+        Build Guild <span class="kochi">Kochi</span>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="card-heading">MEET THE ORGANIZERS</div>
+      <div class="organizer-image" id="clickableImage">
+        <img src="https://greatclub.netlify.app/assets/mascot-photo-DryXZNFL.png" alt="Organizers">
+      </div>
+    </div>
+
+    <div class="sponsors">
+      <div class="sponsors-label">Proudly supported by</div>
+      <div class="sponsor-logos">
+        <span class="sponsor">HACKCLUB</span>
+        <span class="sponsor">BLUEPRINT</span>
+        <span class="sponsor">JLCPCB</span>
+        <span class="sponsor">OSHWELD</span>
+        <span class="sponsor">EASYEDA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden audio element – replace 'sound.mp3' with your actual sound file path -->
+  <audio id="organizerSound" preload="auto">
+    <source src="fahh.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const audio = document.getElementById('organizerSound');
+    const imageDiv = document.getElementById('clickableImage');
+
+    // Function to play sound (handles user interaction)
+    function playSound() {
+      if (audio) {
+        audio.currentTime = 0; // restart from beginning
+        audio.play().catch(e => console.log('Audio play failed:', e));
+      }
+    }
+
+    // Play on click
+    imageDiv.addEventListener('click', playSound);
+
+    // Attempt to autoplay on slide load (browsers usually block this unless user interacted earlier)
+    // We'll try, but it's likely to fail – we'll show a small hint if blocked.
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        console.log('Autoplay prevented. Click the image to hear the sound.');
+        // Optional: show a subtle tooltip or indicator
+        const img = imageDiv.querySelector('img');
+        img.style.cursor = 'pointer';
+        img.title = 'Click to play sound';
+      });
+    }
+  </script>
+</body>
+</html>
