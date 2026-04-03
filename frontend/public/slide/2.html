@@ -8,15 +8,17 @@
   <style>
     /* ── Exactly the same background as schedule.html ── */
     @font-face {
-  font-family:'Phantom Sans';
-  src: url('../font/rc-fullbasic.ttf') format('truetype');
-  font-weight:400;font-style:normal;font-display:swap;
-}
-@font-face {
-  font-family:'Phantom Sans';
-  src: url('../font/rc-fullbasic.ttf') format('truetype');
-  font-weight:700;font-style:normal;font-display:swap;
-}
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff') format('woff');
+      font-weight:400;font-style:normal;font-display:swap;
+    }
+    @font-face {
+      font-family:'Phantom Sans';
+      src:url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2') format('woff2'),
+          url('https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff') format('woff');
+      font-weight:700;font-style:normal;font-display:swap;
+    }
 
     :root{
       --bp-lighter:#344b6a;
@@ -139,7 +141,14 @@
       color: var(--bp-warning);
       text-align: center;
       margin-bottom: 5vh;  /* space after title */
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+ 
+
+  padding-bottom: 0.1em;
     }
+
+
 
     .prompt {
   font-size: clamp(1.8rem, 3.7vh, 2.8rem);
@@ -187,6 +196,15 @@
       font-size: clamp(0.8rem, 1.8vh, 1.2rem);
       color: rgba(255,255,255,0.7);
     }
+    
+    
+    
+    .underline {
+        text-decoration: underline;           /* add this line */
+  text-underline-offset: 0.2em;        /* optional: adjust underline position */
+  text-decoration-thickness: 2px;      /* optional: make underline thicker */
+}
+    
 
     @media (max-width: 700px) {
       .prompt {
@@ -222,7 +240,7 @@
     </div>
 
     <div class="content-card">
-      <div class="chitchat-heading">CHIT CHAT !</div>
+<div class="chitchat-heading">CHIT CHAT !</div>
       <div class="prompt">Look to your person next to you and share what projects you're excited about this year!</div>
       <div class="prompt">Connect with someone new: what are you looking forward to learning in the Build Guild?</div>
       <div class="prompt">Introverts and extroverts alike, say hello to your neighbor!</div>
