@@ -20,8 +20,9 @@
       height: 100%;
       border: none;
       display: block;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.2s ease, transform 0.2s ease;
       opacity: 1;
+      transform: scale(1) rotate(0deg);
     }
     .slide-counter {
       position: fixed;
@@ -57,16 +58,15 @@
 
   <script>
     // ---------- CONFIGURATION ----------
-    // List your slide files in order (relative to the "slide/" folder)
     const slides = [
       "1.html",
       "2.html",
-      "3.html",
       // add more as needed
     ];
     // -----------------------------------
 
     let currentIndex = 0;
+    let isTransitioning = false;
     const frame = document.getElementById('slideFrame');
     const counter = document.getElementById('counter');
     const flash = document.getElementById('flashOverlay');
@@ -75,32 +75,37 @@
       counter.textContent = `${currentIndex + 1} / ${slides.length}`;
     }
 
-    // Helper: wait for ms
     function delay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // Fade iframe out, change src, fade in
     async function loadSlide(index) {
+      if (isTransitioning) return;
       if (index < 0) index = 0;
       if (index >= slides.length) index = slides.length - 1;
       if (index === currentIndex) return;
 
-      // Fade out iframe and show flash
+      isTransitioning = true;
+
+      // Step 1: Fade out iframe and apply grid movement (scale + rotate)
       frame.style.opacity = '0';
+      frame.style.transform = 'scale(0.95) rotate(0.5deg)';
       flash.style.opacity = '0.6';
       await delay(150);
 
-      // Load new slide
+      // Step 2: Load new slide
       currentIndex = index;
       const slideFile = slides[currentIndex];
       frame.src = `slide/${slideFile}`;
       updateCounter();
 
-      // Wait a bit for the iframe to start loading, then fade back
+      // Step 3: Wait a bit for the iframe to start loading, then reset transform and fade in
       await delay(200);
       frame.style.opacity = '1';
+      frame.style.transform = 'scale(1) rotate(0deg)';
       flash.style.opacity = '0';
+      await delay(100);
+      isTransitioning = false;
     }
 
     function nextSlide() {
