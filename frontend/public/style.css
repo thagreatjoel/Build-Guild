@@ -12,6 +12,15 @@
   font-weight:700;font-style:normal;font-display:swap;
 }
 
+/* RC Fullbasic font */
+@font-face {
+  font-family: 'Phantom Sans';
+  src: url('./font/rc-basic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root{
   --bp-lighter:#344b6a;
   --bp-dark:#0e305b;
