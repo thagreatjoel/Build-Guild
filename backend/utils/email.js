@@ -7,7 +7,7 @@ const sendOTPEmail = async (userEmail, otp) => {
     const { data, error } = await resend.emails.send({
   from: 'Build Guild Kochi <greatclub@thagreatjoel.me>',
   to: userEmail,
-  subject: 'Your OTP — Build Guild Kochi',
+  subject: 'OTP for Build Guild Kochi',
   html: `
   <div style="margin:0; padding:30px; background:#0e305b; font-family:Poppins, Arial, sans-serif;">
 
