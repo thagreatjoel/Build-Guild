@@ -1,15 +1,24 @@
-/* ── Phantom Sans (Hack Club's actual font) ── */
 @font-face {
-  font-family:'Phantom Sans';
-  src: url('../font/rc-fullbasic.ttf') format('truetype');
-  font-weight:400;font-style:normal;font-display:swap;
+  font-family: 'Phantom Sans';
+  src: url('../font/RC-BasicLight.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
 }
 @font-face {
-  font-family:'Phantom Sans';
-  src: url('../font/rc-fullbasic.ttf') format('truetype');
-  font-weight:700;font-style:normal;font-display:swap;
+  font-family: 'Phantom Sans';
+  src: url('../font/RC-BasicFull.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
-
+@font-face {
+  font-family: 'Phantom Sans';
+  src: url('../font/RC-BasicDark.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 @keyframes moveGrid {
   0% {
     background-position: 0 0, 0 0;
@@ -29,7 +38,7 @@
   --bp-warning:#ffc857;
   --bp-success:#a8f0ae;
   --f:'Phantom Sans','Poppins',sans-serif;
-  --fh:'Poppins',sans-serif;
+  --fh: 'Phantom Sans','Poppins',sans-serif;
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
