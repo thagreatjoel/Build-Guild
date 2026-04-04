@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Meet the Organizers — Build Guild Kochi</title>
+  <title>FAQ — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <style>
     @font-face {
@@ -106,13 +106,10 @@
       text-transform: uppercase;
       opacity: 0.9;
     }
-    .main-title .kochi { 
-      color: var(--bp-warning);
-    font-family: var(--f); }
-
+    .main-title .kochi { color: var(--bp-warning); }
 
     .content-card {
-      background: rgba(8, 28, 53, 0.5); /* semi‑transparent */
+      background: rgba(8, 28, 53, 0.5);
       border: 2px solid rgba(255,255,255,.14);
       padding: clamp(24px, 4vh, 56px) clamp(32px, 5vw, 72px);
       flex: 1;
@@ -122,37 +119,48 @@
       overflow: hidden;
     }
 
-    .card-heading {
-      font-family: var(--fh);
-      font-size: clamp(1.8rem, 5vh, 3.2rem);
-      font-weight: 800;
-      color: var(--bp-warning);
+    .faq-header {
       text-align: center;
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
-      text-decoration-thickness: 2px;
-      flex-shrink: 0;
-      margin-bottom: clamp(16px, 3vh, 40px);
+      margin-bottom: 2vh;
     }
-
-    .organizer-image {
+    .hackclub-year {
+      font-family: var(--f);
+      font-size: clamp(1.5rem, 4vh, 2.5rem);
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+    .hackclub-year .year {
+      font-size: 0.7em;
+      color: rgba(255,255,255,0.7);
+    }
+    .partner-logos {
+      display: flex;
+      justify-content: center;
+      gap: clamp(1rem, 3vw, 2rem);
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .partner {
+      font-family: var(--f);
+      font-weight: 700;
+      font-size: clamp(1rem, 2.5vh, 1.5rem);
+      color: rgba(255,255,255,0.9);
+    }
+    .question-list {
       flex: 1;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      cursor: pointer;
+      gap: 2vh;
+      margin-top: 2vh;
     }
-    .organizer-image img {
-  max-width: 80%;
-  max-height: 40vh;
-  object-fit: contain;
-  border-radius: 20px;
-  transition: transform 0.2s ease;
-  margin: 0 auto;
-  display: block;
-}
-    .organizer-image img:hover {
-      transform: scale(1.02);
+    .question {
+      font-size: clamp(1.2rem, 3vh, 2rem);
+      font-weight: 600;
+      padding-left: 1.5vw;
+      border-left: 3px solid var(--bp-warning);
+      color: rgba(255,255,255,0.95);
+      line-height: 1.4;
     }
 
     .sponsors {
@@ -182,13 +190,9 @@
       letter-spacing: 1px;
     }
 
-    /* Audio element hidden */
-    audio {
-      display: none;
-    }
-
     @media (max-width: 600px) {
-      .card-heading { font-size: clamp(1.4rem, 6vw, 2rem); }
+      .question { font-size: clamp(1rem, 2.5vh, 1.5rem); }
+      .partner { font-size: clamp(0.8rem, 2vh, 1.2rem); }
     }
   </style>
 </head>
@@ -216,9 +220,22 @@
     </div>
 
     <div class="content-card">
-      <div class="card-heading">MEET THE ORGANIZERS</div>
-      <div class="organizer-image" id="clickableImage">
-        <img src="https://greatclub.netlify.app/assets/mascot-photo-DryXZNFL.png" alt="Organizers">
+      <div class="faq-header">
+        <div class="hackclub-year">
+          HACK CLUB<br>
+          <span class="year">2026</span>
+        </div>
+        <div class="partner-logos">
+          <span class="partner">AMD</span>
+          <span class="partner">Blueprint</span>
+          <span class="partner">Build Guild</span>
+          <span class="partner">KOCHI</span>
+        </div>
+      </div>
+      <div class="question-list">
+        <div class="question">Who's Running This ?!</div>
+        <div class="question">Is this fully free ?!</div>
+        <div class="question">Dang where do they get money !?</div>
       </div>
     </div>
 
@@ -233,40 +250,5 @@
       </div>
     </div>
   </div>
-
-  <!-- Hidden audio element – replace 'sound.mp3' with your actual sound file path -->
-  <audio id="organizerSound" preload="auto">
-    <source src="fahh.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-  <script>
-    const audio = document.getElementById('organizerSound');
-    const imageDiv = document.getElementById('clickableImage');
-
-    // Function to play sound (handles user interaction)
-    function playSound() {
-      if (audio) {
-        audio.currentTime = 0; // restart from beginning
-        audio.play().catch(e => console.log('Audio play failed:', e));
-      }
-    }
-
-    // Play on click
-    imageDiv.addEventListener('click', playSound);
-
-    // Attempt to autoplay on slide load (browsers usually block this unless user interacted earlier)
-    // We'll try, but it's likely to fail – we'll show a small hint if blocked.
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        console.log('Autoplay prevented. Click the image to hear the sound.');
-        // Optional: show a subtle tooltip or indicator
-        const img = imageDiv.querySelector('img');
-        img.style.cursor = 'pointer';
-        img.title = 'Click to play sound';
-      });
-    }
-  </script>
 </body>
 </html>
