@@ -8,7 +8,7 @@
   <style>
     @font-face {
       font-family: 'Phantom Sans';
-      src: url('../font/RC-BasicDark.ttf') format('truetype');
+      src: url('../font/RC-BasicLight.ttf') format('truetype');
       font-weight: 700;
       font-style: normal;
       font-display: swap;
@@ -20,7 +20,13 @@
       font-style: normal;
       font-display: swap;
     }
-   
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
     @keyframes moveGrid {
       0% { background-position: 0 0, 0 0; }
       100% { background-position: 100px 100px, 100px 100px; }
@@ -134,7 +140,7 @@
       text-align: center;
     }
     .whats-title {
-      font-family: var(--fh);
+      font-family: var(--f);
       font-size: clamp(3rem, 8vh, 5rem);   /* MUCH LARGER */
       font-weight: 800;
       color: var(--bp-warning);
