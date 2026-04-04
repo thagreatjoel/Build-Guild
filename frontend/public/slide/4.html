@@ -109,11 +109,11 @@
     .main-title .kochi { color: var(--bp-warning); }
 
     .content-card {
-      background: rgba(8, 28, 53, 0.5);
-      border: 2px solid rgba(255,255,255,.14);
+      background: rgba(8, 28, 53, 1);
+      
       padding: clamp(24px, 4vh, 56px) clamp(32px, 5vw, 72px);
       flex: 1;
-      min-height: 0;
+      min-height: 06;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -189,6 +189,8 @@
       color: rgba(255,255,255,0.7);
       letter-spacing: 1px;
     }
+    
+    
 
     @media (max-width: 600px) {
       .question { font-size: clamp(1rem, 2.5vh, 1.5rem); }
@@ -221,22 +223,39 @@
 
     <div class="content-card">
       <div class="faq-header">
-        <div class="hackclub-year">
-          HACK CLUB<br>
-          <span class="year">2026</span>
-        </div>
-        <div class="partner-logos">
-          <span class="partner">AMD</span>
-          <span class="partner">Blueprint</span>
-          <span class="partner">Build Guild</span>
-          <span class="partner">KOCHI</span>
-        </div>
+     
       </div>
-      <div class="question-list">
-        <div class="question">Who's Running This ?!</div>
-        <div class="question">Is this fully free ?!</div>
-        <div class="question">Dang where do they get money !?</div>
-      </div>
+      <div style="text-align:center; margin-top:40px;">
+
+  <h2 style="
+    font-family:Poppins, Arial, sans-serif;
+    font-size:80px;
+    font-weight:800;
+    color:#ffffff;
+    margin-bottom:10px;
+  ">
+    Who's Running This?!
+  </h2>
+
+  <p style="
+    font-size:35px;
+    font-weight:600;
+    color:#ffc857;
+    margin:6px 0;
+  ">
+    Is this fully free?!
+  </p>
+
+  <p style="
+    font-size:35px;
+    font-weight:600;
+    color:#ffc857;
+    margin:6px 0;
+  ">
+    Dang... where do they get money?!
+  </p>
+
+</div>
     </div>
 
     <div class="sponsors">
