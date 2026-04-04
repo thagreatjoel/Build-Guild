@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>What's Hack Club? — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicLight.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicDark.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @keyframes moveGrid {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 100px 100px, 100px 100px; }
+    }
+    :root {
+      --bp-red: #ec3750;
+      --white: #ffffff;
+      --bp-lighter: #344b6a;
+      --bp-dark: #0e305b;
+      --bp-darker: #081c35;
+      --bp-light: #dbe4ee;
+      --bp-danger: #fe8e86;
+      --bp-danger-darker: #bd4c44;
+      --bp-warning: #ffc857;
+      --bp-success: #a8f0ae;
+      --f: 'Phantom Sans', 'Poppins', sans-serif;
+      --fh: 'Phantom Sans', 'Poppins', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; }
+
+    body {
+      font-family: var(--f);
+      background: var(--bp-dark);
+      color: #fff;
+      min-height: 100vh;
+      overscroll-behavior: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-position: 0 0, 0 0;
+      background-color: var(--bp-dark);
+      animation: moveGrid 10s linear infinite;
+      position: relative;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse, #000000b1, transparent);
+      opacity: .4;
+      filter: url(#grainy);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .z1 { position: relative; z-index: 1; }
+
+    .banner-link {
+      position: fixed;
+      top: 40px;
+      left: 0;
+      z-index: 999;
+    }
+    .banner-link img {
+      width: 180px;
+      max-width: 25vw;
+      height: auto;
+      border: 0;
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: clamp(16px, 3vh, 80px) clamp(24px, 5vw, 80px) clamp(16px, 2.5vh, 40px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2.5vh, 28px);
+    }
+
+    .hero-logo {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(6px, 1vh, 14px);
+    }
+    .blueprint-logo {
+      max-width: clamp(200px, 30vw, 380px);
+    }
+    .blueprint-logo img { width: 100%; height: auto; display: block; }
+    .main-title {
+      font-family: var(--f);
+      font-size: clamp(0.75rem, 2vh, 1.2rem);
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+    .main-title .kochi { color: var(--bp-warning); }
+   
+    .content-card {
+      background: rgba(8, 28, 53, 0.5);
+      border: 2px solid rgba(255,255,255,.14);
+      padding: clamp(24px, 4vh, 56px) clamp(32px, 5vw, 72px);
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .whats-section {
+      text-align: center;
+    }
+    .whats-title {
+      font-family: var(--fh);
+      font-size: clamp(2rem, 6vh, 4rem);
+      font-weight: 800;
+      color: var(--bp-warning);
+      margin-bottom: 2vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .whats-title .red { color: var(--bp-red); }
+    .whats-title .white {color: #ffffff }
+    
+    .hackclub-icon {
+      width: 1.2em;
+      height: 1.2em;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .description {
+      font-size: clamp(1rem, 2.5vh, 1.4rem);
+      line-height: 1.5;
+      color: rgba(255,255,255,0.9);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .sponsors {
+      flex-shrink: 0;
+      text-align: center;
+      padding-top: clamp(10px, 1.5vh, 20px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .sponsors-label {
+      font-size: clamp(0.55rem, 1.1vh, 0.75rem);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: clamp(6px, 0.8vh, 12px);
+    }
+    .sponsor-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(16px, 3vw, 48px);
+      flex-wrap: wrap;
+    }
+    .sponsor {
+      font-weight: 700;
+      font-size: clamp(0.7rem, 1.5vh, 1rem);
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
+  <div class="container z1">
+    <div class="hero-logo">
+      <div class="blueprint-logo">
+        <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
+      </div>
+      <div class="main-title">
+        Build Guild <span class="kochi">Kochi</span>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="whats-section">
+        <div class="whats-title">
+          <span>WHAT‎‎ ‎‎   IS‎ ‎  </span>
+          <img class="hackclub-icon" src="https://assets.hackclub.com/icon-rounded.svg" alt="Hack Club icon">
+          <span class="white">HACKCLUB?</span>
+        </div>
+        <div class="description">
+          HACK CLUB IS A GLOBAL NONPROFIT NETWORK OF STUDENT-LED COMPUTER SCIENCE CLUBS AND MAKER SPACES FOR HIGH SCHOOLERS, DESIGNED TO FOSTER CODING SKILLS THROUGH HANDS-ON, COLLABORATIVE PROJECTS.
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsors">
+      <div class="sponsors-label">Proudly supported by</div>
+      <div class="sponsor-logos">
+        <span class="sponsor">HACKCLUB</span>
+        <span class="sponsor">BLUEPRINT</span>
+        <span class="sponsor">JLCPCB</span>
+        <span class="sponsor">OSHWELD</span>
+        <span class="sponsor">EASYEDA</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
