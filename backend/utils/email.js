@@ -1,19 +1,39 @@
-const nodemailer = require("nodemailer");
+// mailer.js
 
-// Gmail SMTP transporter
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "kochi@blueprint.hackclub.com",
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
+const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+
+// OAuth2 setup
+const oAuth2Client = new google.auth.OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  "https://developers.google.com/oauthplayground"
+);
+
+// Set refresh token
+oAuth2Client.setCredentials({
+  refresh_token: process.env.REFRESH_TOKEN,
 });
 
-// Send OTP Email
 const sendOTPEmail = async (userEmail, otp) => {
   try {
+    // Get access token
+    const accessToken = await oAuth2Client.getAccessToken();
+
+    // Create transporter using Gmail API (OAuth2)
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: "kochi@blueprint.hackclub.com",
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        refreshToken: process.env.REFRESH_TOKEN,
+        accessToken: accessToken.token,
+      },
+    });
+
+    // Send email
     await transporter.sendMail({
       from: '"Build Guild Kochi" <kochi@blueprint.hackclub.com>',
       to: userEmail,
@@ -34,46 +54,29 @@ const sendOTPEmail = async (userEmail, otp) => {
           background-size:50px 50px;
         ">
 
-          <h1 style="margin:0; text-align:center; font-size:22px; font-weight:800;">
+          <h1 style="text-align:center;">
             Build Guild <span style="color:#ffc857;">Kochi</span>
           </h1>
 
-          <p style="margin:18px 0 6px; text-align:center; font-size:14px; color:#b8c7db;">
-            Secure access verification
+          <p style="text-align:center; color:#b8c7db;">
+            Your OTP Code
           </p>
 
-          <div style="text-align:center; margin:20px 0 24px;">
+          <div style="text-align:center; margin:20px 0;">
             <span style="
-              display:inline-block;
-              font-size:38px;
+              font-size:36px;
               letter-spacing:10px;
-              font-weight:700;
-              padding:18px 26px;
-              border-radius:10px;
+              font-weight:bold;
+              padding:15px 25px;
               background:#081c35;
-              border:1px solid rgba(255,255,255,0.1);
+              border-radius:8px;
             ">
               ${otp}
             </span>
           </div>
 
-          <p style="text-align:center; font-size:13px; color:#b8c7db; margin:0;">
-            This code is valid for <strong>5 minutes</strong> and can be used only once.
-          </p>
-
-          <div style="margin:20px 0; padding:14px; border-radius:8px; background:rgba(255,255,255,0.04); font-size:12px; color:#9fb3d1;">
-            <p style="margin:0;">Requested for: <strong>${userEmail}</strong></p>
-            <p style="margin:6px 0 0;">Time: <strong>${new Date().toLocaleString()}</strong></p>
-          </div>
-
-          <p style="text-align:center; font-size:12px; color:#8ea2c0; margin:0;">
-            If you did not request this code, you can safely ignore this email.
-          </p>
-
-          <hr style="margin:24px 0; border:none; border-top:1px solid rgba(255,255,255,0.1);">
-
-          <p style="text-align:center; font-size:11px; color:#6f86a8; margin:0;">
-            Build Guild Kochi · April 15, 2026 · Kochi, India
+          <p style="text-align:center; font-size:13px;">
+            Valid for 5 minutes
           </p>
 
         </div>
