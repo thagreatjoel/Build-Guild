@@ -1,13 +1,17 @@
 const nodemailer = require("nodemailer");
 
+// Gmail SMTP transporter
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: "kochi@blueprint.hackclub.com",
-    pass: process.env.GMAIL_APP_PASSWORD // use app password
-  }
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
 });
 
+// Send OTP Email
 const sendOTPEmail = async (userEmail, otp) => {
   try {
     await transporter.sendMail({
