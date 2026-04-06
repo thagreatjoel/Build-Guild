@@ -204,7 +204,6 @@ router.post('/update-profile', async (req, res) => {
 });
 
 
-// Get public announcement (for users)
 router.get('/announcement', async (req, res) => {
   try {
     const Announcement = require('../models/Announcement');
@@ -215,7 +214,7 @@ router.get('/announcement', async (req, res) => {
     }
     res.json({ text: announcement.text });
   } catch (err) {
-    console.error('Announcement route error:', err);
+    console.error(err);
     res.status(500).json({ msg: 'Server error' });
   }
 });
