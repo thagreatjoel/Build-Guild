@@ -192,5 +192,18 @@ router.post('/update-profile', async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
-
+// Get public announcement (for users)
+router.get('/announcement', async (req, res) => {
+  try {
+    const Announcement = require('../models/Announcement');
+    let announcement = await Announcement.findOne();
+    if (!announcement) {
+      announcement = new Announcement();
+      await announcement.save();
+    }
+    res.json({ text: announcement.text });
+  } catch (err) {
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 module.exports = router;

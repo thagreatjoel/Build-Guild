@@ -176,6 +176,26 @@ router.get('/public-leaderboard', async (req, res) => {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });
   }
-});666666666666666666666666666666
+});
+// Update announcement (admin only)
+router.post('/announcement', auth, async (req, res) => {
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ msg: 'Text required' });
+  try {
+    const Announcement = require('../models/Announcement');
+    let announcement = await Announcement.findOne();
+    if (!announcement) {
+      announcement = new Announcement({ text });
+    } else {
+      announcement.text = text;
+    }
+    announcement.updatedAt = new Date();
+    await announcement.save();
+    res.json({ msg: 'Announcement updated', text: announcement.text });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 
 module.exports = router;

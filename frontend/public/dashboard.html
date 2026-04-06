@@ -5,50 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Dashboard — Build Guild Kochi</title>
   <style>
-    /* Modern CSS variables (from your design system) */
+    /* Same slide design variables */
+    @font-face {
+      font-family:'Phantom Sans';
+      src: url('../font/RC-BasicFull.ttf') format('truetype');
+      font-weight:400;font-style:normal;font-display:swap;
+    }
+    @font-face {
+      font-family:'Phantom Sans';
+      src: url('../font/RC-BasicDark.ttf') format('truetype');
+      font-weight:700;font-style:normal;font-display:swap;
+    }
+    @keyframes moveGrid {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 100px 100px, 100px 100px; }
+    }
     :root {
-      --ms-font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-      --ms-font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-      --ms-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-      --ms-color-white: #fff;
-      --ms-color-black: #000;
-      --ms-color-gray-50: oklch(0.985 0.002 247.839);
-      --ms-color-gray-100: oklch(0.967 0.003 264.542);
-      --ms-color-gray-200: oklch(0.928 0.006 264.531);
-      --ms-color-gray-300: oklch(0.872 0.01 258.338);
-      --ms-color-gray-400: oklch(0.707 0.022 261.325);
-      --ms-color-gray-500: oklch(0.551 0.027 264.364);
-      --ms-color-gray-600: oklch(0.446 0.03 256.802);
-      --ms-color-gray-700: oklch(0.373 0.034 259.733);
-      --ms-color-gray-800: oklch(0.278 0.033 256.848);
-      --ms-color-gray-900: oklch(0.21 0.034 264.665);
-      --ms-color-gray-950: oklch(0.13 0.028 261.692);
-      --ms-color-amber-500: oklch(0.769 0.188 70.08);
-      --ms-color-yellow-500: oklch(0.795 0.184 86.047);
-      --ms-color-emerald-500: oklch(0.696 0.17 162.48);
-      --ms-color-blue-600: oklch(0.546 0.245 262.881);
-      /* additional custom colours for the hack club theme */
-      --bp-dark: #0e305b;
-      --bp-darker: #081c35;
-      --bp-warning: #ffc857;
-      --bp-success: #a8f0ae;
-
-      --font-content: var(--ms-font-sans);
-      --default-transition-duration: 150ms;
-      --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      --bp-lighter:#344b6a;
+      --bp-dark:#0e305b;
+      --bp-darker:#081c35;
+      --bp-warning:#ffc857;
+      --bp-success:#a8f0ae;
+      --f:'Phantom Sans', 'Poppins', sans-serif;
+      --fh:'Poppins', sans-serif;
     }
-
-    /* Grid background & grain – same as schedule */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: var(--font-content);
+      font-family: var(--f);
       background: var(--bp-dark);
-      color: var(--ms-color-white);
+      color: #fff;
       min-height: 100vh;
       background-image:
         linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
@@ -56,9 +41,9 @@
       background-size: 50px 50px;
       background-position: 0 0, 0 0;
       background-color: var(--bp-dark);
+      animation: moveGrid 10s linear infinite;
       position: relative;
     }
-
     body::after {
       content: "";
       position: fixed;
@@ -70,16 +55,10 @@
       pointer-events: none;
       z-index: 0;
     }
-
-    .z1 {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Banner fixed top‑left */
+    .z1 { position: relative; z-index: 1; }
     .banner-link {
       position: fixed;
-      top: 20px;
+      top: 40px;
       left: 0px;
       z-index: 999;
     }
@@ -89,7 +68,6 @@
       height: auto;
       border: 0;
     }
-
     .dashboard-container {
       width: 100%;
       max-width: 1400px;
@@ -99,8 +77,6 @@
       flex-direction: column;
       min-height: 100vh;
     }
-
-    /* Navigation */
     .nav {
       display: flex;
       gap: 2rem;
@@ -113,27 +89,21 @@
       text-decoration: none;
       font-weight: 500;
       font-size: 1rem;
-      transition: color var(--default-transition-duration) var(--default-transition-timing-function);
+      transition: color 0.2s;
     }
-    .nav a:hover,
-    .nav a.active {
-      color: var(--bp-warning);
-    }
-
-    /* Grid */
+    .nav a:hover, .nav a.active { color: var(--bp-warning); }
     .dashboard-grid {
       display: grid;
       grid-template-columns: 1fr 2fr;
       gap: 2rem;
       flex: 1;
     }
-
-    /* Cards */
     .card {
-      background: var(--bp-darker);
+      background: rgba(8, 28, 53, 0.5);  /* semi-transparent like slides */
       border: 2px solid rgba(255,255,255,.14);
       padding: 1.5rem;
       margin-bottom: 1.5rem;
+      backdrop-filter: blur(2px);
     }
     .card h2 {
       font-size: 1.2rem;
@@ -141,15 +111,19 @@
       margin-bottom: 1rem;
       color: var(--bp-warning);
     }
-
-    /* Profile */
+    /* Profile – square/rectangle, no border, hover edit */
     .profile-avatar {
       width: 100px;
       height: 100px;
-      border-radius: 50%;
       object-fit: cover;
-      border: 2px solid var(--bp-warning);
       margin-bottom: 1rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      border: none;
+      border-radius: 0; /* square */
+    }
+    .profile-avatar:hover {
+      opacity: 0.8;
     }
     .profile-name {
       display: flex;
@@ -158,14 +132,11 @@
       flex-wrap: wrap;
       margin-bottom: 0.5rem;
     }
-    .profile-name span {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
+    .profile-name span { font-size: 1.5rem; font-weight: 700; }
     .profile-name input {
       background: var(--bp-dark);
       border: 1px solid rgba(255,255,255,0.2);
-      color: var(--ms-color-white);
+      color: #fff;
       padding: 0.25rem 0.5rem;
       border-radius: 8px;
       font-size: 1rem;
@@ -175,46 +146,31 @@
       margin-bottom: 1rem;
       word-break: break-all;
     }
-    .btn-edit,
-    .btn-save,
-    .btn-upload {
+    /* Straight rectangle buttons */
+    .btn-edit, .btn-save, .logout-btn {
       background: transparent;
       border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 40px;
+      border-radius: 0; /* rectangle */
       padding: 0.25rem 1rem;
-      font-family: var(--font-content);
+      font-family: var(--f);
       font-size: 0.8rem;
       cursor: pointer;
-      transition: all var(--default-transition-duration) var(--default-transition-timing-function);
-      color: var(--ms-color-white);
+      transition: all 0.2s;
+      color: #fff;
     }
-    .btn-edit:hover,
-    .btn-save:hover,
-    .btn-upload:hover {
+    .btn-edit:hover, .btn-save:hover, .logout-btn:hover {
       background: rgba(255,200,87,0.2);
       border-color: var(--bp-warning);
     }
-    .hidden {
-      display: none;
-    }
-    .file-input {
-      display: none;
-    }
-
-    .event-info-item {
-      margin-bottom: 1rem;
-    }
-    .event-info-label {
-      font-weight: 600;
-      color: var(--bp-warning);
-    }
-
+    .hidden { display: none; }
+    .file-input { display: none; }
+    .event-info-item { margin-bottom: 1rem; }
+    .event-info-label { font-weight: 600; color: var(--bp-warning); }
     .announcement {
       background: rgba(255,200,87,0.1);
       border-left: 4px solid var(--bp-warning);
       padding: 1rem;
     }
-
     .staff-picks {
       background: rgba(0,0,0,0.2);
       padding: 1rem;
@@ -226,9 +182,7 @@
       padding: 0.5rem 0;
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    .staff-name {
-      font-weight: 600;
-    }
+    .staff-name { font-weight: 600; }
     .staff-score {
       background: var(--bp-warning);
       color: var(--bp-darker);
@@ -237,30 +191,16 @@
       font-size: 0.8rem;
       font-weight: 700;
     }
-
     .logout-btn {
       margin-top: 1rem;
       width: 100%;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 40px;
-      padding: 0.5rem;
-      cursor: pointer;
-      transition: all var(--default-transition-duration) var(--default-transition-timing-function);
-      color: var(--ms-color-white);
-      font-family: var(--font-content);
     }
-    .logout-btn:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: var(--bp-warning);
-    }
-
     .toast {
       position: fixed;
       bottom: 20px;
       right: 20px;
       z-index: 999;
-      font-family: var(--font-content);
+      font-family: var(--f);
       font-size: 13px;
       font-weight: 700;
       padding: 12px 18px;
@@ -271,34 +211,13 @@
       pointer-events: none;
       max-width: 280px;
     }
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    .toast.t-ok {
-      background: rgba(168,240,174,.1);
-      color: var(--bp-success);
-      border-color: rgba(168,240,174,.35);
-    }
-    .toast.t-err {
-      background: rgba(254,142,134,.1);
-      color: var(--bp-danger);
-      border-color: var(--bp-danger-darker);
-    }
-    .toast.t-info {
-      background: var(--bp-darker);
-      color: var(--bp-warning);
-      border-color: var(--bp-warning);
-    }
-
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.t-ok  { background: rgba(168,240,174,.1); color: var(--bp-success); border-color: rgba(168,240,174,.35); }
+    .toast.t-err { background: rgba(254,142,134,.1); color: var(--bp-danger); border-color: var(--bp-danger-darker); }
+    .toast.t-info { background: var(--bp-darker); color: var(--bp-warning); border-color: var(--bp-warning); }
     @media (max-width: 800px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-      .nav {
-        gap: 1rem;
-      }
+      .dashboard-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .nav { gap: 1rem; }
     }
   </style>
 </head>
@@ -310,7 +229,6 @@
       <feBlend in="SourceGraphic" mode="multiply"/>
     </filter>
   </svg>
-
   <a href="https://hackclub.com/" class="banner-link">
     <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
   </a>
@@ -326,9 +244,8 @@
       <div>
         <div class="card">
           <div style="text-align: center;">
-            <img id="profile-avatar" class="profile-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230e305b' stroke='%23ffc857' stroke-width='3'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23ffc857' font-family='monospace'%3E👤%3C/text%3E%3C/svg%3E" alt="Profile">
+            <img id="profile-avatar" class="profile-avatar" src="https://flipanim.com/anim=33uv0r2h" alt="Profile">
             <input type="file" id="avatar-input" accept="image/*" class="file-input">
-            <button id="upload-btn" class="btn-upload">Change Picture</button>
           </div>
           <div class="profile-name" id="profile-name-display">
             <span id="display-name"></span>
@@ -346,15 +263,12 @@
         </div>
       </div>
 
-      <!-- Right column: Event info & Staff picks -->
+      <!-- Right column: Announcement (editable by admin) & Staff picks -->
       <div>
         <div class="card">
-          <h2>Upcoming Events</h2>
-          <div class="announcement">
-            <p><strong>Build Guild Kochi</strong><br>April 15, 2026, 10:00 AM IST<br>Tinkerspace, Kochi</p>
-          </div>
+          <h2>Announcement</h2>
+          <div id="announcement" class="announcement">Loading...</div>
         </div>
-
         <div class="card">
           <h2>Staff Picks</h2>
           <div id="staff-picks-list" class="staff-picks">Loading...</div>
@@ -364,7 +278,6 @@
   </div>
 
   <div id="toast"></div>
-
   <script src="config.js"></script>
   <script>
     const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
@@ -375,34 +288,9 @@
     const userEmail = session.email;
     let currentUser = {};
 
-    const DEFAULT_AVATAR = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="45" fill="%230e305b" stroke="%23ffc857" stroke-width="3"/%3E%3Ctext x="50" y="65" font-size="40" text-anchor="middle" fill="%23ffc857" font-family="monospace"%3E👤%3C/text%3E%3C/svg%3E';
-
-    function resizeImage(file, maxSize = 200) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            let width = img.width, height = img.height;
-            if (width > height) {
-              if (width > maxSize) { height *= maxSize / width; width = maxSize; }
-            } else {
-              if (height > maxSize) { width *= maxSize / height; height = maxSize; }
-            }
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', 0.8));
-          };
-          img.onerror = reject;
-          img.src = e.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
+    // Default avatar – using the user's requested image; if it fails, fallback to a silhouette.
+    // Note: The provided URL is a FlipAnim page, not a direct image. You may need to replace with a direct image URL.
+    const DEFAULT_AVATAR = "https://flipanim.com/anim=33uv0r2h"; // This is likely not an image. Replace with actual image URL.
 
     async function loadProfile() {
       try {
@@ -413,7 +301,14 @@
         document.getElementById('profile-email').textContent = currentUser.email;
         document.getElementById('user-score').textContent = currentUser.score || 0;
         document.getElementById('user-checked').textContent = currentUser.checkedIn ? 'Yes' : 'No';
-        document.getElementById('profile-avatar').src = currentUser.profilePicture || DEFAULT_AVATAR;
+        const avatarImg = document.getElementById('profile-avatar');
+        if (currentUser.profilePicture) {
+          avatarImg.src = currentUser.profilePicture;
+        } else {
+          avatarImg.src = DEFAULT_AVATAR;
+          // If the default fails to load, replace with a reliable fallback
+          avatarImg.onerror = () => { avatarImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230e305b'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23ffc857' font-family='monospace'%3E👤%3C/text%3E%3C/svg%3E"; };
+        }
       } catch (err) {
         console.error('Failed to load profile', err);
         toast('Failed to load profile', 'err');
@@ -427,18 +322,13 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: userEmail, ...data })
         });
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`${res.status} ${text}`);
-        }
+        if (!res.ok) throw new Error(`${res.status}`);
         const result = await res.json();
         if (result.user.name) document.getElementById('display-name').textContent = result.user.name;
         if (result.user.profilePicture) document.getElementById('profile-avatar').src = result.user.profilePicture;
         toast('Profile updated!', 'ok');
       } catch (err) {
-        console.error('Update failed', err);
-        if (err.message.includes('413')) toast('Image too large.', 'err');
-        else toast('Failed to update profile: ' + err.message, 'err');
+        toast('Update failed', 'err');
       }
     }
 
@@ -460,8 +350,8 @@
       document.getElementById('profile-name-edit').classList.add('hidden');
     });
 
-    // Avatar upload
-    document.getElementById('upload-btn').addEventListener('click', () => {
+    // Avatar upload – triggered by clicking the avatar
+    document.getElementById('profile-avatar').addEventListener('click', () => {
       document.getElementById('avatar-input').click();
     });
     document.getElementById('avatar-input').addEventListener('change', async (e) => {
@@ -473,13 +363,48 @@
       }
       toast('Processing image...', 'info');
       try {
-        const resizedBase64 = await resizeImage(file, 200);
+        // resize function (same as before)
+        const resizedBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              let width = img.width, height = img.height;
+              const maxSize = 200;
+              if (width > height) {
+                if (width > maxSize) { height *= maxSize / width; width = maxSize; }
+              } else {
+                if (height > maxSize) { width *= maxSize / height; height = maxSize; }
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.8));
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
         await updateProfile({ profilePicture: resizedBase64 });
       } catch (err) {
         toast('Failed to process image', 'err');
       }
       document.getElementById('avatar-input').value = '';
     });
+
+    // Load announcement from backend
+    async function loadAnnouncement() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
+        const data = await res.json();
+        document.getElementById('announcement').innerHTML = data.text;
+      } catch (err) {
+        document.getElementById('announcement').innerHTML = 'Failed to load announcement.';
+      }
+    }
 
     async function loadStaffPicks() {
       try {
@@ -527,6 +452,7 @@
     });
 
     loadProfile();
+    loadAnnouncement();
     loadStaffPicks();
     setInterval(loadStaffPicks, 30000);
   </script>

@@ -49,7 +49,12 @@
         <div class="stat-card"><div class="stat-number" id="total-reg">-</div><div class="stat-label">Total Registered</div></div>
         <div class="stat-card"><div class="stat-number" id="total-checked">-</div><div class="stat-label">Checked In</div></div>
       </div>
-
+<div class="section">
+  <h2>📢 Announcement Editor</h2>
+  <textarea id="announcement-text" rows="4" style="width:100%; background: var(--bp-dark); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px;"></textarea>
+  <button class="btn btn-primary" onclick="updateAnnouncement()" style="margin-top:10px;">Update Announcement</button>
+  <div id="announcement-msg" class="msg" style="margin-top:10px;"></div>
+</div>
       <div class="section">
         <h2>User Management</h2>
         <div style="display: flex; gap: 12px; margin-bottom: 20px;">
@@ -182,6 +187,30 @@
       a.click();
       URL.revokeObjectURL(a.href);
     }
+
+
+    async function loadAnnouncement() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
+    const data = await res.json();
+    document.getElementById('announcement-text').value = data.text;
+  } catch(err) { console.error(err); }
+}
+async function updateAnnouncement() {
+  const text = document.getElementById('announcement-text').value;
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/announcement`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    const data = await res.json();
+    if (res.ok) toast('Announcement updated', 'ok');
+    else toast(data.msg || 'Failed', 'err');
+  } catch(err) { toast('Network error', 'err'); }
+}
+// Call loadAnnouncement() in initial load.
+
 
     function toast(msg, type) {
       const t = document.getElementById('toast');
