@@ -474,16 +474,17 @@
     });
 
     async function loadAnnouncement() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        document.getElementById('announcement').innerHTML = data.text || 'No announcement.';
-      } catch (err) {
-        console.error('Announcement error:', err);
-        document.getElementById('announcement').innerHTML = 'Failed to load announcement.';
-      }
-    }
+  // Try to fetch, but if it fails, show a default message
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    document.getElementById('announcement').innerHTML = data.text || 'No announcement.';
+  } catch (err) {
+    console.warn('Using fallback announcement');
+    document.getElementById('announcement').innerHTML = 'Build Guild Kochi<br>April 15, 2026, 10:00 AM IST<br>Tinkerspace, Kochi';
+  }
+}
 
     async function checkEventStatus() {
       try {
