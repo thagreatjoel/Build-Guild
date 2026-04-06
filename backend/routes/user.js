@@ -177,7 +177,21 @@ router.get('/event-note', async (req, res) => {
   if (!note) note = new EventNote();
   res.json({ text: note.text });
 });
-
+// Get public announcement (for users)
+router.get('/announcement', async (req, res) => {
+  try {
+    const Announcement = require('../models/Announcement');
+    let announcement = await Announcement.findOne();
+    if (!announcement) {
+      announcement = new Announcement();
+      await announcement.save();
+    }
+    res.json({ text: announcement.text });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 // Update user profile (name and profile picture)
 router.post('/update-profile', async (req, res) => {
   const { email, name, profilePicture } = req.body;

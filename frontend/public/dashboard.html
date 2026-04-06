@@ -32,6 +32,10 @@
       0% { background-position: 0 0, 0 0; }
       100% { background-position: 100px 100px, 100px 100px; }
     }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
     :root{
       --bp-dark:#0e305b;
       --bp-darker:#081c35;
@@ -95,6 +99,7 @@
       border: 0;
     }
 
+    /* Card styling */
     .dashboard-card {
       background: var(--bp-darker);
       border: 2px solid rgba(255,255,255,.14);
@@ -102,14 +107,52 @@
       max-width: 600px;
       width: 100%;
       margin: 0 auto;
-      animation: rise 0.5s cubic-bezier(.16,1,.3,1);
+      transition: opacity 0.2s;
     }
     @keyframes rise {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Navigation – only Dashboard */
+    /* Skeleton loading styles */
+    .skeleton {
+      background: linear-gradient(90deg, #1a2a4a 25%, #2a3a5a 50%, #1a2a4a 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+    .skeleton-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      margin: 0 auto 1rem;
+    }
+    .skeleton-text {
+      height: 20px;
+      margin: 0.5rem 0;
+    }
+    .skeleton-button {
+      height: 36px;
+      margin: 1rem 0;
+      border-radius: 0;
+    }
+    .skeleton-line {
+      height: 16px;
+      margin: 0.5rem 0;
+    }
+    .skeleton-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5rem 0;
+    }
+    .skeleton-row .skeleton {
+      width: 40%;
+      height: 16px;
+    }
+    .skeleton-row .skeleton:last-child {
+      width: 30%;
+    }
+
     .nav-links {
       display: flex;
       justify-content: center;
@@ -247,6 +290,7 @@
     @media (max-width: 600px) {
       .dashboard-card { padding: 1.5rem; }
       .profile-avatar { width: 90px; height: 90px; }
+      .skeleton-avatar { width: 90px; height: 90px; }
     }
   </style>
 </head>
@@ -263,13 +307,26 @@
     <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
   </a>
 
-  <div class="dashboard-card z1">
+  <!-- Skeleton loading card -->
+  <div id="skeleton-card" class="dashboard-card z1" style="display: flex; flex-direction: column;">
+    <div class="nav-links"><a href="#" class="active">Dashboard</a></div>
+    <div class="skeleton-avatar skeleton"></div>
+    <div class="skeleton skeleton-text" style="width: 60%; margin: 0 auto 0.5rem;"></div>
+    <div class="skeleton skeleton-text" style="width: 80%; margin: 0 auto 1rem;"></div>
+    <div class="skeleton-row"><div class="skeleton"></div><div class="skeleton"></div></div>
+    <div class="skeleton-row"><div class="skeleton"></div><div class="skeleton"></div></div>
+    <div class="skeleton skeleton-text" style="width: 100%; margin: 1rem 0;"></div>
+    <div class="skeleton skeleton-button"></div>
+  </div>
+
+  <!-- Real content card (hidden initially) -->
+  <div id="real-card" class="dashboard-card z1" style="display: none;">
     <div class="nav-links">
       <a href="#" class="active">Dashboard</a>
     </div>
 
     <div class="profile-picture">
-      <img id="profile-avatar" class="profile-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230e305b'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23ffc857' font-family='monospace'%3E👤%3C/text%3E%3C/svg%3E" alt="Profile">
+      <img id="profile-avatar" class="profile-avatar" src="" alt="Profile">
       <input type="file" id="avatar-input" accept="image/*" class="file-input">
     </div>
 
@@ -377,6 +434,7 @@
       }
     }
 
+    // Name editing
     document.getElementById('edit-name-btn').addEventListener('click', () => {
       document.getElementById('profile-name-display').classList.add('hidden');
       document.getElementById('profile-name-edit').classList.remove('hidden');
@@ -394,6 +452,7 @@
       document.getElementById('profile-name-edit').classList.add('hidden');
     });
 
+    // Avatar upload
     document.getElementById('profile-avatar').addEventListener('click', () => {
       document.getElementById('avatar-input').click();
     });
@@ -417,6 +476,7 @@
     async function loadAnnouncement() {
       try {
         const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         document.getElementById('announcement').innerHTML = data.text || 'No announcement.';
       } catch (err) {
@@ -457,10 +517,16 @@
       window.location.href = '/';
     });
 
-    loadProfile();
-    loadAnnouncement();
-    checkEventStatus();
-    setInterval(checkEventStatus, 10000);
+    // Show real card after loading
+    async function init() {
+      await Promise.all([loadProfile(), loadAnnouncement()]);
+      document.getElementById('skeleton-card').style.display = 'none';
+      document.getElementById('real-card').style.display = 'block';
+      checkEventStatus();
+      setInterval(checkEventStatus, 10000);
+    }
+
+    init();
   </script>
 </body>
 </html>
