@@ -7,35 +7,31 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <style>
     /* ── Same background as leaderboard ── */
-        @font-face {
-  font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicLight.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicFull.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicFull.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@keyframes moveGrid {
-  0% {
-    background-position: 0 0, 0 0;
-  }
-  100% {
-    background-position: 100px 100px, 100px 100px;
-  }
-}
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicLight.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @keyframes moveGrid {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 100px 100px, 100px 100px; }
+    }
     :root{
       --bp-dark:#0e305b;
       --bp-darker:#081c35;
@@ -86,7 +82,6 @@
       z-index: 1;
     }
 
-    /* Hack Club banner fixed top‑left */
     .banner-link {
       position: fixed;
       top: 20px;
@@ -100,7 +95,6 @@
       border: 0;
     }
 
-    /* Main card – exactly like leaderboard */
     .dashboard-card {
       background: var(--bp-darker);
       border: 2px solid rgba(255,255,255,.14);
@@ -115,7 +109,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Navigation inside card */
+    /* Navigation – only Dashboard */
     .nav-links {
       display: flex;
       justify-content: center;
@@ -134,25 +128,23 @@
       color: var(--bp-warning);
     }
 
-    /* Profile picture – square, no border, clickable */
     .profile-picture {
       text-align: center;
       margin-bottom: 1.5rem;
     }
     .profile-avatar {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  border: none;
-  border-radius: 12px;  /* squircle */
-}
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      border: none;
+      border-radius: 12px;
+    }
     .profile-avatar:hover {
       opacity: 0.8;
     }
 
-    /* Profile info */
     .profile-name {
       display: flex;
       align-items: center;
@@ -192,7 +184,7 @@
     .btn-edit, .btn-save, .btn-cancel {
       background: transparent;
       border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 0; /* rectangle */
+      border-radius: 0;
       padding: 0.25rem 0.75rem;
       font-family: var(--f);
       font-size: 0.8rem;
@@ -207,7 +199,6 @@
     .hidden { display: none; }
     .file-input { display: none; }
 
-    /* Announcement */
     .announcement {
       background: rgba(255,200,87,0.1);
       border-left: 4px solid var(--bp-warning);
@@ -215,35 +206,11 @@
       margin: 1rem 0;
     }
 
-    /* Staff picks list */
-    .staff-picks {
-      background: rgba(0,0,0,0.2);
-      padding: 1rem;
-      margin: 1rem 0;
-    }
-    .staff-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .staff-name { font-weight: 600; }
-    .staff-score {
-      background: var(--bp-warning);
-      color: var(--bp-darker);
-      padding: 0.2rem 0.5rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    /* Logout button */
     .logout-btn {
       width: 100%;
       background: transparent;
       border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 0; /* rectangle */
+      border-radius: 0;
       padding: 0.5rem;
       cursor: pointer;
       transition: all 0.2s;
@@ -256,7 +223,6 @@
       border-color: var(--bp-warning);
     }
 
-    /* Toast */
     .toast {
       position: fixed;
       bottom: 20px;
@@ -300,7 +266,6 @@
   <div class="dashboard-card z1">
     <div class="nav-links">
       <a href="#" class="active">Dashboard</a>
-      <a href="leaderboard.html">Leaderboard</a>
     </div>
 
     <div class="profile-picture">
@@ -330,11 +295,6 @@
 
     <div id="announcement" class="announcement">Loading announcement...</div>
 
-    <div class="staff-picks">
-      <div style="margin-bottom: 0.5rem;"><strong>Staff Picks</strong></div>
-      <div id="staff-picks-list">Loading...</div>
-    </div>
-
     <button id="logout-btn" class="logout-btn">Log out</button>
   </div>
 
@@ -350,10 +310,8 @@
     const userEmail = session.email;
     let currentUser = {};
 
-    // Default avatar (square, custom image if desired)
     const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230e305b'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23ffc857' font-family='monospace'%3E👤%3C/text%3E%3C/svg%3E";
 
-    // Resize image helper
     function resizeImage(file, maxSize = 200) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -419,7 +377,6 @@
       }
     }
 
-    // Name editing
     document.getElementById('edit-name-btn').addEventListener('click', () => {
       document.getElementById('profile-name-display').classList.add('hidden');
       document.getElementById('profile-name-edit').classList.remove('hidden');
@@ -437,7 +394,6 @@
       document.getElementById('profile-name-edit').classList.add('hidden');
     });
 
-    // Avatar upload – click on image
     document.getElementById('profile-avatar').addEventListener('click', () => {
       document.getElementById('avatar-input').click();
     });
@@ -458,40 +414,30 @@
       document.getElementById('avatar-input').value = '';
     });
 
-    // Announcement
     async function loadAnnouncement() {
       try {
         const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
         const data = await res.json();
-        document.getElementById('announcement').innerHTML = data.text;
+        document.getElementById('announcement').innerHTML = data.text || 'No announcement.';
       } catch (err) {
+        console.error('Announcement error:', err);
         document.getElementById('announcement').innerHTML = 'Failed to load announcement.';
       }
     }
 
-   // Check event status (open/closed) and redirect if closed
-async function checkEventStatus() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/admin/event-status`);
-    const data = await res.json();
-    if (!data.isOpen) {
-      toast('Event has been closed. Redirecting...', 'info');
-      setTimeout(() => {
-        window.location.href = '/waiting.html';
-      }, 2000);
-    }
-  } catch (err) {
-    console.error('Failed to check event status:', err);
-  }
-}
-// Check immediately and then every 10 seconds
-checkEventStatus();
-setInterval(checkEventStatus, 10000);
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
+    async function checkEventStatus() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/event-status`);
+        const data = await res.json();
+        if (!data.isOpen) {
+          toast('Event has been closed. Redirecting...', 'info');
+          setTimeout(() => {
+            window.location.href = '/waiting.html';
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Failed to check event status:', err);
+      }
     }
 
     function toast(msg, type) {
@@ -513,8 +459,8 @@ setInterval(checkEventStatus, 10000);
 
     loadProfile();
     loadAnnouncement();
-    loadStaffPicks();
-    setInterval(loadStaffPicks, 30000);
+    checkEventStatus();
+    setInterval(checkEventStatus, 10000);
   </script>
 </body>
 </html>
