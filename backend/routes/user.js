@@ -192,17 +192,14 @@ router.post('/update-profile', async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
-// Get public announcement (for users)
-router.get('/announcement', async (req, res) => {
+router.get('/leaderboard', async (req, res) => {
   try {
-    const Announcement = require('../models/Announcement');
-    let announcement = await Announcement.findOne();
-    if (!announcement) {
-      announcement = new Announcement();
-      await announcement.save();
-    }
-    res.json({ text: announcement.text });
+    const users = await User.find({ checkedIn: true, score: { $gt: 0 } })
+      .sort({ score: -1 })
+      .select('name username email score profilePicture');
+    res.json(users);
   } catch (err) {
+    console.error('Leaderboard error:', err);
     res.status(500).json({ msg: 'Server error' });
   }
 });
