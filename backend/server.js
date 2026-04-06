@@ -23,7 +23,7 @@ app.use('/api/admin', require('./routes/admin'));
 
 // 🔥 NEW: Slide control routes
 app.use('/api/slide', require('./routes/slide'));
-
+app.use('/api/slide', require('./routes/slide'));
 // Optional: health check (useful for Render wakeup)
 app.get('/ping', (req, res) => {
   res.send('Server is alive');
