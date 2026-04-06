@@ -6,7 +6,6 @@ exports.events = (req, res) => {
   res.setHeader('Connection', 'keep-alive');
 
   res.flushHeaders();
-
   clients.push(res);
 
   req.on('close', () => {
@@ -27,5 +26,10 @@ exports.next = (req, res) => {
 
 exports.prev = (req, res) => {
   sendEvent("prev");
+  res.json({ ok: true });
+};
+
+exports.open = (req, res) => {
+  sendEvent("open");
   res.json({ ok: true });
 };
