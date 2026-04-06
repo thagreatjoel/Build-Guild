@@ -137,15 +137,29 @@
       } catch(err) { toast('Network error', 'err'); }
     }
 
-    async function addScore(email, points) {
-      if (!points || points <= 0) { toast('Enter valid points', 'err'); return; }
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/add-score`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, points: parseInt(points) }) });
-        const data = await res.json();
-        if (res.ok) { toast(`Added ${points} points (new score: ${data.newScore})`, 'ok'); loadUsers(); }
-        else toast(data.msg || 'Failed to add score', 'err');
-      } catch(err) { toast('Network error', 'err'); }
+async function addScore(email, points) {
+  // Allow negative numbers – only check that points is a valid number
+  if (points === undefined || points === null || points === '' || isNaN(points)) {
+    toast('Please enter a valid number', 'err');
+    return;
+  }
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/add-score`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, points: parseInt(points) })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(`✅ ${data.msg} (New Score: ${data.newScore})`, 'ok');
+      loadUsers();
+    } else {
+      toast(data.msg || 'Failed to add score', 'err');
     }
+  } catch (err) {
+    toast('Network error', 'err');
+  }
+}
 
     async function addUser() {
       const email = document.getElementById('new-user-email').value.trim().toLowerCase();

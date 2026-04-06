@@ -107,7 +107,10 @@ router.post('/add-score', auth, async (req, res) => {
   try {
     const { email, points } = req.body;
     if (!email) return res.status(400).json({ msg: 'Email required' });
-    if (!points || isNaN(points)) return res.status(400).json({ msg: 'Valid points required' });
+    // Allow negative numbers – only check that points is a valid number
+    if (points === undefined || points === null || isNaN(points)) {
+      return res.status(400).json({ msg: 'Valid numeric points required' });
+    }
 
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) return res.status(404).json({ msg: 'User not found' });
