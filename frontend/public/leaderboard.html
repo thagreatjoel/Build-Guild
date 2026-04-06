@@ -142,7 +142,7 @@ body::after {
 /* Card – same dark background */
 .leaderboard-card {
   background: var(--bp-darker);
-  border: 2px solid rgba(255,255,255,.14);
+  border: 2px solid rgba(255,255,255,);
   padding: 1.5vh 2vw;
   flex: 1;
   display: flex;
@@ -289,9 +289,17 @@ body::after {
     align-items: flex-start;
   }
   .rank {
-    width: auto;
-    margin-bottom: 4px;
-  }
+  width: 60px;
+  font-weight: 800;
+  font-size: clamp(1.2rem, 3vh, 1.8rem);
+  text-align: left;
+}
+.rank.top-1 { color: var(--bp-warning); }      /* yellow */
+.rank.top-2 { color: #d3d3d3; }               /* greyish white */
+.rank.top-3 { color: #cd7f32; }               /* bronze / brown */
+.rank:not(.top-1):not(.top-2):not(.top-3) {
+  color: #ffffff;                             /* white for others */
+}
   .user-info {
     width: 100%;
     margin-top: 4px;
