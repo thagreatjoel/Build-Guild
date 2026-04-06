@@ -165,11 +165,12 @@
       gap: 0.5vh;
     }
     .leaderboard-item {
-      display: flex;
-      align-items: center;
-      padding: 1vh 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* pushes score to the right */
+  width: 100%;
+}
+
     .leaderboard-item:last-child {
       border-bottom: none;
     }
@@ -193,11 +194,12 @@
   border: 1px solid rgba(255,255,255,0.2);
 }
     .user-info {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-start; /* left align */
+}
     .user-details {
       flex: 1;
     }

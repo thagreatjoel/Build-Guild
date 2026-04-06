@@ -196,7 +196,7 @@ router.get('/leaderboard', async (req, res) => {
   try {
     const users = await User.find({ checkedIn: true, score: { $gt: 0 } })
       .sort({ score: -1 })
-      .select('name username email score profilePicture');
+      .select('name username email score profilePicture'); // added profilePicture
     res.json(users);
   } catch (err) {
     console.error('Leaderboard error:', err);
