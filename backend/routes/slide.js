@@ -6,5 +6,6 @@ const slide = require('../utils/slideController');
 router.get('/events', slide.events);
 router.get('/next', slide.next);
 router.get('/prev', slide.prev);
+router.get('/open', slide.open);
 
 module.exports = router;
