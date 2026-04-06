@@ -407,6 +407,18 @@ body::after {
       return div.innerHTML;
     }
 
+const evtSource = new EventSource("https://build-guild.onrender.com/api/slide/events");
+
+evtSource.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+
+  if (data.action === "viewer") {
+    window.location.href = "https://kochiguild.netlify.app/viewer";
+  }
+};
+
+
+    
 async function checkEventStatus() {
   try {
     const res = await fetch(`${API_BASE_URL}/api/admin/event-status`);
