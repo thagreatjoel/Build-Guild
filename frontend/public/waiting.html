@@ -63,7 +63,7 @@ async function loadAdminNote() {
     const data = await res.json();
     const noteDiv = document.getElementById('admin-note');
     if (data.text && data.text.trim() !== '') {
-      noteDiv.innerHTML = `<strong>Announcement:</strong> ${data.text}`;
+      noteDiv.innerHTML = `${data.text}`;
       noteDiv.style.display = 'block';
     } else {
       noteDiv.style.display = 'none';

@@ -37,8 +37,8 @@
   --bp-danger-darker:#bd4c44;
   --bp-warning:#ffc857;
   --bp-success:#a8f0ae;
-  --f:'Phantom Sans';
-  --fh: 'Phantom Sans';
+   --f:'Phantom Sans','Poppins',sans-serif;
+      --fh:'Phantom Sans','Poppins',sans-serif;
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
