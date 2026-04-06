@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <style>
     /* ── Exactly the same background as index.html ── */
-        @font-face {
+@font-face {
   font-family: 'Phantom Sans';
   src: url('../font/RC-BasicLight.ttf') format('truetype');
   font-weight: 300;
@@ -23,273 +23,284 @@
 }
 @font-face {
   font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicFull.ttf') format('truetype');
+  src: url('../font/RC-BasicDark.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
-    @keyframes moveGrid {
-      0% { background-position: 0 0, 0 0; }
-      100% { background-position: 100px 100px, 100px 100px; }
-    }
-
-    :root{
-      --bp-lighter:#344b6a;
-      --bp-dark:#0e305b;
-      --bp-darker:#081c35;
-      --bp-light:#dbe4ee;
-      --bp-danger:#fe8e86;
-      --bp-danger-darker:#bd4c44;
-      --bp-warning:#ffc857;
-      --bp-success:#a8f0ae;
-      --f:'Phantom Sans','Poppins',sans-serif;
-      --fh:'Phantom Sans','Poppins',sans-serif;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      font-size: 16px;
-    }
-
-    body {
-      font-family: var(--f);
-      background: var(--bp-dark);
-      color: #fff;
-      min-height: 100vh;
-      overscroll-behavior: none;
-      background-image:
-        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size: 50px 50px;
-      background-position: 0 0, 0 0;
-      background-color: var(--bp-dark);
-      animation: moveGrid 10s linear infinite;
-      position: relative;
-    }
-
-    /* Grain overlay – same as index.html */
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse, #000000b1, transparent);
-      opacity: .4;
-      filter: url(#grainy);
-      mix-blend-mode: multiply;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .z1 {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Banner fixed top‑left */
-    .banner-link {
-      position: fixed;
-      top: 20px;
-      left: 0px;
-      z-index: 999;
-    }
-    .banner-link img {
-      width: 180px;
-      max-width: 25vw;
-      height: auto;
-      border: 0;
-    }
-
-    /* Main container – full height, padded to clear the banner */
-    .leaderboard-container {
-      width: 100%;
-      height: 100vh;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: clamp(80px, 12vh, 120px) 4vw 2vh 4vw;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    /* Title and date */
-    .hero-title {
-      text-align: center;
-      flex-shrink: 0;
-      margin-bottom: 2vh;
-    }
-    .hero-title h1 {
-      font-family: var(--fh);
-      font-size: clamp(2rem, 6vh, 5rem);
-      font-weight: 800;
-      letter-spacing: 2px;
-      margin-bottom: 0.25vh;
-    }
-    .hero-title .highlight {
-      color: var(--bp-warning);
-    }
-    .event-date {
-      font-size: clamp(0.8rem, 2vh, 1.2rem);
-      color: rgba(255,255,255,0.6);
-      margin-top: 0;
-    }
-
-    /* Card – same dark background as index.html cards */
-    .leaderboard-card {
-      background: var(--bp-darker);
-      border: 2px solid rgba(255,255,255,.14);
-      padding: 1.5vh 2vw;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    /* Stats summary row */
-    .stats-summary {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 1vh 0 1.5vh;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 1.5vh;
-    }
-    .stats-summary span:first-child {
-      font-size: clamp(0.8rem, 1.5vh, 1rem);
-      color: rgba(255,255,255,0.6);
-    }
-    .stats-summary span:last-child {
-      font-size: clamp(1.2rem, 3vh, 2rem);
-      font-weight: 800;
-      color: var(--bp-warning);
-    }
-
-    /* Leaderboard list */
-    .leaderboard-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5vh;
-    }
-    .leaderboard-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* pushes score to the right */
-  width: 100%;
+@keyframes moveGrid {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 100px 100px, 100px 100px; }
 }
 
-    .leaderboard-item:last-child {
-      border-bottom: none;
-    }
-    .rank {
-      width: 12vw;
-      min-width: 60px;
-      font-weight: 800;
-      font-size: clamp(1rem, 2.2vh, 1.4rem);
-      color: var(--bp-warning);
-    }
-    .rank.top-1 { color: #ffd700; }
-    .rank.top-2 { color: #c0c0c0; }
-    .rank.top-3 { color: #cd7f32; }
-    .profile-pic {
+:root {
+  --bp-lighter: #344b6a;
+  --bp-dark: #0e305b;
+  --bp-darker: #081c35;
+  --bp-light: #dbe4ee;
+  --bp-danger: #fe8e86;
+  --bp-danger-darker: #bd4c44;
+  --bp-warning: #ffc857;
+  --bp-success: #a8f0ae;
+  --f: 'Phantom Sans', 'Poppins', sans-serif;
+  --fh: 'Poppins', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--f);
+  background: var(--bp-dark);
+  color: #fff;
+  min-height: 100vh;
+  overscroll-behavior: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: 0 0, 0 0;
+  background-color: var(--bp-dark);
+  animation: moveGrid 10s linear infinite;
+  position: relative;
+}
+
+/* Grain overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse, #000000b1, transparent);
+  opacity: .4;
+  filter: url(#grainy);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.z1 {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hack Club banner fixed top‑left */
+.banner-link {
+  position: fixed;
+  top: 20px;
+  left: 0px;
+  z-index: 999;
+}
+.banner-link img {
+  width: 180px;
+  max-width: 25vw;
+  height: auto;
+  border: 0;
+}
+
+/* Main container – full height, padded to clear the banner */
+.leaderboard-container {
+  width: 100%;
+  height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: clamp(80px, 12vh, 120px) 4vw 2vh 4vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Hero title */
+.hero-title {
+  text-align: center;
+  flex-shrink: 0;
+  margin-bottom: 2vh;
+}
+.hero-title h1 {
+  font-family: var(--fh);
+  font-size: clamp(2rem, 6vh, 5rem);
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 0.25vh;
+}
+.hero-title .highlight {
+  color: var(--bp-warning);
+}
+.event-date {
+  font-size: clamp(0.8rem, 2vh, 1.2rem);
+  color: rgba(255,255,255,0.6);
+  margin-top: 0;
+}
+
+/* Card – same dark background */
+.leaderboard-card {
+  background: var(--bp-darker);
+  border: 2px solid rgba(255,255,255,.14);
+  padding: 1.5vh 2vw;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Stats summary */
+.stats-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 1vh 0 1.5vh;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 1.5vh;
+}
+.stats-summary span:first-child {
+  font-size: clamp(0.8rem, 1.5vh, 1rem);
+  color: rgba(255,255,255,0.6);
+}
+.stats-summary span:last-child {
+  font-size: clamp(1.2rem, 3vh, 2rem);
+  font-weight: 800;
+  color: var(--bp-warning);
+}
+
+/* Leaderboard list */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+}
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5vh 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+/* Rank styling – no emojis, fixed width, larger text */
+.rank {
+  width: 60px;
+  font-weight: 800;
+  font-size: clamp(1.2rem, 3vh, 1.8rem);
+  color: var(--bp-warning);
+  text-align: left;
+}
+.rank.top-1 { color: #ffd700; }
+.rank.top-2 { color: #c0c0c0; }
+.rank.top-3 { color: #cd7f32; }
+
+/* Profile picture – squircle */
+.profile-pic {
   width: 40px;
   height: 40px;
-  border-radius: 12px;  /* squircle */
+  border-radius: 12px;
   object-fit: cover;
-  margin-right: 1rem;
+  margin-right: 0.8rem;
   background: var(--bp-dark);
   border: 1px solid rgba(255,255,255,0.2);
 }
-    .user-info {
+
+/* User info section – left aligned, tight gap */
+.user-info {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  justify-content: flex-start; /* left align */
+  gap: 0.8rem;
+  justify-content: flex-start;
 }
-    .user-details {
-      flex: 1;
-    }
-    .username {
-      font-family: var(--fh);
-      font-weight: 700;
-      font-size: clamp(0.9rem, 2.2vh, 1.3rem);
-      color: #fff;
-      margin-bottom: 0.2vh;
-    }
-    .email {
-      display: none; /* hide email for privacy */
-      font-size: clamp(0.7rem, 1.5vh, 0.8rem);
-      color: rgba(255,255,255,0.6);
-    }
-    .score {
-      font-weight: 800;
-      font-size: clamp(1rem, 2.2vh, 1.4rem);
-      color: var(--bp-warning);
-      background: rgba(255,200,87,0.1);
-      padding: 0.2rem 0.8rem;
-      border-radius: 40px;
-      min-width: 80px;
-      text-align: center;
-    }
+.user-details {
+  flex: 1;
+}
 
-    .empty-message {
-      text-align: center;
-      padding: 4vh;
-      color: rgba(255,255,255,0.5);
-      font-size: clamp(0.8rem, 1.5vh, 1rem);
-    }
+/* Username – larger text */
+.username {
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: clamp(1rem, 2.5vh, 1.5rem);
+  color: #fff;
+  margin-bottom: 0;
+}
 
-    /* Sponsors */
-    .sponsors {
-      flex-shrink: 0;
-      text-align: center;
-      padding: 1vh 0;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      margin-top: 1vh;
-    }
-    .sponsors-label {
-      font-size: clamp(0.6rem, 1.3vh, 0.8rem);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 0.5vh;
-    }
-    .sponsor-logos {
-      display: flex;
-      justify-content: center;
-      gap: clamp(1rem, 3vw, 3rem);
-      flex-wrap: wrap;
-    }
-    .sponsor {
-      font-weight: 700;
-      font-size: clamp(0.8rem, 1.8vh, 1.2rem);
-      color: rgba(255,255,255,0.7);
-    }
+/* Hide email */
+.email {
+  display: none;
+}
 
-    /* Responsive adjustments – same as schedule */
-    @media (max-width: 700px) {
-      .leaderboard-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .rank {
-        width: auto;
-        margin-bottom: 4px;
-      }
-      .user-info {
-        width: 100%;
-        margin-top: 4px;
-      }
-      .score {
-        align-self: flex-start;
-        margin-top: 6px;
-      }
-    }
+/* Score – larger, pill shaped */
+.score {
+  font-weight: 800;
+  font-size: clamp(1.1rem, 2.5vh, 1.6rem);
+  color: var(--bp-warning);
+  background: rgba(255,200,87,0.1);
+  padding: 0.2rem 0.8rem;
+  border-radius: 40px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 4vh;
+  color: rgba(255,255,255,0.5);
+  font-size: clamp(0.8rem, 1.5vh, 1rem);
+}
+
+/* Sponsors */
+.sponsors {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 1vh 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 1vh;
+}
+.sponsors-label {
+  font-size: clamp(0.6rem, 1.3vh, 0.8rem);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 0.5vh;
+}
+.sponsor-logos {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 3rem);
+  flex-wrap: wrap;
+}
+.sponsor {
+  font-weight: 700;
+  font-size: clamp(0.8rem, 1.8vh, 1.2rem);
+  color: rgba(255,255,255,0.7);
+}
+
+/* Responsive adjustments */
+@media (max-width: 700px) {
+  .leaderboard-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .rank {
+    width: auto;
+    margin-bottom: 4px;
+  }
+  .user-info {
+    width: 100%;
+    margin-top: 4px;
+  }
+  .score {
+    align-self: flex-start;
+    margin-top: 6px;
+  }
+}
   </style>
 </head>
 <body>
