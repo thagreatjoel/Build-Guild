@@ -33,3 +33,8 @@ exports.open = (req, res) => {
   sendEvent("open");
   res.json({ ok: true });
 };
+
+exports.viewer = (req, res) => {
+  sendEvent("viewer");
+  res.json({ ok: true });
+};
