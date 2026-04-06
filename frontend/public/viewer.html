@@ -59,15 +59,7 @@
   <div class="flash-overlay" id="flashOverlay"></div>
 
   <script>
-    // ---------- SLIDES ----------
-    const slides = [
-      "1.html",
-      "2.html",
-      "3.html",
-      "4.html",
-      "5.html"
-    ];
-    // ----------------------------
+    const slides = ["1.html","2.html","3.html","4.html","5.html"];
 
     let currentIndex = 0;
     let isTransitioning = false;
@@ -81,7 +73,7 @@
     }
 
     function delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+      return new Promise(r => setTimeout(r, ms));
     }
 
     async function loadSlide(index) {
@@ -93,49 +85,46 @@
 
       isTransitioning = true;
 
-      // animation out
       frame.style.opacity = '0';
-      frame.style.transform = 'scale(0.95) rotate(0.5deg)';
+      frame.style.transform = 'scale(0.95)';
       flash.style.opacity = '0.6';
       await delay(120);
 
-      // change slide
       currentIndex = index;
       frame.src = `slide/${slides[currentIndex]}`;
       updateCounter();
 
-      // animation in
       await delay(150);
       frame.style.opacity = '1';
       frame.style.transform = 'scale(1)';
       flash.style.opacity = '0';
 
-      await delay(80);
       isTransitioning = false;
     }
 
-    function nextSlide() {
-      loadSlide(currentIndex + 1);
-    }
+    function nextSlide() { loadSlide(currentIndex + 1); }
+    function prevSlide() { loadSlide(currentIndex - 1); }
 
-    function prevSlide() {
-      loadSlide(currentIndex - 1);
-    }
-
-    // ---------- SSE (INSTANT CONTROL) ----------
+    // 🔥 SSE (instant control)
     const evtSource = new EventSource("https://build-guild.onrender.com/api/slide/events");
 
     evtSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
+      if (!data.action) return;
+
       if (data.action === "next") nextSlide();
       if (data.action === "prev") prevSlide();
+
+      // 🔥 NEW: open leaderboard
+      if (data.action === "open") {
+        window.location.href = "https://kochiguild.netlify.app/leaderboard";
+      }
     };
 
     evtSource.onerror = () => {
-      console.log("SSE disconnected... retrying");
+      console.log("SSE reconnecting...");
     };
-    // ------------------------------------------
 
     // keyboard backup
     window.addEventListener('keydown', (e) => {
@@ -144,13 +133,8 @@
     });
 
     // initial load
-    if (slides.length > 0) {
-      frame.src = `slide/${slides[0]}`;
-      updateCounter();
-    } else {
-      frame.srcdoc = "<h1 style='color:white;text-align:center;'>No slides</h1>";
-    }
-
+    frame.src = `slide/${slides[0]}`;
+    updateCounter();
   </script>
 
 </body>
