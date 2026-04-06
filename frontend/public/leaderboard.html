@@ -8,23 +8,19 @@
   <style>
     /* ── Exactly the same background as index.html ── */
     @font-face {
-  font-family:'Phantom Sans';
-  src: url('../font/rc-fullbasic.ttf') format('truetype');
-  font-weight:400;font-style:normal;font-display:swap;
-}
-@font-face {
-  font-family:'Phantom Sans';
-  src: url('../font/rc-fullbasic.ttf') format('truetype');
-  font-weight:700;font-style:normal;font-display:swap;
-}
+      font-family:'Phantom Sans';
+      src: url('../font/rc-fullbasic.ttf') format('truetype');
+      font-weight:400;font-style:normal;font-display:swap;
+    }
+    @font-face {
+      font-family:'Phantom Sans';
+      src: url('../font/rc-fullbasic.ttf') format('truetype');
+      font-weight:700;font-style:normal;font-display:swap;
+    }
 
     @keyframes moveGrid {
-  0% {
-    background-position: 0 0, 0 0;
-  }
-  100% {
-    background-position: 100px 100px, 100px 100px;
-  }
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 100px 100px, 100px 100px; }
     }
 
     :root{
@@ -162,25 +158,6 @@
       color: var(--bp-warning);
     }
 
-    /* Refresh button */
-    .refresh-btn {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 40px;
-      padding: 0.5rem 1rem;
-      font-family: var(--fh);
-      font-size: clamp(0.7rem, 1.2vh, 0.9rem);
-      cursor: pointer;
-      transition: all 0.2s;
-      color: #fff;
-      margin-bottom: 1.5vh;
-      align-self: flex-end;
-    }
-    .refresh-btn:hover {
-      background: rgba(255,200,87,0.2);
-      border-color: var(--bp-warning);
-    }
-
     /* Leaderboard list */
     .leaderboard-list {
       display: flex;
@@ -206,10 +183,23 @@
     .rank.top-1 { color: #ffd700; }
     .rank.top-2 { color: #c0c0c0; }
     .rank.top-3 { color: #cd7f32; }
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 1rem;
+      background: var(--bp-dark);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
     .user-info {
       flex: 1;
-      padding-left: 1.5vw;
-      border-left: 2px solid rgba(255,200,87,0.25);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .user-details {
+      flex: 1;
     }
     .username {
       font-family: var(--fh);
@@ -278,12 +268,8 @@
         margin-bottom: 4px;
       }
       .user-info {
-        padding-left: 0;
-        border-left: none;
-        border-top: 1px solid rgba(255,200,87,0.25);
-        padding-top: 6px;
-        margin-top: 4px;
         width: 100%;
+        margin-top: 4px;
       }
       .score {
         align-self: flex-start;
@@ -309,10 +295,10 @@
   <div class="leaderboard-container z1">
     <div class="hero-title">
       <h1>
-        <span class="schedule-text">🏆</span>
+        <span class="schedule-text"></span>
         <span class="highlight"> Leaderboard</span>
       </h1>
-      <div class="event-date">Top builders who've checked in</div>
+      <div class="event-date">Top builders who've made their best</div>
     </div>
 
     <div class="leaderboard-card">
@@ -320,7 +306,6 @@
         <span>✨ Qualified participants</span>
         <span id="total-users">—</span>
       </div>
-      <button class="refresh-btn" onclick="loadLeaderboard()">⟳ Refresh</button>
       <div id="leaderboard-list" class="leaderboard-list">Loading...</div>
     </div>
 
@@ -338,6 +323,9 @@
 
   <script src="config.js"></script>
   <script>
+    // Default avatar SVG (circular placeholder)
+    const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230e305b' stroke='%23ffc857' stroke-width='2'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23ffc857' font-family='monospace'%3E👤%3C/text%3E%3C/svg%3E";
+
     async function loadLeaderboard() {
       try {
         const res = await fetch(`${API_BASE_URL}/api/user/leaderboard`);
@@ -358,12 +346,16 @@
           else if (index === 1) rankClass = 'top-2';
           else if (index === 2) rankClass = 'top-3';
           const rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+          const profilePic = (user.profilePicture && user.profilePicture.startsWith('data:image')) ? user.profilePicture : DEFAULT_AVATAR;
           return `
             <div class="leaderboard-item">
               <div class="rank ${rankClass}">${rankIcon}</div>
               <div class="user-info">
-                <div class="username">${escapeHtml(user.username || user.name || user.email.split('@')[0])}</div>
-                <div class="email">${escapeHtml(user.email)}</div>
+                <img class="profile-pic" src="${escapeHtml(profilePic)}" alt="avatar" onerror="this.src='${DEFAULT_AVATAR}'">
+                <div class="user-details">
+                  <div class="username">${escapeHtml(user.username || user.name || user.email.split('@')[0])}</div>
+                  <div class="email">${escapeHtml(user.email)}</div>
+                </div>
               </div>
               <div class="score">${user.score || 0} pts</div>
             </div>
@@ -381,8 +373,10 @@
       return div.innerHTML;
     }
 
+    // Initial load
     loadLeaderboard();
-    setInterval(loadLeaderboard, 30000);
+    // Auto-refresh every 10 seconds
+    setInterval(loadLeaderboard, 10000);
   </script>
 </body>
 </html>
