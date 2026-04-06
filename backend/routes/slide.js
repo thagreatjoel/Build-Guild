@@ -1,16 +1,10 @@
-let actions = [];
+const express = require('express');
+const router = express.Router();
 
-function next(req, res) {
-  actions.push("next");
-  res.json({ ok: true });
-}
+const slide = require('../utils/slideController');
 
-function prev(req, res) {
-  actions.push("prev");
-  res.json({ ok: true });
-}
+router.get('/next', slide.next);
+router.get('/prev', slide.prev);
+router.get('/status', slide.status);
 
-function status(req, res) {
-  const action = actions.shift() || null;
-  res.json({ action });
-}
+module.exports = router;
