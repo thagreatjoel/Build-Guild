@@ -4,17 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Slide Viewer</title>
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       background: #0e305b;
       height: 100vh;
       overflow: hidden;
     }
+
     iframe {
       width: 100%;
       height: 100%;
@@ -24,6 +23,7 @@
       opacity: 1;
       transform: scale(1) rotate(0deg);
     }
+
     .slide-counter {
       position: fixed;
       bottom: 12px;
@@ -34,42 +34,44 @@
       font-size: 12px;
       padding: 4px 8px;
       border-radius: 8px;
-      pointer-events: none;
       z-index: 10;
     }
+
     .flash-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #0e305b;   /* solid Hack Club yellow */
-  pointer-events: none;
-  z-index: 30;           /* higher than grain (z-index:0) and iframe */
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0e305b;
+      pointer-events: none;
+      z-index: 30;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
   </style>
 </head>
+
 <body>
-  <iframe id="slideFrame" title="Slide Viewer"></iframe>
+
+  <iframe id="slideFrame"></iframe>
   <div class="slide-counter" id="counter">1 / 0</div>
   <div class="flash-overlay" id="flashOverlay"></div>
 
   <script>
-    // ---------- CONFIGURATION ----------
+    // ---------- SLIDES ----------
     const slides = [
       "1.html",
       "2.html",
       "3.html",
       "4.html",
-      "5.html",
-      // add more as needed
+      "5.html"
     ];
-    // -----------------------------------
+    // ----------------------------
 
     let currentIndex = 0;
     let isTransitioning = false;
+
     const frame = document.getElementById('slideFrame');
     const counter = document.getElementById('counter');
     const flash = document.getElementById('flashOverlay');
@@ -84,89 +86,72 @@
 
     async function loadSlide(index) {
       if (isTransitioning) return;
+
       if (index < 0) index = 0;
       if (index >= slides.length) index = slides.length - 1;
       if (index === currentIndex) return;
 
       isTransitioning = true;
 
-      // Step 1: Fade out iframe and apply grid movement (scale + rotate)
+      // animation out
       frame.style.opacity = '0';
       frame.style.transform = 'scale(0.95) rotate(0.5deg)';
       flash.style.opacity = '0.6';
-      await delay(150);
+      await delay(120);
 
-      // Step 2: Load new slide
+      // change slide
       currentIndex = index;
-      const slideFile = slides[currentIndex];
-      frame.src = `slide/${slideFile}`;
+      frame.src = `slide/${slides[currentIndex]}`;
       updateCounter();
 
-      // Step 3: Wait a bit for the iframe to start loading, then reset transform and fade in
-      await delay(200);
+      // animation in
+      await delay(150);
       frame.style.opacity = '1';
-      frame.style.transform = 'scale(1) rotate(0deg)';
+      frame.style.transform = 'scale(1)';
       flash.style.opacity = '0';
-      await delay(100);
+
+      await delay(80);
       isTransitioning = false;
     }
 
     function nextSlide() {
-      if (currentIndex + 1 < slides.length) {
-        loadSlide(currentIndex + 1);
-      }
+      loadSlide(currentIndex + 1);
     }
 
     function prevSlide() {
-      if (currentIndex - 1 >= 0) {
-        loadSlide(currentIndex - 1);
-      }
+      loadSlide(currentIndex - 1);
     }
 
-    // Keyboard shortcuts: 'a' next, 'q' previous
+    // ---------- SSE (INSTANT CONTROL) ----------
+    const evtSource = new EventSource("https://build-guild.onrender.com/api/slide/events");
+
+    evtSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.action === "next") nextSlide();
+      if (data.action === "prev") prevSlide();
+    };
+
+    evtSource.onerror = () => {
+      console.log("SSE disconnected... retrying");
+    };
+    // ------------------------------------------
+
+    // keyboard backup
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'a' || e.key === 'A') {
-        e.preventDefault();
-        nextSlide();
-      } else if (e.key === 'q' || e.key === 'Q') {
-        e.preventDefault();
-        prevSlide();
-      }
+      if (e.key === 'a') nextSlide();
+      if (e.key === 'q') prevSlide();
     });
 
-let lastTrigger = 0;
-
-async function checkButton() {
-  try {
-    const res = await fetch("https://build-guild.onrender.com/api/slide/status");
-    const data = await res.json();
-
-    if (!data.action) return;
-
-    if (Date.now() - lastTrigger < 400) return;
-
-    if (data.action === "next") nextSlide();
-    if (data.action === "prev") prevSlide();
-
-    lastTrigger = Date.now();
-
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-setInterval(checkButton, 500);
-
-    // Initial load
+    // initial load
     if (slides.length > 0) {
       frame.src = `slide/${slides[0]}`;
-      currentIndex = 0;
       updateCounter();
-      frame.style.opacity = '1';
     } else {
-      frame.srcdoc = '<html><body style="background:#0e305b; color:white; display:flex; justify-content:center; align-items:center;"><h1>No slides configured</h1></body></html>';
-      counter.style.display = 'none';
+      frame.srcdoc = "<h1 style='color:white;text-align:center;'>No slides</h1>";
     }
+
   </script>
+
 </body>
 </html>
