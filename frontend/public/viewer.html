@@ -134,6 +134,29 @@
       }
     });
 
+let lastTrigger = 0;
+
+async function checkButton() {
+  try {
+    const res = await fetch("https://build-guild.onrender.com/api/slide/status");
+    const data = await res.json();
+
+    if (!data.action) return;
+
+    if (Date.now() - lastTrigger < 400) return;
+
+    if (data.action === "next") nextSlide();
+    if (data.action === "prev") prevSlide();
+
+    lastTrigger = Date.now();
+
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+setInterval(checkButton, 500);
+
     // Initial load
     if (slides.length > 0) {
       frame.src = `slide/${slides[0]}`;
