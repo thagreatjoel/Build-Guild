@@ -198,4 +198,24 @@ router.post('/announcement', auth, async (req, res) => {
   }
 });
 
+// Get event note (admin)
+router.get('/event-note', auth, async (req, res) => {
+  const EventNote = require('../models/EventNote');
+  let note = await EventNote.findOne();
+  if (!note) note = new EventNote();
+  res.json({ text: note.text });
+});
+
+// Update event note (admin)
+router.post('/event-note', auth, async (req, res) => {
+  const { text } = req.body;
+  const EventNote = require('../models/EventNote');
+  let note = await EventNote.findOne();
+  if (!note) note = new EventNote();
+  note.text = text;
+  note.updatedAt = new Date();
+  await note.save();
+  res.json({ msg: 'Note updated', text });
+});
+
 module.exports = router;

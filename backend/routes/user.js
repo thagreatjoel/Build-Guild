@@ -170,6 +170,14 @@ router.get('/profile', async (req, res) => {
   }
 });
 
+// Get event note (public)
+router.get('/event-note', async (req, res) => {
+  const EventNote = require('../models/EventNote');
+  let note = await EventNote.findOne();
+  if (!note) note = new EventNote();
+  res.json({ text: note.text });
+});
+
 // Update user profile (name and profile picture)
 router.post('/update-profile', async (req, res) => {
   const { email, name, profilePicture } = req.body;

@@ -407,6 +407,25 @@ body::after {
       return div.innerHTML;
     }
 
+async function checkEventStatus() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/event-status`);
+    const data = await res.json();
+    if (!data.isOpen) {
+      toast('Event has been closed. Redirecting...', 'info');
+      setTimeout(() => {
+        window.location.href = '/waiting.html';
+      }, 2000);
+    }
+  } catch (err) {
+    console.error('Failed to check event status:', err);
+  }
+}
+// Check every 10 seconds
+setInterval(checkEventStatus, 10000);
+checkEventStatus();
+
+
     loadLeaderboard();
     setInterval(loadLeaderboard, 10000);
   </script>
