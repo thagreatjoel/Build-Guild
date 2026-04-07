@@ -84,7 +84,7 @@
       height: auto;
       border: 0;
     }
-    /* Canvas for fireworks – hidden until start */
+    /* Canvas for fireworks */
     #fireworksCanvas {
       position: fixed;
       top: 0;
@@ -106,6 +106,7 @@
       gap: clamp(12px, 2.5vh, 28px);
       position: relative;
       z-index: 3;
+      justify-content: space-between;
     }
     .hero-logo {
       flex-shrink: 0;
@@ -127,32 +128,24 @@
       opacity: 0.9;
     }
     .main-title .kochi { color: var(--bp-warning); }
-    .content-card {
-      background: rgba(8, 28, 53, 1);
-      padding: clamp(24px, 4vh, 56px) clamp(32px, 5vw, 72px);
+    /* No card – only title and maybe a message */
+    .message-area {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      overflow: hidden;
+      align-items: center;
       text-align: center;
     }
-    .start-btn {
-      background: transparent;
-      border: 2px solid var(--bp-warning);
-      border-radius: 60px;
-      padding: 1rem 2rem;
-      font-family: var(--fh);
-      font-size: 1.5rem;
+    .big-title {
+      font-size: clamp(3rem, 8vh, 5rem);
       font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s;
       color: #fff;
-      margin-top: 2rem;
+      margin-bottom: 1rem;
     }
-    .start-btn:hover {
-      background: rgba(255,200,87,0.2);
-      border-color: var(--bp-warning);
+    .subtitle {
+      font-size: clamp(1.5rem, 4vh, 2.5rem);
+      font-weight: 600;
       color: var(--bp-warning);
     }
     .sponsors {
@@ -212,9 +205,6 @@
       color: #fff;
       margin-top: 4px;
     }
-    @media (max-width: 600px) {
-      .start-btn { font-size: 1.2rem; padding: 0.8rem 1.5rem; }
-    }
   </style>
 </head>
 <body>
@@ -246,10 +236,10 @@
       </div>
     </div>
 
-    <div class="content-card">
-      <h2 style="font-size: clamp(3rem, 8vh, 5rem); font-weight:800; color:#fff;">SOLDERING 101</h2>
-      <p style="font-size: clamp(1.5rem, 4vh, 2.5rem); font-weight:600; color:var(--bp-warning); margin-top:1rem;">Begins!</p>
-      <button class="start-btn" id="startEventBtn">Start →</button>
+    <!-- No card, just title and subtitle -->
+    <div class="message-area">
+      <div class="big-title">SOLDERING 101</div>
+      <div class="subtitle">Begins!</div>
     </div>
 
     <div class="sponsors">
@@ -298,7 +288,6 @@
       }
     }
 
-    // Audio with multiple pop sounds
     let popSounds = [];
 
     function loadSounds() {
@@ -527,7 +516,6 @@
     }
 
     function startFireworksSequence() {
-      // Hide the start button and UI elements if desired? Keep them visible, but canvas shows.
       canvas.style.display = 'block';
       startAnimation();
       launchRockets(10, 180);
@@ -552,11 +540,10 @@
       }, 3200);
     }
 
-    document.getElementById('startEventBtn').addEventListener('click', () => {
+    // Auto-start on page load
+    window.addEventListener('load', () => {
       startFireworksSequence();
-      document.getElementById('startEventBtn').disabled = true;
-      document.getElementById('startEventBtn').textContent = 'Started!';
     });
   </script>
 </body>
-</html>
+</html>66666666666666666666666666666666666666666666666666666666666666666666666
