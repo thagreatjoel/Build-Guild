@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Event Started — Build Guild Kochi</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0e305b;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      background: rgba(8,28,53,0.7);
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(255,255,255,.2);
+      padding: 3rem;
+      border-radius: 24px;
+      max-width: 500px;
+      width: 90%;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .timer {
+      font-size: 4rem;
+      font-weight: bold;
+      font-family: monospace;
+      color: #ffc857;
+      margin: 1rem 0;
+    }
+    .message {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎉 Event Started! 🎉</h1>
+    <div class="timer" id="timer">5</div>
+    <div class="message" id="message">Preparing fireworks...</div>
+  </div>
+
+  <script>
+    function firework(count, origin = { y: 0.6 }) {
+      canvasConfetti({
+        particleCount: count,
+        spread: 100,
+        origin: origin,
+        colors: ['#ffc857', '#ffffff', '#0e305b', '#a8f0ae'],
+        startVelocity: 20,
+        gravity: 0.8,
+        ticks: 200
+      });
+    }
+
+    // Stage 1: 10 fireworks immediately
+    firework(10, { y: 0.5 });
+    firework(10, { y: 0.7, x: 0.2 });
+    firework(10, { y: 0.7, x: 0.8 });
+
+    // Stage 2: after 2 seconds, 5 more fireworks
+    setTimeout(() => {
+      firework(5, { y: 0.6, x: 0.5 });
+      firework(5, { y: 0.4, x: 0.3 });
+      firework(5, { y: 0.8, x: 0.7 });
+    }, 2000);
+
+    // Stage 3: timer starts after the second fireworks
+    setTimeout(() => {
+      let secondsLeft = 5;
+      const timerEl = document.getElementById('timer');
+      const msgEl = document.getElementById('message');
+      msgEl.textContent = 'Timer running...';
+      const interval = setInterval(() => {
+        timerEl.textContent = secondsLeft;
+        if (secondsLeft === 0) {
+          clearInterval(interval);
+          timerEl.textContent = "✨ Done! ✨";
+          msgEl.textContent = "You can now close this window.";
+          // Optional final fireworks
+          firework(15, { y: 0.5 });
+        }
+        secondsLeft--;
+      }, 1000);
+    }, 3000); // wait 3 seconds after page load (2s for fireworks + 1s buffer)
+  </script>
+</body>
+</html>

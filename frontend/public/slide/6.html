@@ -3,38 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>FAQ — Build Guild Kochi</title>
+  <title>Soldering 101 — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <style>
+    /* (your existing CSS – unchanged) */
     @font-face {
-  font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicLight.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicFull.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicFull.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@keyframes moveGrid {
-  0% {
-    background-position: 0 0, 0 0;
-  }
-  100% {
-    background-position: 100px 100px, 100px 100px;
-  }
-}
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicLight.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @keyframes moveGrid {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 100px 100px, 100px 100px; }
+    }
     :root {
       --bp-lighter: #344b6a;
       --bp-dark: #0e305b;
@@ -47,11 +44,8 @@
       --f: 'Phantom Sans', 'Poppins', sans-serif;
       --fh: 'Phantom Sans';
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     html { font-size: 16px; }
-
     body {
       font-family: var(--f);
       background: var(--bp-dark);
@@ -67,7 +61,6 @@
       animation: moveGrid 10s linear infinite;
       position: relative;
     }
-
     body::after {
       content: "";
       position: fixed;
@@ -79,9 +72,7 @@
       pointer-events: none;
       z-index: 0;
     }
-
     .z1 { position: relative; z-index: 1; }
-
     .banner-link {
       position: fixed;
       top: 40px;
@@ -94,7 +85,6 @@
       height: auto;
       border: 0;
     }
-
     .container {
       width: 100%;
       height: 100vh;
@@ -105,7 +95,6 @@
       flex-direction: column;
       gap: clamp(12px, 2.5vh, 28px);
     }
-
     .hero-logo {
       flex-shrink: 0;
       display: flex;
@@ -126,62 +115,34 @@
       opacity: 0.9;
     }
     .main-title .kochi { color: var(--bp-warning); }
-
     .content-card {
       background: rgba(8, 28, 53, 1);
-      
       padding: clamp(24px, 4vh, 56px) clamp(32px, 5vw, 72px);
       flex: 1;
-      min-height: 06;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       overflow: hidden;
-    }
-
-    .faq-header {
       text-align: center;
-      margin-bottom: 2vh;
     }
-    .hackclub-year {
-      font-family: var(--f);
-      font-size: clamp(1.5rem, 4vh, 2.5rem);
+    .start-btn {
+      background: transparent;
+      border: 2px solid var(--bp-warning);
+      border-radius: 60px;
+      padding: 1rem 2rem;
+      font-family: var(--fh);
+      font-size: 1.5rem;
       font-weight: 800;
-      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #fff;
+      margin-top: 2rem;
     }
-    .hackclub-year .year {
-      font-size: 0.7em;
-      color: rgba(255,255,255,0.7);
+    .start-btn:hover {
+      background: rgba(255,200,87,0.2);
+      border-color: var(--bp-warning);
+      color: var(--bp-warning);
     }
-    .partner-logos {
-      display: flex;
-      justify-content: center;
-      gap: clamp(1rem, 3vw, 2rem);
-      flex-wrap: wrap;
-      margin: 1rem 0;
-    }
-    .partner {
-      font-family: var(--f);
-      font-weight: 700;
-      font-size: clamp(1rem, 2.5vh, 1.5rem);
-      color: rgba(255,255,255,0.9);
-    }
-    .question-list {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 2vh;
-      margin-top: 2vh;
-    }
-    .question {
-      font-size: clamp(1.2rem, 3vh, 2rem);
-      font-weight: 600;
-      padding-left: 1.5vw;
-      border-left: 3px solid var(--bp-warning);
-      color: rgba(255,255,255,0.95);
-      line-height: 1.4;
-    }
-
     .sponsors {
       flex-shrink: 0;
       text-align: center;
@@ -208,12 +169,8 @@
       color: rgba(255,255,255,0.7);
       letter-spacing: 1px;
     }
-    
-    
-
     @media (max-width: 600px) {
-      .question { font-size: clamp(1rem, 2.5vh, 1.5rem); }
-      .partner { font-size: clamp(0.8rem, 2vh, 1.2rem); }
+      .start-btn { font-size: 1.2rem; padding: 0.8rem 1.5rem; }
     }
   </style>
 </head>
@@ -241,41 +198,9 @@
     </div>
 
     <div class="content-card">
-      <div class="faq-header">
-     
-      </div>
-      <div style="text-align:center; margin-top:80px;">
-
-  <h2 style="
-    font-family:Phantom Sans;
-    font-size:80px;
-    font-weight:800;
-    color:#ffffff;
-    margin-bottom:10px;
-  ">
-    SOLDERING 101
-  </h2>
-
-  <p style="
-    font-size:35px;
-    font-weight:600;
-    color:#ffc857;
-    margin:6px 0;
-  ">
-    Begins!
-  </p>
-
-  <p style="
-    font-size:35px;
-    font-weight:600;
-    color:#ffc857;
-    margin:6px 0;
-  ">
-   
-   
-  </p>
-
-</div>
+      <h2 style="font-size: clamp(3rem, 8vh, 5rem); font-weight:800; color:#fff;">SOLDERING 101</h2>
+      <p style="font-size: clamp(1.5rem, 4vh, 2.5rem); font-weight:600; color:var(--bp-warning); margin-top:1rem;">Begins!</p>
+      <button class="start-btn" id="startEventBtn">Start the Event →</button>
     </div>
 
     <div class="sponsors">
@@ -289,5 +214,11 @@
       </div>
     </div>
   </div>
+
+  <script>
+    document.getElementById('startEventBtn').addEventListener('click', () => {
+      window.location.href = 'espo.html';
+    });
+  </script>
 </body>
 </html>
