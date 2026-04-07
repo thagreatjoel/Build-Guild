@@ -21,7 +21,6 @@
       display: block;
       z-index: 1;
     }
-    /* UI overlay */
     .ui-overlay {
       position: absolute;
       top: 0;
@@ -32,7 +31,7 @@
       align-items: center;
       justify-content: center;
       z-index: 2;
-      pointer-events: none; /* allow clicks to pass to canvas if needed */
+      pointer-events: none;
     }
     .container {
       background: rgba(8, 28, 53, 0.7);
@@ -92,9 +91,9 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Fallback firework image (optional)
+// Fallback firework image
 const fireworkImg = new Image();
-fireworkImg.src = 'fire.webp';  // if missing, uses pixel sprite
+fireworkImg.src = 'fire.webp';
 let fireworkLoaded = false;
 fireworkImg.onload = () => { fireworkLoaded = true; };
 fireworkImg.onerror = () => { console.log('Using fallback rocket sprite'); };
@@ -108,7 +107,6 @@ function drawRocket(cx, cy, angle) {
     ctx.drawImage(fireworkImg, -w/2, -h/2, w, h);
     ctx.restore();
   } else {
-    // simple pixel rocket fallback
     ctx.fillStyle = '#c03030';
     ctx.fillRect(cx-6, cy-12, 12, 24);
     ctx.fillStyle = '#ffc857';
@@ -116,21 +114,47 @@ function drawRocket(cx, cy, angle) {
   }
 }
 
-// Audio helpers (sounds optional, fail silently)
+// ── Audio with multiple pop sounds ────────────────────────
+let popSounds = [];
+
+function loadSounds() {
+  try {
+    const popFiles = ['./pop.wav', './pop1.mp3', './pop2.mp3'];
+    popFiles.forEach(file => {
+      const sound = new Audio(file);
+      sound.preload = 'auto';
+      sound.volume = 0.4;
+      popSounds.push(sound);
+    });
+    // Resume AudioContext on first user interaction (if any)
+    document.body.addEventListener('click', function resumeAudio() {
+      // optional: resume audio context if needed
+    });
+  } catch(e) {
+    console.log('Audio load error:', e);
+  }
+}
+
 function playLaunchSound() {
   try {
-    const snd = new Audio('./launch.mp3');
-    snd.volume = 0.3;
-    snd.play().catch(()=>{});
+    const launchSound = new Audio('./launch.mp3');
+    launchSound.volume = 0.3;
+    launchSound.play().catch(() => {});
   } catch(e) {}
 }
+
 function playPopSound() {
   try {
-    const snd = new Audio('./pop.wav');
-    snd.volume = 0.4;
-    snd.play().catch(()=>{});
+    if (popSounds.length > 0) {
+      const randomIndex = Math.floor(Math.random() * popSounds.length);
+      const selectedSound = popSounds[randomIndex];
+      selectedSound.currentTime = 0;
+      selectedSound.play().catch(() => {});
+    }
   } catch(e) {}
 }
+
+loadSounds();
 
 // Minecraft dye palettes
 const PALETTES = [
@@ -270,7 +294,6 @@ Rocket.prototype.draw = function() {
   drawRocket(this.x, this.y, Math.atan2(this.vy, this.vx));
 };
 
-// Global arrays
 let rockets = [];
 let explosions = [];
 
@@ -288,7 +311,6 @@ function drawStars() {
   ctx.globalAlpha = 1;
 }
 
-// Animation loop
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
@@ -311,7 +333,6 @@ function animate() {
 }
 animate();
 
-// Firework launcher: spawn count rockets with delay between each
 function launchRockets(count, delayBetween = 180) {
   for (let i = 0; i < count; i++) {
     setTimeout(() => {
@@ -329,33 +350,27 @@ function launchRockets(count, delayBetween = 180) {
 const timerEl = document.getElementById('timer');
 const msgEl = document.getElementById('message');
 
-// Burst 1: 10 rockets immediately
 launchRockets(10, 180);
 
-// Burst 2: 5 rockets after 2 seconds
 setTimeout(() => {
   launchRockets(5, 200);
 }, 2000);
 
-// Timer starts after second burst (allow extra 200ms for last rocket)
 setTimeout(() => {
   let seconds = 5;
   timerEl.textContent = seconds;
   msgEl.textContent = 'Timer running...';
   const interval = setInterval(() => {
     seconds--;
-    if (seconds >= 0) {
-      timerEl.textContent = seconds;
-    }
+    if (seconds >= 0) timerEl.textContent = seconds;
     if (seconds < 0) {
       clearInterval(interval);
       timerEl.textContent = '✨';
       msgEl.textContent = 'Event started! You can close this window.';
-      // Final celebration fireworks
       launchRockets(8, 150);
     }
   }, 1000);
-}, 3200); // 2s delay + 1.2s buffer
+}, 3200);
 </script>
 </body>
 </html>
