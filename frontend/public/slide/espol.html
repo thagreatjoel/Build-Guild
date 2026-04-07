@@ -3,374 +3,543 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Event Started — Build Guild Kochi</title>
+  <title>Soldering 101 — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #0e305b;
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicLight.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
     }
-    canvas {
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('../font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @keyframes moveGrid {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 100px 100px, 100px 100px; }
+    }
+    :root {
+      --bp-lighter: #344b6a;
+      --bp-dark: #0e305b;
+      --bp-darker: #081c35;
+      --bp-light: #dbe4ee;
+      --bp-danger: #fe8e86;
+      --bp-danger-darker: #bd4c44;
+      --bp-warning: #ffc857;
+      --bp-success: #a8f0ae;
+      --f: 'Phantom Sans', 'Poppins', sans-serif;
+      --fh: 'Phantom Sans';
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; }
+    body {
+      font-family: var(--f);
+      background: var(--bp-dark);
+      color: #fff;
+      min-height: 100vh;
+      overscroll-behavior: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-position: 0 0, 0 0;
+      background-color: var(--bp-dark);
+      animation: moveGrid 10s linear infinite;
+      position: relative;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse, #000000b1, transparent);
+      opacity: .4;
+      filter: url(#grainy);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .z1 { position: relative; z-index: 1; }
+    .banner-link {
+      position: fixed;
+      top: 40px;
+      left: 0;
+      z-index: 999;
+    }
+    .banner-link img {
+      width: 180px;
+      max-width: 25vw;
+      height: auto;
+      border: 0;
+    }
+    /* Canvas transparent background */
+    #fireworksCanvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      display: block;
-      z-index: 1;
-    }
-    .ui-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: none;
       z-index: 2;
       pointer-events: none;
+      background: transparent;
     }
     .container {
-      background: rgba(8, 28, 53, 0.7);
-      backdrop-filter: blur(12px);
-      border: 2px solid rgba(255,255,255,.2);
-      padding: 2rem 3rem;
-      border-radius: 32px;
-      max-width: 500px;
-      width: 90%;
+      width: 100%;
+      height: 100vh;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: clamp(16px, 3vh, 80px) clamp(24px, 5vw, 80px) clamp(16px, 2.5vh, 40px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2.5vh, 28px);
+      position: relative;
+      z-index: 3;
+      justify-content: space-between;
+    }
+    .hero-logo {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(6px, 1vh, 14px);
+    }
+    .blueprint-logo {
+      max-width: clamp(200px, 30vw, 380px);
+    }
+    .blueprint-logo img { width: 100%; height: auto; display: block; }
+    .main-title {
+      font-family: var(--f);
+      font-size: clamp(0.75rem, 2vh, 1.2rem);
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+    .main-title .kochi { color: var(--bp-warning); }
+    .message-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      pointer-events: auto;
-      font-family: 'Poppins', sans-serif;
     }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+    .big-title {
+      font-size: clamp(3rem, 8vh, 5rem);
+      font-weight: 800;
       color: #fff;
+      margin-bottom: 1rem;
     }
-    .timer {
-      font-size: 4rem;
+    .subtitle {
+      font-size: clamp(1.5rem, 4vh, 2.5rem);
+      font-weight: 600;
+      color: var(--bp-warning);
+    }
+    .sponsors {
+      flex-shrink: 0;
+      text-align: center;
+      padding-top: clamp(10px, 1.5vh, 20px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .sponsors-label {
+      font-size: clamp(0.55rem, 1.1vh, 0.75rem);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: clamp(6px, 0.8vh, 12px);
+    }
+    .sponsor-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(16px, 3vw, 48px);
+      flex-wrap: wrap;
+    }
+    .sponsor {
+      font-weight: 700;
+      font-size: clamp(0.7rem, 1.5vh, 1rem);
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 1px;
+    }
+    /* Timer overlay */
+    .timer-overlay {
+      position: fixed;
+      bottom: 30px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 4;
+      font-family: 'Poppins', monospace;
+      background: rgba(0,0,0,0.6);
+      padding: 12px 20px;
+      border-radius: 50px;
+      width: fit-content;
+      margin: 0 auto;
+      backdrop-filter: blur(8px);
+      border: 1px solid #ffc857;
+      pointer-events: none;
+      display: none;
+    }
+    .timer-number {
+      font-size: 3rem;
       font-weight: bold;
-      font-family: monospace;
       color: #ffc857;
-      margin: 1rem 0;
+      font-family: monospace;
+      letter-spacing: 4px;
     }
-    .message {
-      font-size: 1rem;
-      color: rgba(255,255,255,0.8);
-      margin-top: 0.5rem;
-    }
-    @media (max-width: 600px) {
-      .container { padding: 1.5rem; }
-      h1 { font-size: 1.8rem; }
-      .timer { font-size: 3rem; }
+    .timer-label {
+      font-size: 0.9rem;
+      color: #fff;
+      margin-top: 4px;
     }
   </style>
 </head>
 <body>
-<canvas id="fireworksCanvas"></canvas>
-<div class="ui-overlay">
-  <div class="container">
-    <h1>🎆 Event Started!</h1>
-    <div class="timer" id="timer">5</div>
-    <div class="message" id="message">Launching fireworks...</div>
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
+  <canvas id="fireworksCanvas"></canvas>
+  <div class="timer-overlay" id="timerOverlay">
+    <div class="timer-number" id="timerNumber">5</div>
+    <div class="timer-label" id="timerLabel">seconds until start</div>
   </div>
-</div>
 
-<script>
-// ======================== ROCKET FIREWORKS SYSTEM ========================
-const canvas = document.getElementById('fireworksCanvas');
-const ctx = canvas.getContext('2d');
+  <div class="container z1">
+    <div class="hero-logo">
+      <div class="blueprint-logo">
+        <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
+      </div>
+      <div class="main-title">
+        Build Guild <span class="kochi">Kochi</span>
+      </div>
+    </div>
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+    <div class="message-area">
+      <div class="big-title">SOLDERING 101</div>
+      <div class="subtitle">Begins!</div>
+    </div>
 
-// Fallback firework image
-const fireworkImg = new Image();
-fireworkImg.src = 'fire.webp';
-let fireworkLoaded = false;
-fireworkImg.onload = () => { fireworkLoaded = true; };
-fireworkImg.onerror = () => { console.log('Using fallback rocket sprite'); };
+    <div class="sponsors">
+      <div class="sponsors-label">Proudly supported by</div>
+      <div class="sponsor-logos">
+        <span class="sponsor">HACKCLUB</span>
+        <span class="sponsor">BLUEPRINT</span>
+        <span class="sponsor">JLCPCB</span>
+        <span class="sponsor">OSHWELD</span>
+        <span class="sponsor">EASYEDA</span>
+      </div>
+    </div>
+  </div>
 
-function drawRocket(cx, cy, angle) {
-  if (fireworkLoaded && fireworkImg.complete) {
-    const w = 36, h = 48;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(angle + Math.PI / 2);
-    ctx.drawImage(fireworkImg, -w/2, -h/2, w, h);
-    ctx.restore();
-  } else {
-    ctx.fillStyle = '#c03030';
-    ctx.fillRect(cx-6, cy-12, 12, 24);
-    ctx.fillStyle = '#ffc857';
-    ctx.fillRect(cx-2, cy-16, 4, 8);
-  }
-}
+  <script>
+    // ======================== ROCKET FIREWORKS SYSTEM (transparent canvas) ========================
+    const canvas = document.getElementById('fireworksCanvas');
+    const ctx = canvas.getContext('2d');
 
-// ── Audio with multiple pop sounds ────────────────────────
-let popSounds = [];
-
-function loadSounds() {
-  try {
-    const popFiles = ['./pop.wav', './pop1.mp3', './pop2.mp3'];
-    popFiles.forEach(file => {
-      const sound = new Audio(file);
-      sound.preload = 'auto';
-      sound.volume = 0.4;
-      popSounds.push(sound);
-    });
-    // Resume AudioContext on first user interaction (if any)
-    document.body.addEventListener('click', function resumeAudio() {
-      // optional: resume audio context if needed
-    });
-  } catch(e) {
-    console.log('Audio load error:', e);
-  }
-}
-
-function playLaunchSound() {
-  try {
-    const launchSound = new Audio('./launch.mp3');
-    launchSound.volume = 0.3;
-    launchSound.play().catch(() => {});
-  } catch(e) {}
-}
-
-function playPopSound() {
-  try {
-    if (popSounds.length > 0) {
-      const randomIndex = Math.floor(Math.random() * popSounds.length);
-      const selectedSound = popSounds[randomIndex];
-      selectedSound.currentTime = 0;
-      selectedSound.play().catch(() => {});
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
-  } catch(e) {}
-}
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-loadSounds();
+    const fireworkImg = new Image();
+    fireworkImg.src = 'fire.webp';
+    let fireworkLoaded = false;
+    fireworkImg.onload = () => { fireworkLoaded = true; };
+    fireworkImg.onerror = () => { console.log('Using fallback rocket sprite'); };
 
-// Minecraft dye palettes
-const PALETTES = [
-  ['#ff2222','#cc0000','#ff9999'], ['#ff9900','#cc6600','#ffdd88'],
-  ['#ffee00','#bbbb00','#ffff99'], ['#22ee22','#009900','#99ffaa'],
-  ['#2299ff','#0055cc','#99ccff'], ['#ff22ff','#aa00aa','#ffaaff'],
-  ['#ffffff','#cccccc','#f0f0f0'], ['#00ffcc','#009999','#88ffee'],
-  ['#ff99ff','#bb66bb','#ffd4ff']
-];
-
-function Particle(x, y, vx, vy, col, trailCol) {
-  this.x = x; this.y = y; this.vx = vx; this.vy = vy;
-  this.col = col; this.trailCol = trailCol;
-  this.life = 1;
-  this.decay = 0.016 + Math.random() * 0.012;
-  this.hist = [];
-}
-Particle.prototype.update = function() {
-  this.hist.push({x:this.x, y:this.y});
-  if (this.hist.length > 9) this.hist.shift();
-  this.vx *= 0.98;
-  this.vy = this.vy * 0.98 + 0.055;
-  this.x += this.vx;
-  this.y += this.vy;
-  this.life -= this.decay;
-};
-Particle.prototype.draw = function() {
-  for (let i = 0; i < this.hist.length; i++) {
-    let a = (i / this.hist.length) * this.life * 0.4;
-    ctx.globalAlpha = a;
-    ctx.fillStyle = this.trailCol;
-    ctx.fillRect(this.hist[i].x - 1, this.hist[i].y - 1, 2, 2);
-  }
-  ctx.globalAlpha = Math.max(0, this.life);
-  ctx.fillStyle = this.col;
-  ctx.fillRect(this.x - 2, this.y - 2, 4, 4);
-  ctx.globalAlpha = 1;
-};
-
-function Explosion(x, y) {
-  this.x = x; this.y = y;
-  this.parts = []; this.parts2 = []; this.glitter = [];
-  this.done = false; this.frame = 0; this.fadeDone = false;
-  let pal = PALETTES[Math.floor(Math.random() * PALETTES.length)];
-  let pal2 = PALETTES[Math.floor(Math.random() * PALETTES.length)];
-  let type = Math.floor(Math.random() * 3);
-  let cnt = 52 + Math.floor(Math.random() * 24);
-  if (type === 0) {
-    for (let i = 0; i < cnt; i++) {
-      let a = (i / cnt) * Math.PI * 2, s = 3.2 + Math.random() * 1.8;
-      this.parts.push(new Particle(x, y, Math.cos(a) * s, Math.sin(a) * s, pal[0], pal[2]));
-    }
-  } else if (type === 1) {
-    for (let pt = 0; pt < 5; pt++) {
-      let base = (pt / 5) * Math.PI * 2 - Math.PI / 2;
-      let perRay = Math.round(cnt / 5);
-      for (let j = 0; j < perRay; j++) {
-        let spread = (j / perRay - 0.5) * 0.5;
-        let s2 = 3.5 + Math.random() * 1.8;
-        this.parts.push(new Particle(x, y, Math.cos(base + spread) * s2, Math.sin(base + spread) * s2, pal[0], pal[2]));
+    function drawRocket(cx, cy, angle) {
+      if (fireworkLoaded && fireworkImg.complete) {
+        const w = 36, h = 48;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle + Math.PI / 2);
+        ctx.drawImage(fireworkImg, -w/2, -h/2, w, h);
+        ctx.restore();
+      } else {
+        ctx.fillStyle = '#c03030';
+        ctx.fillRect(cx-6, cy-12, 12, 24);
+        ctx.fillStyle = '#ffc857';
+        ctx.fillRect(cx-2, cy-16, 4, 8);
       }
     }
-  } else {
-    for (let i = 0; i < cnt; i++) {
-      let a = (i / cnt) * Math.PI * 2;
-      let s3 = (i % 2 === 0 ? 1.8 : 4.0) + Math.random() * 0.7;
-      this.parts.push(new Particle(x, y, Math.cos(a) * s3, Math.sin(a) * s3, i % 2 === 0 ? pal[1] : pal[0], pal[2]));
+
+    let popSounds = [];
+
+    function loadSounds() {
+      try {
+        const popFiles = ['./pop.wav', './pop1.mp3', './pop2.mp3'];
+        popFiles.forEach(file => {
+          const sound = new Audio(file);
+          sound.preload = 'auto';
+          sound.volume = 0.4;
+          popSounds.push(sound);
+        });
+      } catch(e) { console.log('Audio load error:', e); }
     }
-  }
-  this.pal2 = pal2;
-  for (let gi = 0; gi < 16; gi++) {
-    let ga = Math.random() * Math.PI * 2, gs = 1 + Math.random() * 2.5;
-    this.glitter.push({ x: x, y: y, vx: Math.cos(ga) * gs, vy: Math.sin(ga) * gs, life: 1, sz: 2 + Math.random() * 2, col: pal[2] });
-  }
-}
-Explosion.prototype.update = function() {
-  this.frame++;
-  if (!this.fadeDone && this.frame >= 20) {
-    this.fadeDone = true;
-    let c = 28;
-    for (let i = 0; i < c; i++) {
-      let a = (i / c) * Math.PI * 2, s = 2 + Math.random() * 1.2;
-      this.parts2.push(new Particle(this.x, this.y, Math.cos(a) * s, Math.sin(a) * s, this.pal2[0], this.pal2[2]));
+
+    function playLaunchSound() {
+      try {
+        const launchSound = new Audio('./launch.mp3');
+        launchSound.volume = 0.3;
+        launchSound.play().catch(() => {});
+      } catch(e) {}
     }
-  }
-  for (let p of this.parts) p.update();
-  for (let p2 of this.parts2) p2.update();
-  this.parts = this.parts.filter(p => p.life > 0);
-  this.parts2 = this.parts2.filter(p => p.life > 0);
-  for (let g of this.glitter) {
-    g.x += g.vx; g.y += g.vy; g.vy += 0.06; g.vx *= 0.97; g.life -= 0.022;
-  }
-  this.glitter = this.glitter.filter(g => g.life > 0);
-  if (this.parts.length === 0 && this.parts2.length === 0 && this.glitter.length === 0) this.done = true;
-};
-Explosion.prototype.draw = function() {
-  for (let p of this.parts) p.draw();
-  for (let p2 of this.parts2) p2.draw();
-  for (let g of this.glitter) {
-    ctx.globalAlpha = g.life * 0.9;
-    ctx.fillStyle = g.col;
-    let s = Math.round(g.sz);
-    ctx.fillRect(g.x - s / 2, g.y - 1, s, 2);
-    ctx.fillRect(g.x - 1, g.y - s / 2, 2, s);
-  }
-  ctx.globalAlpha = 1;
-};
 
-function Rocket(x, y, targetY, vx, vy) {
-  this.x = x; this.y = y;
-  this.vx = vx; this.vy = vy;
-  this.targetY = targetY;
-  this.trail = [];
-  this.done = false;
-}
-Rocket.prototype.update = function() {
-  this.vy += 0.06;
-  this.x += this.vx;
-  this.y += this.vy;
-  this.trail.push({ x: this.x, y: this.y, col: Math.random() > 0.5 ? '#ff8833' : '#ffcc33', sz: 2 + Math.random() * 2 });
-  if (this.trail.length > 24) this.trail.shift();
-  if (this.y <= this.targetY || this.vy >= -0.3) {
-    this.done = true;
-    explosions.push(new Explosion(this.x, this.y));
-    playPopSound();
-  }
-};
-Rocket.prototype.draw = function() {
-  for (let i = 0; i < this.trail.length; i++) {
-    let t = this.trail[i];
-    ctx.globalAlpha = (i / this.trail.length) * 0.8;
-    ctx.fillStyle = t.col;
-    let s = Math.round(t.sz);
-    ctx.fillRect(Math.round(t.x) - s / 2, Math.round(t.y) - s / 2, s, s);
-  }
-  ctx.globalAlpha = 1;
-  drawRocket(this.x, this.y, Math.atan2(this.vy, this.vx));
-};
-
-let rockets = [];
-let explosions = [];
-
-// Stars background
-const STARS = [];
-for (let i = 0; i < 90; i++) {
-  STARS.push({ x: Math.random(), y: Math.random(), r: Math.random() > 0.85 ? 1.5 : 1, a: 0.3 + Math.random() * 0.7 });
-}
-function drawStars() {
-  for (let s of STARS) {
-    ctx.globalAlpha = s.a * (0.7 + Math.sin(Date.now() / 1800 + s.x * 99) * 0.3);
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(Math.round(s.x * canvas.width), Math.round(s.y * canvas.height * 0.75), s.r, s.r);
-  }
-  ctx.globalAlpha = 1;
-}
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  grad.addColorStop(0, '#080c18');
-  grad.addColorStop(1, '#0d1530');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  drawStars();
-  for (let i = rockets.length - 1; i >= 0; i--) {
-    rockets[i].update();
-    rockets[i].draw();
-    if (rockets[i].done) rockets.splice(i, 1);
-  }
-  for (let i = explosions.length - 1; i >= 0; i--) {
-    explosions[i].update();
-    explosions[i].draw();
-    if (explosions[i].done) explosions.splice(i, 1);
-  }
-  requestAnimationFrame(animate);
-}
-animate();
-
-function launchRockets(count, delayBetween = 180) {
-  for (let i = 0; i < count; i++) {
-    setTimeout(() => {
-      const x = 80 + Math.random() * (canvas.width - 160);
-      const targetY = canvas.height * (0.08 + Math.random() * 0.32);
-      const vx = (Math.random() - 0.5) * 1.5;
-      const vy = -(9 + Math.random() * 5);
-      rockets.push(new Rocket(x, canvas.height + 30, targetY, vx, vy));
-      playLaunchSound();
-    }, i * delayBetween);
-  }
-}
-
-// ========================= TIMING AND UI =========================
-const timerEl = document.getElementById('timer');
-const msgEl = document.getElementById('message');
-
-launchRockets(10, 180);
-
-setTimeout(() => {
-  launchRockets(5, 200);
-}, 2000);
-
-setTimeout(() => {
-  let seconds = 5;
-  timerEl.textContent = seconds;
-  msgEl.textContent = 'Timer running...';
-  const interval = setInterval(() => {
-    seconds--;
-    if (seconds >= 0) timerEl.textContent = seconds;
-    if (seconds < 0) {
-      clearInterval(interval);
-      timerEl.textContent = '✨';
-      msgEl.textContent = 'Event started! You can close this window.';
-      launchRockets(8, 150);
+    function playPopSound() {
+      try {
+        if (popSounds.length > 0) {
+          const randomIndex = Math.floor(Math.random() * popSounds.length);
+          const selectedSound = popSounds[randomIndex];
+          selectedSound.currentTime = 0;
+          selectedSound.play().catch(() => {});
+        }
+      } catch(e) {}
     }
-  }, 1000);
-}, 3200);
-</script>
+
+    loadSounds();
+
+    const PALETTES = [
+      ['#ff2222','#cc0000','#ff9999'], ['#ff9900','#cc6600','#ffdd88'],
+      ['#ffee00','#bbbb00','#ffff99'], ['#22ee22','#009900','#99ffaa'],
+      ['#2299ff','#0055cc','#99ccff'], ['#ff22ff','#aa00aa','#ffaaff'],
+      ['#ffffff','#cccccc','#f0f0f0'], ['#00ffcc','#009999','#88ffee'],
+      ['#ff99ff','#bb66bb','#ffd4ff']
+    ];
+
+    function Particle(x, y, vx, vy, col, trailCol) {
+      this.x = x; this.y = y; this.vx = vx; this.vy = vy;
+      this.col = col; this.trailCol = trailCol;
+      this.life = 1;
+      this.decay = 0.016 + Math.random() * 0.012;
+      this.hist = [];
+    }
+    Particle.prototype.update = function() {
+      this.hist.push({x:this.x, y:this.y});
+      if (this.hist.length > 9) this.hist.shift();
+      this.vx *= 0.98;
+      this.vy = this.vy * 0.98 + 0.055;
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= this.decay;
+    };
+    Particle.prototype.draw = function() {
+      for (let i = 0; i < this.hist.length; i++) {
+        let a = (i / this.hist.length) * this.life * 0.4;
+        ctx.globalAlpha = a;
+        ctx.fillStyle = this.trailCol;
+        ctx.fillRect(this.hist[i].x - 1, this.hist[i].y - 1, 2, 2);
+      }
+      ctx.globalAlpha = Math.max(0, this.life);
+      ctx.fillStyle = this.col;
+      ctx.fillRect(this.x - 2, this.y - 2, 4, 4);
+      ctx.globalAlpha = 1;
+    };
+
+    function Explosion(x, y) {
+      this.x = x; this.y = y;
+      this.parts = []; this.parts2 = []; this.glitter = [];
+      this.done = false; this.frame = 0; this.fadeDone = false;
+      let pal = PALETTES[Math.floor(Math.random() * PALETTES.length)];
+      let pal2 = PALETTES[Math.floor(Math.random() * PALETTES.length)];
+      let type = Math.floor(Math.random() * 3);
+      let cnt = 52 + Math.floor(Math.random() * 24);
+      if (type === 0) {
+        for (let i = 0; i < cnt; i++) {
+          let a = (i / cnt) * Math.PI * 2, s = 3.2 + Math.random() * 1.8;
+          this.parts.push(new Particle(x, y, Math.cos(a) * s, Math.sin(a) * s, pal[0], pal[2]));
+        }
+      } else if (type === 1) {
+        for (let pt = 0; pt < 5; pt++) {
+          let base = (pt / 5) * Math.PI * 2 - Math.PI / 2;
+          let perRay = Math.round(cnt / 5);
+          for (let j = 0; j < perRay; j++) {
+            let spread = (j / perRay - 0.5) * 0.5;
+            let s2 = 3.5 + Math.random() * 1.8;
+            this.parts.push(new Particle(x, y, Math.cos(base + spread) * s2, Math.sin(base + spread) * s2, pal[0], pal[2]));
+          }
+        }
+      } else {
+        for (let i = 0; i < cnt; i++) {
+          let a = (i / cnt) * Math.PI * 2;
+          let s3 = (i % 2 === 0 ? 1.8 : 4.0) + Math.random() * 0.7;
+          this.parts.push(new Particle(x, y, Math.cos(a) * s3, Math.sin(a) * s3, i % 2 === 0 ? pal[1] : pal[0], pal[2]));
+        }
+      }
+      this.pal2 = pal2;
+      for (let gi = 0; gi < 16; gi++) {
+        let ga = Math.random() * Math.PI * 2, gs = 1 + Math.random() * 2.5;
+        this.glitter.push({ x: x, y: y, vx: Math.cos(ga) * gs, vy: Math.sin(ga) * gs, life: 1, sz: 2 + Math.random() * 2, col: pal[2] });
+      }
+    }
+    Explosion.prototype.update = function() {
+      this.frame++;
+      if (!this.fadeDone && this.frame >= 20) {
+        this.fadeDone = true;
+        let c = 28;
+        for (let i = 0; i < c; i++) {
+          let a = (i / c) * Math.PI * 2, s = 2 + Math.random() * 1.2;
+          this.parts2.push(new Particle(this.x, this.y, Math.cos(a) * s, Math.sin(a) * s, this.pal2[0], this.pal2[2]));
+        }
+      }
+      for (let p of this.parts) p.update();
+      for (let p2 of this.parts2) p2.update();
+      this.parts = this.parts.filter(p => p.life > 0);
+      this.parts2 = this.parts2.filter(p => p.life > 0);
+      for (let g of this.glitter) {
+        g.x += g.vx; g.y += g.vy; g.vy += 0.06; g.vx *= 0.97; g.life -= 0.022;
+      }
+      this.glitter = this.glitter.filter(g => g.life > 0);
+      if (this.parts.length === 0 && this.parts2.length === 0 && this.glitter.length === 0) this.done = true;
+    };
+    Explosion.prototype.draw = function() {
+      for (let p of this.parts) p.draw();
+      for (let p2 of this.parts2) p2.draw();
+      for (let g of this.glitter) {
+        ctx.globalAlpha = g.life * 0.9;
+        ctx.fillStyle = g.col;
+        let s = Math.round(g.sz);
+        ctx.fillRect(g.x - s / 2, g.y - 1, s, 2);
+        ctx.fillRect(g.x - 1, g.y - s / 2, 2, s);
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    function Rocket(x, y, targetY, vx, vy) {
+      this.x = x; this.y = y;
+      this.vx = vx; this.vy = vy;
+      this.targetY = targetY;
+      this.trail = [];
+      this.done = false;
+    }
+    Rocket.prototype.update = function() {
+      this.vy += 0.06;
+      this.x += this.vx;
+      this.y += this.vy;
+      this.trail.push({ x: this.x, y: this.y, col: Math.random() > 0.5 ? '#ff8833' : '#ffcc33', sz: 2 + Math.random() * 2 });
+      if (this.trail.length > 24) this.trail.shift();
+      if (this.y <= this.targetY || this.vy >= -0.3) {
+        this.done = true;
+        explosions.push(new Explosion(this.x, this.y));
+        playPopSound();
+      }
+    };
+    Rocket.prototype.draw = function() {
+      for (let i = 0; i < this.trail.length; i++) {
+        let t = this.trail[i];
+        ctx.globalAlpha = (i / this.trail.length) * 0.8;
+        ctx.fillStyle = t.col;
+        let s = Math.round(t.sz);
+        ctx.fillRect(Math.round(t.x) - s / 2, Math.round(t.y) - s / 2, s, s);
+      }
+      ctx.globalAlpha = 1;
+      drawRocket(this.x, this.y, Math.atan2(this.vy, this.vx));
+    };
+
+    let rockets = [];
+    let explosions = [];
+
+    // Stars drawn on transparent canvas (faint)
+    const STARS = [];
+    for (let i = 0; i < 90; i++) {
+      STARS.push({ x: Math.random(), y: Math.random(), r: Math.random() > 0.85 ? 1.5 : 1, a: 0.2 + Math.random() * 0.3 }); // reduced alpha
+    }
+    function drawStars() {
+      for (let s of STARS) {
+        ctx.globalAlpha = s.a * (0.5 + Math.sin(Date.now() / 1800 + s.x * 99) * 0.2);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(Math.round(s.x * canvas.width), Math.round(s.y * canvas.height * 0.75), s.r, s.r);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    let animationId = null;
+    function startAnimation() {
+      if (animationId) return;
+      function animate() {
+        // Clear canvas with transparency (not painting background)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawStars();
+        for (let i = rockets.length - 1; i >= 0; i--) {
+          rockets[i].update();
+          rockets[i].draw();
+          if (rockets[i].done) rockets.splice(i, 1);
+        }
+        for (let i = explosions.length - 1; i >= 0; i--) {
+          explosions[i].update();
+          explosions[i].draw();
+          if (explosions[i].done) explosions.splice(i, 1);
+        }
+        animationId = requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    function launchRockets(count, delayBetween = 180) {
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const x = 80 + Math.random() * (canvas.width - 160);
+          const targetY = canvas.height * (0.08 + Math.random() * 0.32);
+          const vx = (Math.random() - 0.5) * 1.5;
+          const vy = -(9 + Math.random() * 5);
+          rockets.push(new Rocket(x, canvas.height + 30, targetY, vx, vy));
+          playLaunchSound();
+        }, i * delayBetween);
+      }
+    }
+
+    function startFireworksSequence() {
+      canvas.style.display = 'block';
+      startAnimation();
+      launchRockets(10, 180);
+      setTimeout(() => {
+        launchRockets(5, 200);
+      }, 2000);
+      setTimeout(() => {
+        const timerOverlay = document.getElementById('timerOverlay');
+        const timerNumber = document.getElementById('timerNumber');
+        timerOverlay.style.display = 'block';
+        let seconds = 5;
+        timerNumber.textContent = seconds;
+        const interval = setInterval(() => {
+          seconds--;
+          if (seconds >= 0) timerNumber.textContent = seconds;
+          if (seconds < 0) {
+            clearInterval(interval);
+            timerOverlay.style.display = 'none';
+            launchRockets(8, 150);
+          }
+        }, 1000);
+      }, 3200);
+    }
+
+    // Auto-start on page load
+    window.addEventListener('load', () => {
+      startFireworksSequence();
+    });
+  </script>
 </body>
 </html>
