@@ -4,35 +4,52 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Event Started — Build Guild Kochi</title>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       background: #0e305b;
-      min-height: 100vh;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 1;
+    }
+    /* UI overlay */
+    .ui-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Poppins', sans-serif;
-      color: white;
-      text-align: center;
+      z-index: 2;
+      pointer-events: none; /* allow clicks to pass to canvas if needed */
     }
     .container {
-      background: rgba(8,28,53,0.7);
-      backdrop-filter: blur(8px);
+      background: rgba(8, 28, 53, 0.7);
+      backdrop-filter: blur(12px);
       border: 2px solid rgba(255,255,255,.2);
-      padding: 3rem;
-      border-radius: 24px;
+      padding: 2rem 3rem;
+      border-radius: 32px;
       max-width: 500px;
       width: 90%;
+      text-align: center;
+      pointer-events: auto;
+      font-family: 'Poppins', sans-serif;
     }
     h1 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin-bottom: 1rem;
+      color: #fff;
     }
     .timer {
       font-size: 4rem;
@@ -42,62 +59,303 @@
       margin: 1rem 0;
     }
     .message {
-      font-size: 1.2rem;
-      margin-top: 1rem;
-      opacity: 0.8;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.8);
+      margin-top: 0.5rem;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1.5rem; }
+      h1 { font-size: 1.8rem; }
+      .timer { font-size: 3rem; }
     }
   </style>
 </head>
 <body>
+<canvas id="fireworksCanvas"></canvas>
+<div class="ui-overlay">
   <div class="container">
-    <h1>🎉 Event Started! 🎉</h1>
+    <h1>🎆 Event Started!</h1>
     <div class="timer" id="timer">5</div>
-    <div class="message" id="message">Preparing fireworks...</div>
+    <div class="message" id="message">Launching fireworks...</div>
   </div>
+</div>
 
-  <script>
-    function firework(count, origin = { y: 0.6 }) {
-      canvasConfetti({
-        particleCount: count,
-        spread: 100,
-        origin: origin,
-        colors: ['#ffc857', '#ffffff', '#0e305b', '#a8f0ae'],
-        startVelocity: 20,
-        gravity: 0.8,
-        ticks: 200
-      });
+<script>
+// ======================== ROCKET FIREWORKS SYSTEM ========================
+const canvas = document.getElementById('fireworksCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Fallback firework image (optional)
+const fireworkImg = new Image();
+fireworkImg.src = 'fire.webp';  // if missing, uses pixel sprite
+let fireworkLoaded = false;
+fireworkImg.onload = () => { fireworkLoaded = true; };
+fireworkImg.onerror = () => { console.log('Using fallback rocket sprite'); };
+
+function drawRocket(cx, cy, angle) {
+  if (fireworkLoaded && fireworkImg.complete) {
+    const w = 36, h = 48;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle + Math.PI / 2);
+    ctx.drawImage(fireworkImg, -w/2, -h/2, w, h);
+    ctx.restore();
+  } else {
+    // simple pixel rocket fallback
+    ctx.fillStyle = '#c03030';
+    ctx.fillRect(cx-6, cy-12, 12, 24);
+    ctx.fillStyle = '#ffc857';
+    ctx.fillRect(cx-2, cy-16, 4, 8);
+  }
+}
+
+// Audio helpers (sounds optional, fail silently)
+function playLaunchSound() {
+  try {
+    const snd = new Audio('./launch.mp3');
+    snd.volume = 0.3;
+    snd.play().catch(()=>{});
+  } catch(e) {}
+}
+function playPopSound() {
+  try {
+    const snd = new Audio('./pop.wav');
+    snd.volume = 0.4;
+    snd.play().catch(()=>{});
+  } catch(e) {}
+}
+
+// Minecraft dye palettes
+const PALETTES = [
+  ['#ff2222','#cc0000','#ff9999'], ['#ff9900','#cc6600','#ffdd88'],
+  ['#ffee00','#bbbb00','#ffff99'], ['#22ee22','#009900','#99ffaa'],
+  ['#2299ff','#0055cc','#99ccff'], ['#ff22ff','#aa00aa','#ffaaff'],
+  ['#ffffff','#cccccc','#f0f0f0'], ['#00ffcc','#009999','#88ffee'],
+  ['#ff99ff','#bb66bb','#ffd4ff']
+];
+
+function Particle(x, y, vx, vy, col, trailCol) {
+  this.x = x; this.y = y; this.vx = vx; this.vy = vy;
+  this.col = col; this.trailCol = trailCol;
+  this.life = 1;
+  this.decay = 0.016 + Math.random() * 0.012;
+  this.hist = [];
+}
+Particle.prototype.update = function() {
+  this.hist.push({x:this.x, y:this.y});
+  if (this.hist.length > 9) this.hist.shift();
+  this.vx *= 0.98;
+  this.vy = this.vy * 0.98 + 0.055;
+  this.x += this.vx;
+  this.y += this.vy;
+  this.life -= this.decay;
+};
+Particle.prototype.draw = function() {
+  for (let i = 0; i < this.hist.length; i++) {
+    let a = (i / this.hist.length) * this.life * 0.4;
+    ctx.globalAlpha = a;
+    ctx.fillStyle = this.trailCol;
+    ctx.fillRect(this.hist[i].x - 1, this.hist[i].y - 1, 2, 2);
+  }
+  ctx.globalAlpha = Math.max(0, this.life);
+  ctx.fillStyle = this.col;
+  ctx.fillRect(this.x - 2, this.y - 2, 4, 4);
+  ctx.globalAlpha = 1;
+};
+
+function Explosion(x, y) {
+  this.x = x; this.y = y;
+  this.parts = []; this.parts2 = []; this.glitter = [];
+  this.done = false; this.frame = 0; this.fadeDone = false;
+  let pal = PALETTES[Math.floor(Math.random() * PALETTES.length)];
+  let pal2 = PALETTES[Math.floor(Math.random() * PALETTES.length)];
+  let type = Math.floor(Math.random() * 3);
+  let cnt = 52 + Math.floor(Math.random() * 24);
+  if (type === 0) {
+    for (let i = 0; i < cnt; i++) {
+      let a = (i / cnt) * Math.PI * 2, s = 3.2 + Math.random() * 1.8;
+      this.parts.push(new Particle(x, y, Math.cos(a) * s, Math.sin(a) * s, pal[0], pal[2]));
     }
+  } else if (type === 1) {
+    for (let pt = 0; pt < 5; pt++) {
+      let base = (pt / 5) * Math.PI * 2 - Math.PI / 2;
+      let perRay = Math.round(cnt / 5);
+      for (let j = 0; j < perRay; j++) {
+        let spread = (j / perRay - 0.5) * 0.5;
+        let s2 = 3.5 + Math.random() * 1.8;
+        this.parts.push(new Particle(x, y, Math.cos(base + spread) * s2, Math.sin(base + spread) * s2, pal[0], pal[2]));
+      }
+    }
+  } else {
+    for (let i = 0; i < cnt; i++) {
+      let a = (i / cnt) * Math.PI * 2;
+      let s3 = (i % 2 === 0 ? 1.8 : 4.0) + Math.random() * 0.7;
+      this.parts.push(new Particle(x, y, Math.cos(a) * s3, Math.sin(a) * s3, i % 2 === 0 ? pal[1] : pal[0], pal[2]));
+    }
+  }
+  this.pal2 = pal2;
+  for (let gi = 0; gi < 16; gi++) {
+    let ga = Math.random() * Math.PI * 2, gs = 1 + Math.random() * 2.5;
+    this.glitter.push({ x: x, y: y, vx: Math.cos(ga) * gs, vy: Math.sin(ga) * gs, life: 1, sz: 2 + Math.random() * 2, col: pal[2] });
+  }
+}
+Explosion.prototype.update = function() {
+  this.frame++;
+  if (!this.fadeDone && this.frame >= 20) {
+    this.fadeDone = true;
+    let c = 28;
+    for (let i = 0; i < c; i++) {
+      let a = (i / c) * Math.PI * 2, s = 2 + Math.random() * 1.2;
+      this.parts2.push(new Particle(this.x, this.y, Math.cos(a) * s, Math.sin(a) * s, this.pal2[0], this.pal2[2]));
+    }
+  }
+  for (let p of this.parts) p.update();
+  for (let p2 of this.parts2) p2.update();
+  this.parts = this.parts.filter(p => p.life > 0);
+  this.parts2 = this.parts2.filter(p => p.life > 0);
+  for (let g of this.glitter) {
+    g.x += g.vx; g.y += g.vy; g.vy += 0.06; g.vx *= 0.97; g.life -= 0.022;
+  }
+  this.glitter = this.glitter.filter(g => g.life > 0);
+  if (this.parts.length === 0 && this.parts2.length === 0 && this.glitter.length === 0) this.done = true;
+};
+Explosion.prototype.draw = function() {
+  for (let p of this.parts) p.draw();
+  for (let p2 of this.parts2) p2.draw();
+  for (let g of this.glitter) {
+    ctx.globalAlpha = g.life * 0.9;
+    ctx.fillStyle = g.col;
+    let s = Math.round(g.sz);
+    ctx.fillRect(g.x - s / 2, g.y - 1, s, 2);
+    ctx.fillRect(g.x - 1, g.y - s / 2, 2, s);
+  }
+  ctx.globalAlpha = 1;
+};
 
-    // Stage 1: 10 fireworks immediately
-    firework(10, { y: 0.5 });
-    firework(10, { y: 0.7, x: 0.2 });
-    firework(10, { y: 0.7, x: 0.8 });
+function Rocket(x, y, targetY, vx, vy) {
+  this.x = x; this.y = y;
+  this.vx = vx; this.vy = vy;
+  this.targetY = targetY;
+  this.trail = [];
+  this.done = false;
+}
+Rocket.prototype.update = function() {
+  this.vy += 0.06;
+  this.x += this.vx;
+  this.y += this.vy;
+  this.trail.push({ x: this.x, y: this.y, col: Math.random() > 0.5 ? '#ff8833' : '#ffcc33', sz: 2 + Math.random() * 2 });
+  if (this.trail.length > 24) this.trail.shift();
+  if (this.y <= this.targetY || this.vy >= -0.3) {
+    this.done = true;
+    explosions.push(new Explosion(this.x, this.y));
+    playPopSound();
+  }
+};
+Rocket.prototype.draw = function() {
+  for (let i = 0; i < this.trail.length; i++) {
+    let t = this.trail[i];
+    ctx.globalAlpha = (i / this.trail.length) * 0.8;
+    ctx.fillStyle = t.col;
+    let s = Math.round(t.sz);
+    ctx.fillRect(Math.round(t.x) - s / 2, Math.round(t.y) - s / 2, s, s);
+  }
+  ctx.globalAlpha = 1;
+  drawRocket(this.x, this.y, Math.atan2(this.vy, this.vx));
+};
 
-    // Stage 2: after 2 seconds, 5 more fireworks
+// Global arrays
+let rockets = [];
+let explosions = [];
+
+// Stars background
+const STARS = [];
+for (let i = 0; i < 90; i++) {
+  STARS.push({ x: Math.random(), y: Math.random(), r: Math.random() > 0.85 ? 1.5 : 1, a: 0.3 + Math.random() * 0.7 });
+}
+function drawStars() {
+  for (let s of STARS) {
+    ctx.globalAlpha = s.a * (0.7 + Math.sin(Date.now() / 1800 + s.x * 99) * 0.3);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(Math.round(s.x * canvas.width), Math.round(s.y * canvas.height * 0.75), s.r, s.r);
+  }
+  ctx.globalAlpha = 1;
+}
+
+// Animation loop
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, '#080c18');
+  grad.addColorStop(1, '#0d1530');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  drawStars();
+  for (let i = rockets.length - 1; i >= 0; i--) {
+    rockets[i].update();
+    rockets[i].draw();
+    if (rockets[i].done) rockets.splice(i, 1);
+  }
+  for (let i = explosions.length - 1; i >= 0; i--) {
+    explosions[i].update();
+    explosions[i].draw();
+    if (explosions[i].done) explosions.splice(i, 1);
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+
+// Firework launcher: spawn count rockets with delay between each
+function launchRockets(count, delayBetween = 180) {
+  for (let i = 0; i < count; i++) {
     setTimeout(() => {
-      firework(5, { y: 0.6, x: 0.5 });
-      firework(5, { y: 0.4, x: 0.3 });
-      firework(5, { y: 0.8, x: 0.7 });
-    }, 2000);
+      const x = 80 + Math.random() * (canvas.width - 160);
+      const targetY = canvas.height * (0.08 + Math.random() * 0.32);
+      const vx = (Math.random() - 0.5) * 1.5;
+      const vy = -(9 + Math.random() * 5);
+      rockets.push(new Rocket(x, canvas.height + 30, targetY, vx, vy));
+      playLaunchSound();
+    }, i * delayBetween);
+  }
+}
 
-    // Stage 3: timer starts after the second fireworks
-    setTimeout(() => {
-      let secondsLeft = 5;
-      const timerEl = document.getElementById('timer');
-      const msgEl = document.getElementById('message');
-      msgEl.textContent = 'Timer running...';
-      const interval = setInterval(() => {
-        timerEl.textContent = secondsLeft;
-        if (secondsLeft === 0) {
-          clearInterval(interval);
-          timerEl.textContent = "✨ Done! ✨";
-          msgEl.textContent = "You can now close this window.";
-          // Optional final fireworks
-          firework(15, { y: 0.5 });
-        }
-        secondsLeft--;
-      }, 1000);
-    }, 3000); // wait 3 seconds after page load (2s for fireworks + 1s buffer)
-  </script>
+// ========================= TIMING AND UI =========================
+const timerEl = document.getElementById('timer');
+const msgEl = document.getElementById('message');
+
+// Burst 1: 10 rockets immediately
+launchRockets(10, 180);
+
+// Burst 2: 5 rockets after 2 seconds
+setTimeout(() => {
+  launchRockets(5, 200);
+}, 2000);
+
+// Timer starts after second burst (allow extra 200ms for last rocket)
+setTimeout(() => {
+  let seconds = 5;
+  timerEl.textContent = seconds;
+  msgEl.textContent = 'Timer running...';
+  const interval = setInterval(() => {
+    seconds--;
+    if (seconds >= 0) {
+      timerEl.textContent = seconds;
+    }
+    if (seconds < 0) {
+      clearInterval(interval);
+      timerEl.textContent = '✨';
+      msgEl.textContent = 'Event started! You can close this window.';
+      // Final celebration fireworks
+      launchRockets(8, 150);
+    }
+  }, 1000);
+}, 3200); // 2s delay + 1.2s buffer
+</script>
 </body>
 </html>
