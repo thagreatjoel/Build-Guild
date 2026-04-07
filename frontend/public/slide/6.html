@@ -3,37 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>What's Hack Club? — Build Guild Kochi</title>
+  <title>FAQ — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <style>
     @font-face {
-      font-family: 'Phantom Sans';
-      src: url('../font/RC-BasicLight.ttf') format('truetype');
-      font-weight: 700;
-      font-style: normal;
-      font-display: swap;
-    }
-    @font-face {
-      font-family: 'Phantom Sans';
-      src: url('../font/RC-BasicFull.ttf') format('truetype');
-      font-weight: 400;
-      font-style: normal;
-      font-display: swap;
-    }
-    @font-face {
-      font-family: 'Phantom Sans';
-      src: url('../font/RC-BasicFull.ttf') format('truetype');
-      font-weight: 700;
-      font-style: normal;
-      font-display: swap;
-    }
-    @keyframes moveGrid {
-      0% { background-position: 0 0, 0 0; }
-      100% { background-position: 100px 100px, 100px 100px; }
-    }
+  font-family: 'Phantom Sans';
+  src: url('../font/RC-BasicLight.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Phantom Sans';
+  src: url('../font/RC-BasicFull.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Phantom Sans';
+  src: url('../font/RC-BasicFull.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@keyframes moveGrid {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 100px 100px, 100px 100px;
+  }
+}
     :root {
-      --bp-red: #ec3750;
-      --white: #ffffff;
       --bp-lighter: #344b6a;
       --bp-dark: #0e305b;
       --bp-darker: #081c35;
@@ -43,10 +45,11 @@
       --bp-warning: #ffc857;
       --bp-success: #a8f0ae;
       --f: 'Phantom Sans', 'Poppins', sans-serif;
-      --fh: 'Phantom Sans', 'Poppins', sans-serif;
+      --fh: 'Phantom Sans';
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     html { font-size: 16px; }
 
     body {
@@ -125,45 +128,58 @@
     .main-title .kochi { color: var(--bp-warning); }
 
     .content-card {
-      background: rgba(8, 28, 53,1);
-      border: 2px solid rgba(255,255,255,);
+      background: rgba(8, 28, 53, 1);
+      
       padding: clamp(24px, 4vh, 56px) clamp(32px, 5vw, 72px);
       flex: 1;
-      min-height: 0;
+      min-height: 06;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       overflow: hidden;
     }
 
-    .whats-section {
+    .faq-header {
       text-align: center;
+      margin-bottom: 2vh;
     }
-    .whats-title {
+    .hackclub-year {
       font-family: var(--f);
-      font-size: clamp(3rem, 8vh, 5rem);   /* MUCH LARGER */
+      font-size: clamp(1.5rem, 4vh, 2.5rem);
       font-weight: 800;
-      color: var(--bp-warning);
-      margin-bottom: 3vh;
+      letter-spacing: 2px;
+    }
+    .hackclub-year .year {
+      font-size: 0.7em;
+      color: rgba(255,255,255,0.7);
+    }
+    .partner-logos {
       display: flex;
-      align-items: center;
       justify-content: center;
+      gap: clamp(1rem, 3vw, 2rem);
       flex-wrap: wrap;
-      gap: 0.8rem;
+      margin: 1rem 0;
     }
-    .whats-title .white { color: #ffffff; }
-    .hackclub-icon {
-      width: 1.2em;
-      height: 1.2em;
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .description {
-      font-size: clamp(1.4rem, 3.5vh, 2rem);  /* LARGER */
-      line-height: 1.5;
+    .partner {
+      font-family: var(--f);
+      font-weight: 700;
+      font-size: clamp(1rem, 2.5vh, 1.5rem);
       color: rgba(255,255,255,0.9);
-      max-width: 900px;
-      margin: 0 auto;
+    }
+    .question-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2vh;
+      margin-top: 2vh;
+    }
+    .question {
+      font-size: clamp(1.2rem, 3vh, 2rem);
+      font-weight: 600;
+      padding-left: 1.5vw;
+      border-left: 3px solid var(--bp-warning);
+      color: rgba(255,255,255,0.95);
+      line-height: 1.4;
     }
 
     .sponsors {
@@ -192,6 +208,13 @@
       color: rgba(255,255,255,0.7);
       letter-spacing: 1px;
     }
+    
+    
+
+    @media (max-width: 600px) {
+      .question { font-size: clamp(1rem, 2.5vh, 1.5rem); }
+      .partner { font-size: clamp(0.8rem, 2vh, 1.2rem); }
+    }
   </style>
 </head>
 <body>
@@ -218,16 +241,41 @@
     </div>
 
     <div class="content-card">
-      <div class="whats-section">
-        <div class="whats-title">
-          <span>What is</span>
-          <img class="hackclub-icon" src="https://assets.hackclub.com/icon-rounded.svg" alt="Hack Club icon">
-          <span class="white">Hack Club?</span>
-        </div>
-        <div class="description">
-          Hack Club is a global nonprofit network of student-led computer science clubs and maker spaces for high schoolers, designed to foster coding skills through hands-on, collaborative projects.
-        </div>
+      <div class="faq-header">
+     
       </div>
+      <div style="text-align:center; margin-top:80px;">
+
+  <h2 style="
+    font-family:Phantom Sans;
+    font-size:80px;
+    font-weight:800;
+    color:#ffffff;
+    margin-bottom:10px;
+  ">
+    SOLDERING 101
+  </h2>
+
+  <p style="
+    font-size:35px;
+    font-weight:600;
+    color:#ffc857;
+    margin:6px 0;
+  ">
+    Begins!
+  </p>
+
+  <p style="
+    font-size:35px;
+    font-weight:600;
+    color:#ffc857;
+    margin:6px 0;
+  ">
+   
+   
+  </p>
+
+</div>
     </div>
 
     <div class="sponsors">
