@@ -134,18 +134,30 @@ router.post('/login-status', async (req, res) => {
   if (!email) return res.status(400).json({ msg: 'Email required' });
 
   try {
-    await User.findOneAndUpdate(
-      { email: email.toLowerCase() },
-      { lastLogin: loggedIn ? new Date() : null, loggedIn: loggedIn || false },
-      { upsert: true, new: true }
-    );
+    let user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      // Create a minimal user document (should have been created during OTP, but just in case)
+      user = new User({
+        email: email.toLowerCase(),
+        name: email.split('@')[0],
+        username: email.split('@')[0],
+        loggedIn: loggedIn || false,
+        lastLogin: loggedIn ? new Date() : null,
+      });
+      await user.save();
+      console.log(`Created user from login-status: ${email}`);
+    } else {
+      user.loggedIn = loggedIn || false;
+      user.lastLogin = loggedIn ? new Date() : null;
+      await user.save();
+      console.log(`Updated login status for ${email}: loggedIn=${loggedIn}`);
+    }
     res.json({ msg: 'Login status updated' });
   } catch (err) {
     console.error('Error updating login status:', err);
     res.status(500).json({ msg: 'Failed to update login status' });
   }
 });
-
 
 // Public leaderboard: only checked-in users with score > 0
 router.get('/leaderboard', async (req, res) => {
