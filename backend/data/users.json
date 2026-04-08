@@ -1,5 +1,6 @@
 {
   "users": [
+    { "email": "jonahjoju09@gmail.com", "username": "Jo", "name": "Jonah", "score": 0 },
     { "email": "joeljonah06@gmail.com", "username": "JoelJo", "name": "Joel Jonah", "score": 0 },
     { "email": "albinanil813@gmail.com", "username": "AlbinAnil", "name": "Albin Anil", "score": 0 },
     { "email": "dark1234abc@gmail.com", "username": "Seeshan", "name": "Seeshan", "score": 0 },
