@@ -91,31 +91,32 @@ router.post('/verify-otp', async (req, res) => {
   const displayName = getDisplayNameByEmail(email);
 
   try {
-    let user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      user = new User({
-        email: email.toLowerCase(),
-        name: displayName || username || email.split('@')[0],
-        username: username || email.split('@')[0],
-        phone: '',
-        qrToken: '',
-        checkedIn: false,
-        loggedIn: true,
-        lastLogin: new Date()
-      });
-      await user.save();
-      console.log(`✅ New user created: ${email} (${displayName || username})`);
-    } else {
-      user.loggedIn = true;
-      user.lastLogin = new Date();
-      if (!user.username && username) user.username = username;
-      if (!user.name && displayName) user.name = displayName;
-      await user.save();
-    }
-  } catch (err) {
-    console.error('Error updating user:', err);
+  let user = await User.findOne({ email: email.toLowerCase() });
+  if (!user) {
+    user = new User({
+      email: email.toLowerCase(),
+      name: displayName || username || email.split('@')[0],
+      username: username || email.split('@')[0],
+      phone: '',
+      qrToken: '',
+      checkedIn: false,
+      loggedIn: true,
+      lastLogin: new Date()
+    });
+    await user.save();
+    console.log(`✅ New user created: ${email} (${displayName || username})`);
+  } else {
+    user.loggedIn = true;
+    user.lastLogin = new Date();
+    if (!user.username && username) user.username = username;
+    if (!user.name && displayName) user.name = displayName;
+    await user.save();
+    console.log(`✅ User updated: ${email}`);
   }
-
+} catch (err) {
+  console.error('Error creating/updating user:', err.message);
+  // Still return success for OTP even if user save fails
+}
   res.json({ 
     msg: 'OTP verified successfully',
     username: username || email.split('@')[0],
