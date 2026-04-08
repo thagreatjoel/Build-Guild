@@ -87,17 +87,25 @@ router.post('/verify-otp', async (req, res) => {
 
   otpStore.delete(email.toLowerCase());
 
-  const username = getUsernameByEmail(email);
-  const displayName = getDisplayNameByEmail(email);
+  let username = getUsernameByEmail(email);
+  let displayName = getDisplayNameByEmail(email);
   const fallbackName = email.split('@')[0];
+
+  // Ensure username is never empty or null
+  if (!username || username.trim() === '') {
+    username = fallbackName;
+  }
+  if (!displayName || displayName.trim() === '') {
+    displayName = username;
+  }
 
   try {
     let user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       user = new User({
         email: email.toLowerCase(),
-        name: displayName || username || fallbackName,
-        username: username || fallbackName,
+        name: displayName,
+        username: username,
         phone: '',
         qrToken: '',
         checkedIn: false,
@@ -107,7 +115,7 @@ router.post('/verify-otp', async (req, res) => {
         profilePicture: ''
       });
       await user.save();
-      console.log(`✅ New user created: ${email}`);
+      console.log(`✅ New user created: ${email} (${username})`);
     } else {
       user.loggedIn = true;
       user.lastLogin = new Date();
@@ -118,23 +126,15 @@ router.post('/verify-otp', async (req, res) => {
     }
     res.json({
       msg: 'OTP verified successfully',
-      username: username || fallbackName,
-      displayName: displayName || username || fallbackName,
+      username: username,
+      displayName: displayName,
       email: email
     });
   } catch (err) {
-  console.error('❌ Error saving user:', err);
-  console.error('Error name:', err.name);
-  console.error('Error message:', err.message);
-  console.error('Error code:', err.code);
-  if (err.code === 11000) {
-    console.error('Duplicate key error - keyPattern:', err.keyPattern);
-    console.error('Duplicate key error - keyValue:', err.keyValue);
+    console.error('❌ Error saving user:', err);
+    res.status(500).json({ msg: 'Login succeeded but failed to save user data. Please try again or contact support.' });
   }
-  res.status(500).json({ msg: 'Login succeeded but failed to save user data. Please try again or contact support.' });
-}
 });
-
 // ========== LOGIN STATUS ==========
 router.post('/login-status', async (req, res) => {
   const { email, loggedIn } = req.body;
