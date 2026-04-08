@@ -89,40 +89,43 @@ router.post('/verify-otp', async (req, res) => {
 
   const username = getUsernameByEmail(email);
   const displayName = getDisplayNameByEmail(email);
+  const fallbackName = email.split('@')[0];
 
   try {
-  let user = await User.findOne({ email: email.toLowerCase() });
-  if (!user) {
-    user = new User({
-      email: email.toLowerCase(),
-      name: displayName || username || email.split('@')[0],
-      username: username || email.split('@')[0],
-      phone: '',
-      qrToken: '',
-      checkedIn: false,
-      loggedIn: true,
-      lastLogin: new Date()
+    let user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      user = new User({
+        email: email.toLowerCase(),
+        name: displayName || username || fallbackName,
+        username: username || fallbackName,
+        phone: '',
+        qrToken: '',
+        checkedIn: false,
+        loggedIn: true,
+        lastLogin: new Date(),
+        score: 0,
+        profilePicture: ''
+      });
+      await user.save();
+      console.log(`✅ New user created: ${email}`);
+    } else {
+      user.loggedIn = true;
+      user.lastLogin = new Date();
+      if (!user.username && username) user.username = username;
+      if (!user.name && displayName) user.name = displayName;
+      await user.save();
+      console.log(`✅ User updated: ${email}`);
+    }
+    res.json({
+      msg: 'OTP verified successfully',
+      username: username || fallbackName,
+      displayName: displayName || username || fallbackName,
+      email: email
     });
-    await user.save();
-    console.log(`✅ New user created: ${email} (${displayName || username})`);
-  } else {
-    user.loggedIn = true;
-    user.lastLogin = new Date();
-    if (!user.username && username) user.username = username;
-    if (!user.name && displayName) user.name = displayName;
-    await user.save();
-    console.log(`✅ User updated: ${email}`);
+  } catch (err) {
+    console.error('❌ Error saving user:', err.message);
+    res.status(500).json({ msg: 'Login succeeded but failed to save user data. Please try again or contact support.' });
   }
-} catch (err) {
-  console.error('Error creating/updating user:', err.message);
-  // Still return success for OTP even if user save fails
-}
-  res.json({ 
-    msg: 'OTP verified successfully',
-    username: username || email.split('@')[0],
-    displayName: displayName || username || email.split('@')[0],
-    email: email
-  });
 });
 
 // ========== LOGIN STATUS ==========
