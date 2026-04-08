@@ -127,8 +127,10 @@ router.post('/verify-otp', async (req, res) => {
   console.error('Error name:', err.name);
   console.error('Error message:', err.message);
   console.error('Error code:', err.code);
-  console.error('Error keyPattern:', err.keyPattern);
-  console.error('Error keyValue:', err.keyValue);
+  if (err.code === 11000) {
+    console.error('Duplicate key error - keyPattern:', err.keyPattern);
+    console.error('Duplicate key error - keyValue:', err.keyValue);
+  }
   res.status(500).json({ msg: 'Login succeeded but failed to save user data. Please try again or contact support.' });
 }
 });
