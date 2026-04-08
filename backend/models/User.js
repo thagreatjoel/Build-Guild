@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
   name: { type: String, default: '' },
-  username: { type: String, default: '' },
+  username: { type: String, default: '' }, // no unique, no sparse
   email: { type: String, required: true, unique: true },
   phone: { type: String, default: '' },
   qrToken: { type: String, default: '' },
