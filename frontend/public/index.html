@@ -8,15 +8,51 @@
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
   <style>
-    .otp-container { max-width: 500px; margin: 0 auto; }
-    .otp-input { display: flex; gap: 12px; justify-content: center; margin: 20px 0; }
-    .otp-input input { width: 60px; height: 60px; text-align: center; font-size: 24px; font-weight: 700; background: var(--bp-dark); border: 2px solid rgba(255,255,255,.18); color: #fff; border-radius: 8px; }
+    .view {
+      padding: 88px 20px 32px;
+    }
+    .otp-container {
+      width: min(100%, 500px);
+      margin: 0 auto;
+      border: none;
+      box-shadow: none;
+    }
+    .otp-input {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .otp-input input {
+      width: 100%;
+      min-width: 0;
+      aspect-ratio: 1;
+      text-align: center;
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 700;
+      background: var(--bp-dark);
+      border: 2px solid rgba(255,255,255,.18);
+      color: #fff;
+      border-radius: 8px;
+    }
     .otp-input input:focus { border-color: var(--bp-warning); outline: none; }
-    .resend-btn { background: none; border: none; color: var(--bp-warning); cursor: pointer; font-size: 14px; margin-top: 10px; }
+    .resend-btn { background: none; border: none; color: var(--bp-warning); cursor: pointer; font-size: 14px; margin-top: 10px; text-align: left; }
     .resend-btn:hover { text-decoration: underline; }
     .email-display { background: rgba(255,200,87,0.1); padding: 10px; border-radius: 8px; margin: 15px 0; text-align: center; }
-    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
-    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
+    .banner-link { position: fixed; top: 16px; left: 0; z-index: 999; }
+    .banner-link img { width: clamp(120px, 18vw, 180px); max-width: 42vw; height: auto; border: 0; }
+    @media (max-width: 640px) {
+      .view {
+        padding: 84px 14px 24px;
+        justify-content: flex-start;
+      }
+      .otp-container {
+        padding: 24px 18px;
+      }
+      .otp-input {
+        gap: 8px;
+      }
+    }
   </style>
 </head>
 <body>
