@@ -465,8 +465,17 @@
     .logos {
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 14px;
       flex-wrap: wrap;
+    }
+
+    .logos::before,
+    .logos::after {
+      content: "";
+      width: 48px;
+      height: 1px;
+      background: rgba(255,255,255,0.18);
     }
 
     .logo-pill {
@@ -808,11 +817,27 @@
     }
 
     async function renderCertificateCanvas() {
+      if (!window.html2canvas) {
+        throw new Error('html2canvas is not available');
+      }
+
       return window.html2canvas(certificate, {
         backgroundColor: null,
         scale: 2,
-        useCORS: true
+        useCORS: true,
+        logging: false
       });
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     participantNameInput.addEventListener('input', updateName);
@@ -821,13 +846,40 @@
     bindSignatureInput('signatureOne', 'signaturePreviewOne', 'signaturePlaceholderOne');
     bindSignatureInput('signatureTwo', 'signaturePreviewTwo', 'signaturePlaceholderTwo');
 
-    document.getElementById('downloadPng').addEventListener('click', async () => {
-      const canvas = await renderCertificateCanvas();
-      const link = document.createElement('a');
-      const safeName = (participantNameInput.value.trim() || 'participant').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-      link.download = `${safeName}-certificate.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+    document.getElementById('downloadPng').addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      const originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Preparing PNG...';
+
+      try {
+        const canvas = await renderCertificateCanvas();
+        const safeName = (participantNameInput.value.trim() || 'participant').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+
+        if (canvas.toBlob) {
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              alert('PNG export failed. Please try again.');
+              return;
+            }
+            downloadBlob(blob, `${safeName}-certificate.png`);
+          }, 'image/png');
+        } else {
+          const dataUrl = canvas.toDataURL('image/png');
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = `${safeName}-certificate.png`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        }
+      } catch (error) {
+        console.error('PNG export failed:', error);
+        alert('PNG export failed. Please refresh and try again.');
+      } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+      }
     });
 
     document.getElementById('downloadPdf').addEventListener('click', () => {
