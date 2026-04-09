@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Certificate Generator — Build Guild Kochi</title>
+  <title>Certificate Generator - Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
@@ -28,19 +28,17 @@
       font-style: normal;
       font-display: swap;
     }
+
     @keyframes moveGrid {
       0% { background-position: 0 0, 0 0; }
       100% { background-position: 100px 100px, 100px 100px; }
-    }
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 0.5; transform: scale(1); }
-      50% { opacity: 0.9; transform: scale(1.06); }
     }
     @keyframes drift {
       0% { transform: translate3d(0, 0, 0); }
       50% { transform: translate3d(10px, -8px, 0); }
       100% { transform: translate3d(0, 0, 0); }
     }
+
     :root {
       --bp-lighter: #344b6a;
       --bp-dark: #0e305b;
@@ -48,14 +46,13 @@
       --bp-light: #dbe4ee;
       --bp-warning: #ffc857;
       --bp-success: #a8f0ae;
-      --bp-danger: #fe8e86;
       --f: 'Phantom Sans', 'Poppins', sans-serif;
       --fh: 'Phantom Sans', 'Poppins', sans-serif;
-      --cert-w: 1123;
-      --cert-h: 794;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { min-height: 100%; }
+
     body {
       font-family: var(--f);
       background: var(--bp-dark);
@@ -70,37 +67,43 @@
       position: relative;
       overflow-x: hidden;
     }
+
     body::before,
     body::after {
-      content: '';
+      content: "";
       position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 0;
     }
+
     body::before {
       background:
-        radial-gradient(circle at 15% 15%, rgba(255,200,87,0.18), transparent 24%),
-        radial-gradient(circle at 85% 20%, rgba(168,240,174,0.12), transparent 22%),
-        radial-gradient(circle at 75% 80%, rgba(255,255,255,0.08), transparent 18%);
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,0.08), transparent 24%),
+        radial-gradient(circle at 82% 22%, rgba(52,75,106,0.22), transparent 22%),
+        radial-gradient(circle at 75% 80%, rgba(255,255,255,0.05), transparent 18%);
       animation: drift 10s ease-in-out infinite;
     }
+
     body::after {
       background: radial-gradient(ellipse, rgba(0,0,0,0.72), transparent 68%);
       opacity: .55;
     }
+
     .banner-link {
       position: fixed;
       top: 18px;
       left: 0;
       z-index: 20;
     }
+
     .banner-link img {
       width: clamp(120px, 18vw, 180px);
       max-width: 42vw;
       height: auto;
       border: 0;
     }
+
     .page {
       position: relative;
       z-index: 1;
@@ -112,6 +115,7 @@
       gap: 22px;
       align-items: start;
     }
+
     .panel {
       position: sticky;
       top: 92px;
@@ -121,19 +125,23 @@
       padding: 22px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.25);
     }
+
     .panel h1 {
       font-family: var(--fh);
       font-size: 1.9rem;
       line-height: 1;
       margin-bottom: 10px;
     }
+
     .panel p {
       color: rgba(255,255,255,0.72);
       line-height: 1.6;
       font-size: 0.95rem;
       margin-bottom: 18px;
     }
+
     .field { margin-bottom: 14px; }
+
     .field label {
       display: block;
       margin-bottom: 7px;
@@ -143,6 +151,7 @@
       text-transform: uppercase;
       letter-spacing: 0.16em;
     }
+
     .field input,
     .field textarea,
     .field select {
@@ -155,23 +164,26 @@
       outline: none;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
+
     .field input:focus,
     .field textarea:focus,
     .field select:focus {
       border-color: rgba(255,200,87,0.72);
       box-shadow: 0 0 0 3px rgba(255,200,87,0.12);
     }
+
     .field textarea {
       min-height: 132px;
       resize: vertical;
       line-height: 1.55;
     }
+
     .actions {
       display: grid;
-      grid-template-columns: 1fr;
       gap: 10px;
       margin-top: 18px;
     }
+
     .btn {
       border: none;
       padding: 13px 16px;
@@ -180,22 +192,38 @@
       cursor: pointer;
       transition: transform 0.15s ease, filter 0.15s ease;
     }
-    .btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
-    .btn-primary { background: var(--bp-warning); color: #0b2240; }
-    .btn-secondary { background: #fff; color: #0b2240; }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .btn-primary {
+      background: var(--bp-warning);
+      color: #0b2240;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #0b2240;
+    }
+
     .hint {
       margin-top: 14px;
       color: rgba(255,255,255,0.64);
       font-size: 0.88rem;
       line-height: 1.55;
     }
+
     .stage { min-width: 0; }
+
     .preview-shell {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
       padding: 14px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
+
     .preview-label {
       display: flex;
       justify-content: space-between;
@@ -207,6 +235,7 @@
       text-transform: uppercase;
       letter-spacing: 0.18em;
     }
+
     .preview-viewport {
       position: relative;
       width: 100%;
@@ -215,12 +244,14 @@
       background: rgba(5, 18, 35, 0.72);
       border: 1px solid rgba(255,255,255,0.08);
     }
+
     .preview-stage {
       width: 1123px;
       height: 794px;
       transform-origin: top left;
       transform: scale(var(--preview-scale, 1));
     }
+
     .certificate {
       width: 1123px;
       height: 794px;
@@ -228,47 +259,39 @@
       overflow: hidden;
       color: #fff;
       background:
-        radial-gradient(circle at top right, rgba(255,200,87,0.18), transparent 24%),
-        radial-gradient(circle at bottom left, rgba(255,255,255,0.09), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(52,75,106,0.22), transparent 28%),
         linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
-        linear-gradient(135deg, #0f3564 0%, #081c35 56%, #061427 100%);
+        linear-gradient(135deg, #123f72 0%, #0b2a50 52%, #07192e 100%);
       background-size: auto, auto, 50px 50px, 50px 50px, auto;
       box-shadow: 0 24px 60px rgba(0,0,0,0.28);
     }
+
     .certificate::before,
     .certificate::after {
-      content: '';
+      content: "";
       position: absolute;
       pointer-events: none;
     }
+
     .certificate::before {
       inset: 18px;
       border: 1px solid rgba(255,255,255,0.12);
     }
+
     .certificate::after {
       inset: 40px;
-      border: 1px solid rgba(255,200,87,0.34);
+      border: 1px solid rgba(255,255,255,0.12);
     }
-    .cert-glow {
-      position: absolute;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      filter: blur(28px);
-      background: radial-gradient(circle, rgba(255,200,87,0.28), transparent 68%);
-      opacity: 0.7;
-      animation: pulseGlow 5s ease-in-out infinite;
-      pointer-events: none;
-    }
-    .cert-glow.one { top: -70px; right: -60px; }
-    .cert-glow.two { bottom: -110px; left: -40px; animation-delay: -2s; }
+
     .cert-grid-fade {
       position: absolute;
       inset: 0;
       background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 24%, transparent 76%, rgba(255,255,255,0.03));
       pointer-events: none;
     }
+
     .certificate-inner {
       position: relative;
       z-index: 1;
@@ -277,6 +300,7 @@
       display: flex;
       flex-direction: column;
     }
+
     .topline {
       display: flex;
       justify-content: space-between;
@@ -284,17 +308,20 @@
       align-items: flex-start;
       margin-bottom: 30px;
     }
+
     .brand-mark {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
+
     .brand-kicker {
       font-size: 0.82rem;
       letter-spacing: 0.32em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.62);
     }
+
     .brand-title {
       font-family: var(--fh);
       font-size: 2.35rem;
@@ -302,7 +329,9 @@
       letter-spacing: 0.03em;
       line-height: 0.95;
     }
-    .brand-title span { color: var(--bp-warning); }
+
+    .brand-title span { color: rgba(255,255,255,0.9); }
+
     .category-tag {
       padding: 12px 16px;
       background: rgba(255,255,255,0.06);
@@ -314,6 +343,7 @@
       color: rgba(255,255,255,0.86);
       white-space: nowrap;
     }
+
     .hero-band {
       display: grid;
       grid-template-columns: 120px 1fr 120px;
@@ -321,26 +351,29 @@
       gap: 20px;
       margin-bottom: 10px;
     }
+
     .line-token {
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,200,87,0.7), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.42), transparent);
       position: relative;
     }
+
     .line-token::after {
-      content: '';
+      content: "";
       position: absolute;
       top: 50%;
       left: 50%;
       width: 8px;
       height: 8px;
       transform: translate(-50%, -50%) rotate(45deg);
-      background: var(--bp-warning);
-      box-shadow: 0 0 18px rgba(255,200,87,0.55);
+      background: rgba(255,255,255,0.78);
     }
+
     .headline {
       text-align: center;
       margin-top: 8px;
     }
+
     .eyebrow {
       text-transform: uppercase;
       letter-spacing: 0.36em;
@@ -348,6 +381,7 @@
       color: rgba(255,255,255,0.58);
       margin-bottom: 14px;
     }
+
     .headline h2 {
       font-family: var(--fh);
       font-size: 4.1rem;
@@ -355,6 +389,7 @@
       margin-bottom: 14px;
       text-shadow: 0 0 22px rgba(255,255,255,0.08);
     }
+
     .presented {
       font-size: 1rem;
       letter-spacing: 0.28em;
@@ -362,39 +397,42 @@
       color: rgba(255,255,255,0.62);
       margin-bottom: 10px;
     }
+
     .participant-name {
       font-family: var(--fh);
       font-size: 4.6rem;
       font-weight: 800;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--bp-warning);
-      text-shadow: 0 0 30px rgba(255,200,87,0.18);
+      color: #ffffff;
       margin-bottom: 18px;
       word-break: break-word;
     }
+
     .name-underline {
       width: min(500px, 100%);
       height: 12px;
       margin: 0 auto 24px;
       position: relative;
     }
+
     .name-underline::before,
     .name-underline::after {
-      content: '';
+      content: "";
       position: absolute;
       inset: 50% 0 auto;
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
     }
+
     .name-underline::after {
       width: 74px;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      background: var(--bp-warning);
-      box-shadow: 0 0 18px rgba(255,200,87,0.45);
+      background: rgba(255,255,255,0.78);
     }
+
     .description {
       width: min(820px, 100%);
       margin: 0 auto;
@@ -403,14 +441,34 @@
       line-height: 1.78;
       color: rgba(255,255,255,0.84);
     }
-    .description .hl { color: #fff; font-weight: 700; }
+
+    .description .hl {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .sponsors-strip {
+      margin-top: auto;
+      padding-top: 22px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+
+    .sponsors-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 14px;
+    }
+
     .logos {
-      margin-top: 28px;
       display: flex;
       justify-content: center;
       gap: 14px;
       flex-wrap: wrap;
     }
+
     .logo-pill {
       padding: 10px 15px;
       background: rgba(255,255,255,0.05);
@@ -421,14 +479,15 @@
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
+
     .footer {
-      margin-top: auto;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 44px;
-      padding-top: 40px;
+      padding-top: 28px;
       align-items: end;
     }
+
     .sign-block {
       display: flex;
       flex-direction: column;
@@ -436,6 +495,7 @@
       gap: 10px;
       text-align: center;
     }
+
     .signature-box {
       width: 100%;
       max-width: 260px;
@@ -447,6 +507,7 @@
       border-bottom: 2px solid rgba(255,255,255,0.26);
       overflow: hidden;
     }
+
     .signature-box img {
       max-width: 100%;
       max-height: 60px;
@@ -454,6 +515,7 @@
       display: none;
       filter: brightness(1.15);
     }
+
     .signature-placeholder {
       color: rgba(255,255,255,0.45);
       text-transform: uppercase;
@@ -461,18 +523,21 @@
       font-size: 0.72rem;
       font-weight: 700;
     }
+
     .sign-name {
       font-family: var(--fh);
       font-size: 1.18rem;
       font-weight: 700;
       color: #fff;
     }
+
     .sign-role {
       font-size: 0.78rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.62);
     }
+
     .print-note {
       margin-top: 18px;
       text-align: right;
@@ -481,13 +546,14 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
-    .mobile-note {
-      display: none;
-    }
+
+    .mobile-note { display: none; }
+
     @media (max-width: 1120px) {
       .page { grid-template-columns: 1fr; }
       .panel { position: static; }
     }
+
     @media (max-width: 720px) {
       .page { padding: 82px 12px 18px; gap: 14px; }
       .panel { padding: 18px; }
@@ -500,11 +566,13 @@
         font-size: 0.82rem;
       }
     }
+
     @media print {
       body {
         background: #081c35;
         animation: none;
       }
+
       body::before,
       body::after,
       .banner-link,
@@ -513,30 +581,36 @@
       .mobile-note {
         display: none !important;
       }
+
       .page {
         display: block;
         width: auto;
         margin: 0;
         padding: 0;
       }
+
       .preview-shell {
         padding: 0;
         border: none;
         background: transparent;
         box-shadow: none;
       }
+
       .preview-viewport {
         aspect-ratio: auto;
         overflow: visible;
         border: none;
         background: transparent;
       }
+
       .preview-stage {
         transform: none !important;
       }
+
       .certificate {
         box-shadow: none;
       }
+
       @page {
         size: A4 landscape;
         margin: 0;
@@ -552,7 +626,7 @@
   <div class="page">
     <aside class="panel">
       <h1>Certificate Builder</h1>
-      <p>The preview now scales to your screen, and the certificate uses the same dark blueprint-style theme as the rest of the repo.</p>
+      <p>The preview scales to your screen, and the certificate now uses the same dark blueprint-style theme as the rest of the repo.</p>
 
       <div class="field">
         <label for="category">Category</label>
@@ -598,8 +672,6 @@
         <div class="preview-viewport" id="previewViewport">
           <div class="preview-stage" id="previewStage">
             <section class="certificate" id="certificate">
-              <div class="cert-glow one"></div>
-              <div class="cert-glow two"></div>
               <div class="cert-grid-fade"></div>
               <div class="certificate-inner">
                 <div class="topline">
@@ -622,7 +694,10 @@
                   <div class="participant-name" id="participantNameDisplay">ALBIN ANIL</div>
                   <div class="name-underline"></div>
                   <div class="description" id="descriptionDisplay"></div>
+                </div>
 
+                <div class="sponsors-strip">
+                  <div class="sponsors-label">Supported By</div>
                   <div class="logos">
                     <div class="logo-pill">Hack Club</div>
                     <div class="logo-pill">EasyEDA</div>
