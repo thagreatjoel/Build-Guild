@@ -239,22 +239,22 @@
     .preview-viewport {
       position: relative;
       width: 100%;
-      aspect-ratio: 1123 / 794;
+      aspect-ratio: 4 / 3;
       overflow: hidden;
       background: rgba(5, 18, 35, 0.72);
       border: 1px solid rgba(255,255,255,0.08);
     }
 
     .preview-stage {
-      width: 1123px;
-      height: 794px;
+      width: 1200px;
+      height: 900px;
       transform-origin: top left;
       transform: scale(var(--preview-scale, 1));
     }
 
     .certificate {
-      width: 1123px;
-      height: 794px;
+      width: 1200px;
+      height: 900px;
       position: relative;
       overflow: hidden;
       color: #fff;
@@ -621,7 +621,7 @@
       }
 
       @page {
-        size: A4 landscape;
+        size: auto;
         margin: 0;
       }
     }
@@ -780,7 +780,7 @@
 
     function updatePreviewScale() {
       const viewportWidth = previewViewport.clientWidth;
-      const scale = Math.min(viewportWidth / 1123, 1);
+      const scale = Math.min(viewportWidth / 1200, 1);
       previewStage.style.setProperty('--preview-scale', String(scale));
       scaleLabel.textContent = scale < 1 ? `Scaled ${Math.round(scale * 100)}%` : 'Full Size';
     }
@@ -814,11 +814,13 @@
         throw new Error('html2canvas is not available');
       }
 
-      const exportScale = Math.max(window.devicePixelRatio || 1, 3);
+      const exportScale = Math.max(window.devicePixelRatio || 1, 5);
 
       return window.html2canvas(certificate, {
         backgroundColor: null,
         scale: exportScale,
+        width: 1600,
+        height: 1200,
         useCORS: true,
         logging: false
       });
