@@ -814,13 +814,13 @@
         throw new Error('html2canvas is not available');
       }
 
-      const exportScale = Math.max(window.devicePixelRatio || 1, 5);
+      const exportScale = Math.max(window.devicePixelRatio || 1, 4);
 
       return window.html2canvas(certificate, {
         backgroundColor: null,
         scale: exportScale,
-        width: 1600,
-        height: 1200,
+        width: 1200,
+        height: 900,
         useCORS: true,
         logging: false
       });
