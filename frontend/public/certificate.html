@@ -239,21 +239,21 @@
     .preview-viewport {
       position: relative;
       width: 100%;
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 16 / 10;
       overflow: hidden;
       background: rgba(5, 18, 35, 0.72);
       border: 1px solid rgba(255,255,255,0.08);
     }
 
     .preview-stage {
-      width: 1200px;
+      width: 1440px;
       height: 900px;
       transform-origin: top left;
       transform: scale(var(--preview-scale, 1));
     }
 
     .certificate {
-      width: 1200px;
+      width: 1440px;
       height: 900px;
       position: relative;
       overflow: hidden;
@@ -447,10 +447,17 @@
       font-weight: 700;
     }
 
-    .sponsors-strip {
+    .footer {
       margin-top: auto;
-      padding-top: 22px;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 44px;
+      padding-top: 28px;
+      align-items: end;
+    }
+
+    .sponsors-strip {
+      padding-top: 18px;
       text-align: center;
     }
 
@@ -459,42 +466,31 @@
       text-transform: uppercase;
       letter-spacing: 0.22em;
       color: rgba(255,255,255,0.5);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .logos {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 14px;
+      gap: 24px;
       flex-wrap: wrap;
-    }
-
-    .logos::before,
-    .logos::after {
-      content: "";
-      width: 48px;
-      height: 1px;
-      background: rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.86);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
     }
 
     .logo-pill {
-      padding: 10px 15px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.88);
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .footer {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 44px;
-      padding-top: 28px;
-      align-items: end;
+      padding: 0;
+      background: transparent;
+      border: none;
+      color: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      text-transform: inherit;
+      letter-spacing: inherit;
     }
 
     .sign-block {
@@ -698,16 +694,6 @@
                   <div class="description" id="descriptionDisplay"></div>
                 </div>
 
-                <div class="sponsors-strip">
-                  <div class="sponsors-label">Supported By</div>
-                  <div class="logos">
-                    <div class="logo-pill">Hack Club</div>
-                    <div class="logo-pill">EasyEDA</div>
-                    <div class="logo-pill">JLCPCB</div>
-                    <div class="logo-pill">OSHWLab</div>
-                  </div>
-                </div>
-
                 <div class="footer">
                   <div class="sign-block">
                     <div class="signature-box">
@@ -725,6 +711,16 @@
                     </div>
                     <div class="sign-name">Co-Organizer</div>
                     <div class="sign-role">&amp; Manager</div>
+                  </div>
+                </div>
+
+                <div class="sponsors-strip">
+                  <div class="sponsors-label">Supported By</div>
+                  <div class="logos">
+                    <div class="logo-pill">Hack Club</div>
+                    <div class="logo-pill">EasyEDA</div>
+                    <div class="logo-pill">JLCPCB</div>
+                    <div class="logo-pill">OSHWLab</div>
                   </div>
                 </div>
 
@@ -780,7 +776,7 @@
 
     function updatePreviewScale() {
       const viewportWidth = previewViewport.clientWidth;
-      const scale = Math.min(viewportWidth / 1200, 1);
+      const scale = Math.min(viewportWidth / 1440, 1);
       previewStage.style.setProperty('--preview-scale', String(scale));
       scaleLabel.textContent = scale < 1 ? `Scaled ${Math.round(scale * 100)}%` : 'Full Size';
     }
@@ -819,7 +815,7 @@
       return window.html2canvas(certificate, {
         backgroundColor: null,
         scale: exportScale,
-        width: 1200,
+        width: 1440,
         height: 900,
         useCORS: true,
         logging: false
