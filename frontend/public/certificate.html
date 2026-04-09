@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Generator — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('./font/RC-BasicLight.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('./font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Phantom Sans';
+      src: url('./font/RC-BasicFull.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @keyframes moveGrid {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 100px 100px, 100px 100px; }
+    }
+    :root {
+      --bp-lighter: #344b6a;
+      --bp-dark: #0e305b;
+      --bp-darker: #081c35;
+      --bp-light: #dbe4ee;
+      --bp-warning: #ffc857;
+      --bp-success: #a8f0ae;
+      --f: 'Phantom Sans', 'Poppins', sans-serif;
+      --fh: 'Phantom Sans', 'Poppins', sans-serif;
+      --paper: #f7f1df;
+      --ink: #102746;
+      --ink-soft: rgba(16, 39, 70, 0.72);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--f);
+      background: var(--bp-dark);
+      color: #fff;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: moveGrid 10s linear infinite;
+      position: relative;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.7), transparent);
+      opacity: .45;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1320px, 100%);
+      margin: 0 auto;
+      padding: 96px 24px 32px;
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .banner-link {
+      position: fixed;
+      top: 18px;
+      left: 0;
+      z-index: 5;
+    }
+    .banner-link img {
+      width: clamp(120px, 18vw, 180px);
+      max-width: 42vw;
+      height: auto;
+      border: 0;
+    }
+    .panel {
+      background: rgba(8, 28, 53, 0.88);
+      backdrop-filter: blur(10px);
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.12);
+      position: sticky;
+      top: 92px;
+    }
+    .panel h1 {
+      font-family: var(--fh);
+      font-size: 1.8rem;
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+    .panel p {
+      color: rgba(255,255,255,0.72);
+      line-height: 1.6;
+      margin-bottom: 18px;
+      font-size: 0.95rem;
+    }
+    .field {
+      margin-bottom: 16px;
+    }
+    .field label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bp-warning);
+      margin-bottom: 8px;
+    }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      font: inherit;
+      color: #fff;
+      background: rgba(14, 48, 91, 0.92);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 12px 14px;
+      outline: none;
+    }
+    .field textarea {
+      min-height: 126px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn {
+      border: none;
+      padding: 13px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+    .btn-primary {
+      background: var(--bp-warning);
+      color: #102746;
+    }
+    .btn-secondary {
+      background: #fff;
+      color: #102746;
+    }
+    .hint {
+      margin-top: 14px;
+      color: rgba(255,255,255,0.65);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .stage {
+      min-width: 0;
+    }
+    .certificate-shell {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 16px;
+      overflow: auto;
+    }
+    .certificate {
+      width: 1123px;
+      min-height: 794px;
+      background: linear-gradient(135deg, rgba(255,200,87,0.14), transparent 30%), var(--paper);
+      color: var(--ink);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+    }
+    .certificate::before {
+      content: '';
+      position: absolute;
+      inset: 18px;
+      border: 2px solid rgba(16, 39, 70, 0.14);
+      pointer-events: none;
+    }
+    .certificate::after {
+      content: '';
+      position: absolute;
+      inset: 36px;
+      border: 1px solid rgba(255, 200, 87, 0.5);
+      pointer-events: none;
+    }
+    .noise {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(255,200,87,0.22), transparent 26%),
+        radial-gradient(circle at bottom left, rgba(14,48,91,0.1), transparent 24%);
+      pointer-events: none;
+    }
+    .certificate-inner {
+      position: relative;
+      z-index: 1;
+      padding: 54px 62px 48px;
+      display: flex;
+      flex-direction: column;
+      min-height: 794px;
+    }
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-start;
+      margin-bottom: 36px;
+    }
+    .brand-mark {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .brand-kicker {
+      font-size: 0.84rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .brand-title {
+      font-family: var(--fh);
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+    .brand-title span {
+      color: #bf7e00;
+    }
+    .category-tag {
+      padding: 10px 14px;
+      background: rgba(16,39,70,0.08);
+      border: 1px solid rgba(16,39,70,0.12);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .headline {
+      text-align: center;
+      margin-top: 12px;
+    }
+    .headline .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.34em;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      margin-bottom: 18px;
+    }
+    .headline h2 {
+      font-family: var(--fh);
+      font-size: 3.7rem;
+      line-height: 0.98;
+      margin-bottom: 14px;
+    }
+    .headline .presented {
+      font-size: 1.05rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 12px;
+    }
+    .participant-name {
+      font-family: var(--fh);
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0a2542;
+      margin-bottom: 22px;
+      word-break: break-word;
+    }
+    .name-underline {
+      width: min(460px, 100%);
+      margin: 0 auto 28px;
+      border-top: 2px solid rgba(16,39,70,0.18);
+    }
+    .description {
+      width: min(780px, 100%);
+      margin: 0 auto;
+      text-align: center;
+      font-size: 1.15rem;
+      line-height: 1.75;
+      color: rgba(16,39,70,0.82);
+    }
+    .description strong {
+      color: #0a2542;
+    }
+    .logos {
+      margin-top: 34px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .logo-pill {
+      border: 1px solid rgba(16,39,70,0.14);
+      background: rgba(255,255,255,0.4);
+      padding: 10px 16px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+    .footer {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 44px;
+      padding-top: 42px;
+      align-items: end;
+    }
+    .sign-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+    .signature-box {
+      width: 100%;
+      max-width: 260px;
+      height: 84px;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      border-bottom: 2px solid rgba(16,39,70,0.28);
+      overflow: hidden;
+      padding: 0 10px 10px;
+    }
+    .signature-box img {
+      max-width: 100%;
+      max-height: 60px;
+      object-fit: contain;
+      display: none;
+    }
+    .signature-placeholder {
+      color: rgba(16,39,70,0.45);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .sign-role {
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .sign-name {
+      font-family: var(--fh);
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .print-note {
+      margin-top: 14px;
+      text-align: right;
+      font-size: 0.76rem;
+      color: rgba(16,39,70,0.55);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    @media (max-width: 1080px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+      .panel {
+        position: static;
+      }
+      .certificate-shell {
+        padding: 10px;
+      }
+    }
+    @media (max-width: 720px) {
+      .page {
+        padding: 82px 14px 18px;
+      }
+      .panel {
+        padding: 18px;
+      }
+      .certificate-shell {
+        padding: 8px;
+      }
+    }
+    @media print {
+      body {
+        background: #fff;
+        animation: none;
+      }
+      body::after,
+      .banner-link,
+      .panel {
+        display: none !important;
+      }
+      .page {
+        display: block;
+        width: auto;
+        padding: 0;
+        margin: 0;
+      }
+      .stage,
+      .certificate-shell {
+        overflow: visible;
+        padding: 0;
+        border: none;
+        background: transparent;
+      }
+      .certificate {
+        box-shadow: none;
+      }
+      @page {
+        size: A4 landscape;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
+  <div class="page">
+    <aside class="panel">
+      <h1>Certificate Builder</h1>
+      <p>Set the participant name, upload signatures, and export the certificate as PNG or PDF.</p>
+
+      <div class="field">
+        <label for="category">Category</label>
+        <select id="category">
+          <option value="Participation" selected>Participation</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="participantName">Participant Name</label>
+        <input id="participantName" type="text" value="ALBIN ANIL" placeholder="Enter participant name">
+      </div>
+
+      <div class="field">
+        <label for="descriptionText">Certificate Text</label>
+        <textarea id="descriptionText">For successful completion of the Soldering 101 Course and participation in the Soldering &amp; Desoldering Marathon. This event was organized in association with Hack Club and supported by international technical partners EasyEDA, JLCPCB, and OSHWLab.</textarea>
+      </div>
+
+      <div class="field">
+        <label for="signatureOne">Lead Organizer &amp; Mentor Signature</label>
+        <input id="signatureOne" type="file" accept="image/*">
+      </div>
+
+      <div class="field">
+        <label for="signatureTwo">Co-Organizer &amp; Manager Signature</label>
+        <input id="signatureTwo" type="file" accept="image/*">
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="downloadPng">Save as PNG</button>
+        <button class="btn btn-secondary" id="downloadPdf">Save as PDF</button>
+      </div>
+
+      <div class="hint">PDF uses your browser print dialog for a clean export. PNG creates a direct image download.</div>
+    </aside>
+
+    <main class="stage">
+      <div class="certificate-shell">
+        <section class="certificate" id="certificate">
+          <div class="noise"></div>
+          <div class="certificate-inner">
+            <div class="topline">
+              <div class="brand-mark">
+                <div class="brand-kicker">Build Guild Kochi</div>
+                <div class="brand-title">Soldering <span>101</span></div>
+              </div>
+              <div class="category-tag">Category: <span id="categoryValue">Participation</span></div>
+            </div>
+
+            <div class="headline">
+              <div class="eyebrow">Certificate of Participation</div>
+              <h2>Certificate of Participation</h2>
+              <div class="presented">Presented to</div>
+              <div class="participant-name" id="participantNameDisplay">ALBIN ANIL</div>
+              <div class="name-underline"></div>
+              <div class="description" id="descriptionDisplay">For successful completion of the <strong>Soldering 101 Course</strong> and participation in the <strong>Soldering &amp; Desoldering Marathon</strong>. This event was organized in association with <strong>Hack Club</strong> and supported by international technical partners <strong>EasyEDA</strong>, <strong>JLCPCB</strong>, and <strong>OSHWLab</strong>.</div>
+
+              <div class="logos">
+                <div class="logo-pill">Hack Club</div>
+                <div class="logo-pill">EasyEDA</div>
+                <div class="logo-pill">JLCPCB</div>
+                <div class="logo-pill">OSHWLab</div>
+              </div>
+            </div>
+
+            <div class="footer">
+              <div class="sign-block">
+                <div class="signature-box">
+                  <img id="signaturePreviewOne" alt="Lead Organizer signature">
+                  <div class="signature-placeholder" id="signaturePlaceholderOne">Upload Signature</div>
+                </div>
+                <div class="sign-name">Lead Organizer</div>
+                <div class="sign-role">&amp; Mentor</div>
+              </div>
+
+              <div class="sign-block">
+                <div class="signature-box">
+                  <img id="signaturePreviewTwo" alt="Co-Organizer signature">
+                  <div class="signature-placeholder" id="signaturePlaceholderTwo">Upload Signature</div>
+                </div>
+                <div class="sign-name">Co-Organizer</div>
+                <div class="sign-role">&amp; Manager</div>
+              </div>
+            </div>
+
+            <div class="print-note">Build Guild Kochi • Participation Certificate</div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const participantNameInput = document.getElementById('participantName');
+    const participantNameDisplay = document.getElementById('participantNameDisplay');
+    const descriptionText = document.getElementById('descriptionText');
+    const descriptionDisplay = document.getElementById('descriptionDisplay');
+    const categorySelect = document.getElementById('category');
+    const categoryValue = document.getElementById('categoryValue');
+    const certificate = document.getElementById('certificate');
+
+    participantNameInput.addEventListener('input', () => {
+      const value = participantNameInput.value.trim();
+      participantNameDisplay.textContent = value || 'PARTICIPANT NAME';
+    });
+
+    descriptionText.addEventListener('input', () => {
+      descriptionDisplay.innerHTML = descriptionText.value.trim() || 'Certificate description';
+    });
+
+    categorySelect.addEventListener('change', () => {
+      categoryValue.textContent = categorySelect.value;
+    });
+
+    function bindSignatureInput(fileInputId, imageId, placeholderId) {
+      const input = document.getElementById(fileInputId);
+      const image = document.getElementById(imageId);
+      const placeholder = document.getElementById(placeholderId);
+
+      input.addEventListener('change', () => {
+        const [file] = input.files || [];
+        if (!file) {
+          image.removeAttribute('src');
+          image.style.display = 'none';
+          placeholder.style.display = 'block';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          image.src = reader.result;
+          image.style.display = 'block';
+          placeholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    bindSignatureInput('signatureOne', 'signaturePreviewOne', 'signaturePlaceholderOne');
+    bindSignatureInput('signatureTwo', 'signaturePreviewTwo', 'signaturePlaceholderTwo');
+
+    async function renderCertificateCanvas() {
+      return window.html2canvas(certificate, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true
+      });
+    }
+
+    document.getElementById('downloadPng').addEventListener('click', async () => {
+      const canvas = await renderCertificateCanvas();
+      const link = document.createElement('a');
+      const safeName = (participantNameInput.value.trim() || 'participant').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+      link.download = `${safeName}-certificate.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    document.getElementById('downloadPdf').addEventListener('click', () => {
+      window.print();
+    });
+  </script>
+</body>
+</html>
