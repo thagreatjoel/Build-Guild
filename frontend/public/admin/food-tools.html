@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Tools — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../config.js"></script>
+  <style>
+    .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .qr-batch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+    .print-card { background: #fff; color: #111; border: 1px solid #ddd; padding: 14px; break-inside: avoid; }
+    .print-card h3 { font-size: 18px; margin-bottom: 10px; }
+    .print-qr { display: flex; justify-content: center; min-height: 152px; align-items: center; margin-bottom: 8px; }
+    .print-meta { font-size: 12px; line-height: 1.5; color: #444; }
+    #reader { width: 100%; min-height: 280px; }
+    .scan-result { border: 1px solid rgba(255,255,255,.12); padding: 14px; background: rgba(0,0,0,.18); }
+    .queue-list { display: grid; gap: 12px; }
+    .queue-card { border: 1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.18); padding: 14px; }
+    .queue-meta { color: rgba(255,255,255,.7); font-size: 13px; line-height: 1.55; margin-top: 8px; }
+    .action-row { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; margin-top: 12px; }
+    @media (max-width: 980px) { .tool-grid, .action-row { grid-template-columns: 1fr; } }
+    @media print {
+      .page-header, .surface:not(.print-zone), .toast, .banner-link { display: none !important; }
+      .print-zone { display: block !important; border: none; padding: 0; background: #fff; }
+      .qr-batch-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <a href="https://hackclub.com/" class="banner-link no-print">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <main class="page-shell">
+    <div class="page-header no-print">
+      <div>
+        <div class="page-title">Food Tools</div>
+        <div class="page-subtitle">Generate and print blank physical QR cards like <code>#0001</code>, scan any physical or user food QR, and manage the food request queue.</div>
+        <div class="topbar-nav">
+          <a class="topbar-link" href="/admin/dashboard.html">Overview</a>
+          <a class="topbar-link active" href="/admin/food-tools.html">Food Tools</a>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="tool-grid no-print">
+      <section class="section-stack">
+        <div class="surface">
+          <div class="card-eyebrow">Printable QR Generator</div>
+          <div class="page-subtitle" style="margin:0 0 14px;">These first QR codes should only contain the physical card identity, not user data. Example payload: <code>{"type":"buildguild-physical-qr","code":"#0001","assigned":false}</code>.</div>
+          <div class="grid three">
+            <div class="field">
+              <label>Start Number</label>
+              <input id="qr-start" type="number" min="1" value="1">
+            </div>
+            <div class="field">
+              <label>Count</label>
+              <input id="qr-count" type="number" min="1" max="200" value="30">
+            </div>
+            <div class="field">
+              <label>Prefix</label>
+              <input id="qr-prefix" type="text" value="#" maxlength="2">
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+            <button class="btn btn-primary" onclick="generateBatch()">Generate QR Batch</button>
+            <button class="btn btn-outline" onclick="window.print()">Print Batch</button>
+          </div>
+        </div>
+
+        <div class="surface">
+          <div class="card-eyebrow">Food Fund Scanner</div>
+          <div class="page-subtitle" style="margin:0 0 14px;">Scan a blank physical code or a user food QR. The scanner will tell you whether the card is assigned and show remaining balance if it belongs to a user.</div>
+          <div id="reader"></div>
+          <div class="field" style="margin-top:12px;">
+            <label>Manual Scan Input</label>
+            <input id="manual-scan-value" type="text" placeholder='Paste raw QR text or code like #0001'>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+            <button class="btn btn-primary" onclick="manualScanLookup()">Lookup QR</button>
+            <button class="btn btn-outline" id="start-scanner-btn" onclick="startScanner()">Start Camera Scanner</button>
+            <button class="btn btn-outline" onclick="stopScanner()">Stop Scanner</button>
+          </div>
+          <div id="scan-result" class="scan-result" style="margin-top:14px;">Scan result will appear here.</div>
+        </div>
+      </section>
+
+      <section class="section-stack">
+        <div class="surface">
+          <div class="card-eyebrow">Food Request Queue</div>
+          <div id="food-request-list" class="queue-list">
+            <div class="empty-state">Loading food requests...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="surface print-zone" style="margin-top:18px;">
+      <div class="card-eyebrow no-print">Batch Preview</div>
+      <div id="qr-batch-grid" class="qr-batch-grid"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script>
+    const token = localStorage.getItem('adminToken');
+    if (!token) window.location.href = 'admin.html';
+    const headers = { 'x-auth-token': token };
+    let scannerInstance = null;
+    let scannerActive = false;
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    }
+    function formatCurrency(value) { return `$${Number(value || 0).toFixed(2)}`; }
+    function formatDate(value) { return value ? new Date(value).toLocaleString() : 'Pending'; }
+    function toast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast show t-${type}`;
+      setTimeout(() => t.classList.remove('show'), 3400);
+    }
+
+    function physicalQrPayload(code) {
+      return {
+        type: 'buildguild-physical-qr',
+        version: 1,
+        code,
+        assigned: false
+      };
+    }
+
+    function normalizeCode(number, prefix = '#') {
+      return `${prefix}${String(number).padStart(4, '0')}`;
+    }
+
+    function generateBatch() {
+      const start = Number(document.getElementById('qr-start').value || 1);
+      const count = Number(document.getElementById('qr-count').value || 30);
+      const prefix = document.getElementById('qr-prefix').value || '#';
+      const grid = document.getElementById('qr-batch-grid');
+      grid.innerHTML = '';
+      for (let index = 0; index < count; index += 1) {
+        const code = normalizeCode(start + index, prefix);
+        const payload = physicalQrPayload(code);
+        const card = document.createElement('div');
+        card.className = 'print-card';
+        card.innerHTML = `
+          <h3>${escapeHtml(code)}</h3>
+          <div class="print-qr"></div>
+          <div class="print-meta">Blank physical event QR card</div>
+          <div class="print-meta">Payload type: buildguild-physical-qr</div>
+        `;
+        grid.appendChild(card);
+        new QRCode(card.querySelector('.print-qr'), {
+          text: JSON.stringify(payload),
+          width: 132,
+          height: 132,
+          colorDark: '#081c35',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+      toast(`Generated ${count} printable QR codes`, 'ok');
+    }
+
+    async function renderScanResult(result) {
+      const target = document.getElementById('scan-result');
+      if (!result.found) {
+        target.innerHTML = `
+          <strong>Not assigned yet</strong>
+          <div class="queue-meta">${escapeHtml(result.msg || 'No user found')}</div>
+          ${result.code ? `<div class="queue-meta">Physical code: ${escapeHtml(result.code)}</div>` : ''}
+        `;
+        return;
+      }
+
+      const user = result.user;
+      target.innerHTML = `
+        <strong>${escapeHtml(user.name)}</strong>
+        <div class="queue-meta">Email: ${escapeHtml(user.email)}</div>
+        <div class="queue-meta">Physical QR: ${escapeHtml(user.assignedQrCode || 'Not assigned')}</div>
+        <div class="queue-meta">Checked in: ${user.checkedIn ? 'Yes' : 'No'}</div>
+        <div class="queue-meta">Food fund: ${formatCurrency(user.foodFundBalance)} / ${formatCurrency(user.foodFundTotal)}</div>
+        <div class="queue-meta">Latest request: ${user.latestFoodRequest ? `${escapeHtml(user.latestFoodRequest.provider)} • ${formatCurrency(user.latestFoodRequest.requestedAmount)} • ${escapeHtml(user.latestFoodRequest.status)}` : 'None yet'}</div>
+      `;
+    }
+
+    async function lookupScannedValue(scannedValue) {
+      const res = await fetch(`${API_BASE_URL}/api/admin/scan-food-qr`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scannedValue })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.msg || 'Failed to scan QR');
+      renderScanResult(data);
+      if (data.found) toast('Food fund found', 'ok');
+      else toast(data.msg || 'No assigned user found', 'info');
+    }
+
+    async function manualScanLookup() {
+      const value = document.getElementById('manual-scan-value').value.trim();
+      if (!value) return toast('Paste or enter a QR value first', 'err');
+      try {
+        await lookupScannedValue(value);
+      } catch (err) {
+        toast(err.message || 'Lookup failed', 'err');
+      }
+    }
+
+    async function startScanner() {
+      if (scannerActive || !window.Html5Qrcode) return;
+      scannerInstance = new Html5Qrcode('reader');
+      try {
+        await scannerInstance.start(
+          { facingMode: 'environment' },
+          { fps: 10, qrbox: { width: 220, height: 220 } },
+          async (decodedText) => {
+            document.getElementById('manual-scan-value').value = decodedText;
+            await lookupScannedValue(decodedText);
+            await stopScanner();
+          },
+          () => {}
+        );
+        scannerActive = true;
+        toast('Scanner started', 'info');
+      } catch (err) {
+        scannerInstance = null;
+        toast('Could not start camera scanner', 'err');
+      }
+    }
+
+    async function stopScanner() {
+      if (!scannerInstance || !scannerActive) return;
+      try {
+        await scannerInstance.stop();
+        await scannerInstance.clear();
+      } catch (err) {
+        console.error(err);
+      }
+      scannerInstance = null;
+      scannerActive = false;
+    }
+
+    async function loadFoodRequests() {
+      const res = await fetch(`${API_BASE_URL}/api/admin/food-requests`, { headers });
+      const requests = await res.json();
+      const target = document.getElementById('food-request-list');
+      if (!requests.length) {
+        target.innerHTML = '<div class="empty-state">No food requests yet.</div>';
+        return;
+      }
+      target.innerHTML = requests.map((request) => `
+        <div class="queue-card">
+          <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <strong>${escapeHtml(request.name)} • ${formatCurrency(request.requestedAmount)}</strong>
+            <span class="pill status-${escapeHtml(request.status)}">${escapeHtml(request.status)}</span>
+          </div>
+          <div class="queue-meta">${escapeHtml(request.email)}${request.assignedQrCode ? ` • ${escapeHtml(request.assignedQrCode)}` : ''}</div>
+          <div class="queue-meta">${escapeHtml(request.provider)}</div>
+          <div class="queue-meta">${escapeHtml(request.itemNote)}</div>
+          <div class="queue-meta">Requested: ${formatDate(request.createdAt)}</div>
+          ${request.status === 'pending' ? `
+            <div class="action-row">
+              <input class="input" id="admin-note-${request.id}" type="text" placeholder="Optional admin note">
+              <button class="btn btn-primary" onclick="processFoodRequest('${request.id}', 'approved')">Approve + Deduct</button>
+              <button class="btn btn-outline" onclick="processFoodRequest('${request.id}', 'rejected')">Reject</button>
+            </div>
+          ` : `<div class="queue-meta">Admin note: ${escapeHtml(request.adminNote || 'No note yet')}</div>`}
+        </div>
+      `).join('');
+    }
+
+    async function processFoodRequest(requestId, status) {
+      const adminNote = document.getElementById(`admin-note-${requestId}`)?.value || '';
+      const res = await fetch(`${API_BASE_URL}/api/admin/food-requests/${requestId}/process`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, adminNote })
+      });
+      const data = await res.json();
+      if (!res.ok) return toast(data.msg || 'Failed to process request', 'err');
+      toast(data.msg, 'ok');
+      loadFoodRequests();
+    }
+
+    function logout() {
+      stopScanner();
+      localStorage.removeItem('adminToken');
+      window.location.href = 'admin.html';
+    }
+
+    generateBatch();
+    loadFoodRequests().catch(() => toast('Failed to load food requests', 'err'));
+    window.addEventListener('beforeunload', stopScanner);
+  </script>
+</body>
+</html>

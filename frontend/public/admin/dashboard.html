@@ -156,7 +156,7 @@
           <td>${user.score || 0}</td>
           <td>
             <div style="display:grid; gap:8px; min-width:180px;">
-              ${!user.checkedIn ? `<button class="btn btn-outline" onclick="manualCheckin('${user.email}','${escapeHtml(user.name)}')">Check-in</button>` : ''}
+              ${!user.checkedIn ? `<button class="btn btn-outline" onclick="manualCheckin('${user.email}')">Check-in</button>` : ''}
               <input class="input" type="number" id="score-${user._id}" placeholder="points">
               <button class="btn btn-primary" onclick="addScore('${user.email}', document.getElementById('score-${user._id}').value)">Add Score</button>
             </div>
@@ -203,8 +203,8 @@
       loadFoodRequests();
     }
 
-    async function manualCheckin(email, name) {
-      if (!confirm(`Check in ${name || email}?`)) return;
+    async function manualCheckin(email) {
+      if (!confirm(`Check in ${email}?`)) return;
       const res = await fetch(`${API_BASE_URL}/api/admin/manual-checkin`, {
         method: 'POST',
         headers: { ...headers, 'Content-Type': 'application/json' },
