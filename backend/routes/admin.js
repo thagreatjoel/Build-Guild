@@ -6,18 +6,70 @@ const User = require('../models/User');
 const { sendQREmail } = require('../utils/email');
 const EventStatus = require('../models/EventStatus');
 
-// Get stats (total registered, total checked-in)
+const DEFAULT_FOOD_FUND = 5;
+
+function normalizeFoodState(user) {
+  let changed = false;
+
+  if (typeof user.foodFundTotal !== 'number') {
+    user.foodFundTotal = DEFAULT_FOOD_FUND;
+    changed = true;
+  }
+  if (typeof user.foodFundBalance !== 'number') {
+    user.foodFundBalance = user.foodFundTotal;
+    changed = true;
+  }
+  if (!Array.isArray(user.foodRequests)) {
+    user.foodRequests = [];
+    changed = true;
+  }
+  if (typeof user.assignedQrCode !== 'string') {
+    user.assignedQrCode = '';
+    changed = true;
+  }
+
+  return changed;
+}
+
+function serializeFoodRequest(user, request) {
+  return {
+    id: request._id,
+    userId: user._id,
+    name: user.name || user.username || user.email.split('@')[0],
+    username: user.username || '',
+    email: user.email,
+    assignedQrCode: user.assignedQrCode || '',
+    provider: request.provider,
+    itemNote: request.itemNote,
+    requestedAmount: request.requestedAmount,
+    status: request.status,
+    adminNote: request.adminNote || '',
+    createdAt: request.createdAt,
+    processedAt: request.processedAt,
+    foodFundBalance: user.foodFundBalance,
+    foodFundTotal: user.foodFundTotal
+  };
+}
+
+async function normalizeAllUsers(users) {
+  await Promise.all(users.map(async (user) => {
+    if (normalizeFoodState(user)) {
+      await user.save();
+    }
+  }));
+}
+
 router.get('/stats', auth, async (req, res) => {
   try {
     const total = await User.countDocuments();
     const checkedIn = await User.countDocuments({ checkedIn: true });
-    res.json({ total, checkedIn });
+    const pendingFoodRequests = await User.countDocuments({ 'foodRequests.status': 'pending' });
+    res.json({ total, checkedIn, pendingFoodRequests });
   } catch (err) {
     res.status(500).json({ msg: 'Server error' });
   }
 });
 
-// Scan QR token: mark check-in
 router.post('/scan', auth, async (req, res) => {
   try {
     const { token } = req.body;
@@ -35,7 +87,6 @@ router.post('/scan', auth, async (req, res) => {
   }
 });
 
-// Manual walk-in registration
 router.post('/manual-register', auth, async (req, res) => {
   try {
     const { name, email, phone } = req.body;
@@ -44,7 +95,15 @@ router.post('/manual-register', auth, async (req, res) => {
     if (existing) return res.status(400).json({ msg: 'Email already registered' });
 
     const qrToken = uuidv4();
-    const user = new User({ name, email: email.toLowerCase(), phone, qrToken });
+    const user = new User({
+      name,
+      email: email.toLowerCase(),
+      phone,
+      qrToken,
+      foodFundTotal: DEFAULT_FOOD_FUND,
+      foodFundBalance: DEFAULT_FOOD_FUND,
+      foodRequests: []
+    });
     await user.save();
 
     await sendQREmail(email, name, qrToken);
@@ -55,17 +114,16 @@ router.post('/manual-register', auth, async (req, res) => {
   }
 });
 
-// Get all users
 router.get('/users', auth, async (req, res) => {
   try {
     const users = await User.find().sort({ createdAt: -1 });
+    await normalizeAllUsers(users);
     res.json(users);
   } catch (err) {
     res.status(500).json({ msg: 'Server error' });
   }
 });
 
-// Delete a user
 router.delete('/users/:id', auth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -78,7 +136,6 @@ router.delete('/users/:id', auth, async (req, res) => {
   }
 });
 
-// Manual check-in by admin
 router.post('/manual-checkin', auth, async (req, res) => {
   try {
     const { email } = req.body;
@@ -102,12 +159,10 @@ router.post('/manual-checkin', auth, async (req, res) => {
   }
 });
 
-// Add score to user
 router.post('/add-score', auth, async (req, res) => {
   try {
     const { email, points } = req.body;
     if (!email) return res.status(400).json({ msg: 'Email required' });
-    // Allow negative numbers – only check that points is a valid number
     if (points === undefined || points === null || isNaN(points)) {
       return res.status(400).json({ msg: 'Valid numeric points required' });
     }
@@ -115,7 +170,7 @@ router.post('/add-score', auth, async (req, res) => {
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) return res.status(404).json({ msg: 'User not found' });
 
-    user.score = (user.score || 0) + parseInt(points);
+    user.score = (user.score || 0) + parseInt(points, 10);
     await user.save();
 
     res.json({ msg: `Added ${points} points to ${user.name || user.email}`, newScore: user.score });
@@ -125,10 +180,92 @@ router.post('/add-score', auth, async (req, res) => {
   }
 });
 
-// Get users with scores (sorted)
+router.post('/assign-physical-qr', auth, async (req, res) => {
+  try {
+    const { email, assignedQrCode } = req.body;
+    if (!email) return res.status(400).json({ msg: 'Email required' });
+    if (!assignedQrCode || !assignedQrCode.trim()) return res.status(400).json({ msg: 'Physical QR code is required' });
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    user.assignedQrCode = assignedQrCode.trim().toUpperCase();
+    normalizeFoodState(user);
+    await user.save();
+
+    res.json({ msg: 'Physical QR code assigned', assignedQrCode: user.assignedQrCode });
+  } catch (err) {
+    console.error('Assign physical QR error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+router.get('/food-requests', auth, async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 });
+    await normalizeAllUsers(users);
+
+    const requests = users
+      .flatMap((user) => user.foodRequests.map((request) => serializeFoodRequest(user, request)))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.json(requests);
+  } catch (err) {
+    console.error('Food request list error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+router.post('/food-requests/:requestId/process', auth, async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const { status, adminNote } = req.body;
+
+    if (!['approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ msg: 'Valid status is required' });
+    }
+
+    const user = await User.findOne({ 'foodRequests._id': requestId });
+    if (!user) return res.status(404).json({ msg: 'Food request not found' });
+
+    normalizeFoodState(user);
+
+    const request = user.foodRequests.id(requestId);
+    if (!request) return res.status(404).json({ msg: 'Food request not found' });
+    if (request.status !== 'pending') {
+      return res.status(400).json({ msg: 'This food request has already been processed' });
+    }
+
+    if (status === 'approved' && request.requestedAmount > user.foodFundBalance) {
+      return res.status(400).json({ msg: 'User does not have enough food fund balance left' });
+    }
+
+    request.status = status;
+    request.adminNote = (adminNote || '').trim();
+    request.processedAt = new Date();
+
+    if (status === 'approved') {
+      user.foodFundBalance = Number((user.foodFundBalance - request.requestedAmount).toFixed(2));
+      if (user.foodFundBalance < 0) user.foodFundBalance = 0;
+    }
+
+    await user.save();
+
+    res.json({
+      msg: status === 'approved' ? 'Food request approved and deducted from fund' : 'Food request rejected',
+      request: serializeFoodRequest(user, request),
+      foodFundBalance: user.foodFundBalance
+    });
+  } catch (err) {
+    console.error('Food request process error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
 router.get('/users-with-scores', auth, async (req, res) => {
   try {
     const users = await User.find().sort({ score: -1, checkedInAt: -1 });
+    await normalizeAllUsers(users);
     res.json(users);
   } catch (err) {
     console.error(err);
@@ -136,7 +273,6 @@ router.get('/users-with-scores', auth, async (req, res) => {
   }
 });
 
-// Get event status
 router.get('/event-status', async (req, res) => {
   let status = await EventStatus.findOne();
   if (!status) {
@@ -146,7 +282,6 @@ router.get('/event-status', async (req, res) => {
   res.json({ isOpen: status.isOpen });
 });
 
-// Toggle event status
 router.post('/event-status/toggle', auth, async (req, res) => {
   let status = await EventStatus.findOne();
   if (!status) {
@@ -158,19 +293,6 @@ router.post('/event-status/toggle', auth, async (req, res) => {
   res.json({ isOpen: status.isOpen });
 });
 
-
-// Get users with scores (sorted)
-router.get('/users-with-scores', auth, async (req, res) => {
-  try {
-    const users = await User.find().sort({ score: -1, checkedInAt: -1 });
-    res.json(users);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: 'Server error' });
-  }
-});
-
-// Public leaderboard: only checked-in users with score > 0
 router.get('/public-leaderboard', async (req, res) => {
   try {
     const users = await User.find({ checkedIn: true, score: { $gt: 0 } }).sort({ score: -1 });
@@ -197,7 +319,6 @@ router.post('/announcement', auth, async (req, res) => {
   }
 });
 
-// Get event note (admin)
 router.get('/event-note', auth, async (req, res) => {
   const EventNote = require('../models/EventNote');
   let note = await EventNote.findOne();
@@ -205,7 +326,6 @@ router.get('/event-note', auth, async (req, res) => {
   res.json({ text: note.text });
 });
 
-// Update event note (admin)
 router.post('/event-note', auth, async (req, res) => {
   const { text } = req.body;
   const EventNote = require('../models/EventNote');

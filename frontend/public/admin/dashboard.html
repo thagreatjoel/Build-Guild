@@ -15,13 +15,23 @@
     .section { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 20px; margin-bottom: 24px; }
     .section h2 { font-size: 18px; margin-bottom: 16px; }
     .user-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .user-table th, .user-table td { border: 1px solid rgba(255,255,255,.2); padding: 8px; text-align: left; }
+    .user-table th, .user-table td { border: 1px solid rgba(255,255,255,.2); padding: 8px; text-align: left; vertical-align: top; }
     .user-table th { background: rgba(0,0,0,.3); }
     .btn-small { padding: 4px 12px; font-size: 12px; margin: 2px; }
-    .flex-between { display: flex; justify-content: space-between; align-items: center; }
-    .score-input { width: 60px; padding: 4px; margin-right: 5px; background: var(--bp-dark); border: 1px solid rgba(255,255,255,.2); color: #fff; }
-    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .score-input, .qr-input, .note-input, .amount-input { width: 100%; padding: 6px; margin-right: 5px; background: var(--bp-dark); border: 1px solid rgba(255,255,255,.2); color: #fff; }
+    .banner-link { position: fixed; top: 20px; left: 0; z-index: 999; }
     .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
+    .request-card { border: 1px solid rgba(255,255,255,.12); padding: 14px; margin-bottom: 12px; background: rgba(0,0,0,.18); }
+    .request-card:last-child { margin-bottom: 0; }
+    .request-top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+    .request-meta { color: rgba(255,255,255,.75); line-height: 1.5; font-size: 13px; }
+    .request-actions { display: grid; grid-template-columns: 110px 1fr auto auto; gap: 8px; margin-top: 12px; }
+    .pill { display: inline-block; padding: 3px 8px; border: 1px solid rgba(255,255,255,.2); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+    .status-pending { color: var(--bp-warning); }
+    .status-approved { color: #a8f0ae; }
+    .status-rejected { color: #fe8e86; }
+    @media (max-width: 900px) { .request-actions { grid-template-columns: 1fr; } }
     @media (max-width: 600px) { .stats-grid { flex-direction: column; } .stat-card { margin-bottom: 10px; } }
   </style>
 </head>
@@ -39,7 +49,7 @@
   </svg>
 
   <div class="view active z1" style="padding-top: 40px;">
-    <div style="width:100%; max-width: 1200px;">
+    <div style="width:100%; max-width: 1280px;">
       <div class="flex-between" style="margin-bottom: 20px;">
         <h1 style="font-size: 28px;">Admin Dashboard</h1>
         <button class="btn btn-outline btn-small" onclick="logout()">Logout</button>
@@ -48,32 +58,43 @@
       <div class="stats-grid" id="stats">
         <div class="stat-card"><div class="stat-number" id="total-reg">-</div><div class="stat-label">Total Registered</div></div>
         <div class="stat-card"><div class="stat-number" id="total-checked">-</div><div class="stat-label">Checked In</div></div>
+        <div class="stat-card"><div class="stat-number" id="pending-food-count">-</div><div class="stat-label">Pending Food Requests</div></div>
       </div>
-<div class="section">
-  <h2> Announcement Editor</h2>
-  <textarea id="announcement-text" rows="4" style="width:100%; background: var(--bp-dark); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px;"></textarea>
-  <button class="btn btn-primary" onclick="updateAnnouncement()" style="margin-top:10px;">Update Announcement</button>
-  <div id="announcement-msg" class="msg" style="margin-top:10px;"></div>
-</div>
+
+      <div class="section">
+        <h2>Announcement Editor</h2>
+        <textarea id="announcement-text" rows="4" style="width:100%; background: var(--bp-dark); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px;"></textarea>
+        <button class="btn btn-primary" onclick="updateAnnouncement()" style="margin-top:10px;">Update Announcement</button>
+      </div>
+
       <div class="section">
         <h2>User Management</h2>
-        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-          <input type="email" id="new-user-email" placeholder="Email" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <input type="text" id="new-user-name" placeholder="Full Name" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <input type="text" id="new-user-username" placeholder="Username" style="flex:2; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+          <input type="email" id="new-user-email" placeholder="Email" style="flex:2; min-width:180px; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <input type="text" id="new-user-name" placeholder="Full Name" style="flex:2; min-width:180px; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
+          <input type="text" id="new-user-username" placeholder="Username" style="flex:2; min-width:180px; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
           <button class="btn btn-primary" onclick="addUser()">Add User</button>
         </div>
       </div>
 
       <div class="section">
         <div class="flex-between">
-          <h2>Attendees & Scores</h2>
+          <h2>Food Request Queue</h2>
+          <button class="btn btn-outline btn-small" onclick="loadFoodRequests()">Refresh</button>
+        </div>
+        <div id="food-request-list">Loading food requests...</div>
+      </div>
+
+      <div class="section">
+        <div class="flex-between">
+          <h2>Attendees, QR Assignment & Scores</h2>
           <button class="btn btn-outline btn-small" onclick="exportCSV()">Export CSV</button>
         </div>
         <div style="overflow-x: auto;">
           <table class="user-table" id="user-table">
             <thead>
-              <tr><th>Name</th><th>Username</th><th>Email</th><th>Status</th><th>Score</th><th>Actions</th></thead>
+              <tr><th>Name</th><th>Username</th><th>Email</th><th>Status</th><th>Food Fund</th><th>Physical QR</th><th>Score</th><th>Actions</th></tr>
+            </thead>
             <tbody></tbody>
           </table>
         </div>
@@ -83,8 +104,8 @@
         <h2>Event Control</h2>
         <div id="event-status" style="margin-bottom: 15px;">Loading...</div>
         <textarea id="event-note-text" rows="3" style="width:100%; background: var(--bp-dark); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px;"></textarea>
-  <button class="btn btn-primary" onclick="updateEventNote()" style="margin-top:10px;">Update Note</button>
-  <div id="note-msg" class="msg" style="margin-top:10px;"></div>
+        <button class="btn btn-primary" onclick="updateEventNote()" style="margin-top:10px;">Update Note</button>
+        <div id="note-msg" class="msg" style="margin-top:10px;"></div>
         <button class="btn btn-primary" onclick="toggleEvent()">Toggle Event Status</button>
       </div>
     </div>
@@ -98,11 +119,30 @@
 
     const headers = { 'x-auth-token': token };
 
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char]));
+    }
+
+    function formatCurrency(value) {
+      return `$${Number(value || 0).toFixed(2)}`;
+    }
+
+    function formatDate(value) {
+      return value ? new Date(value).toLocaleString() : 'Pending';
+    }
+
     async function loadStats() {
       const res = await fetch(`${API_BASE_URL}/api/admin/stats`, { headers });
       const data = await res.json();
       document.getElementById('total-reg').innerText = data.total;
       document.getElementById('total-checked').innerText = data.checkedIn;
+      document.getElementById('pending-food-count').innerText = data.pendingFoodRequests || 0;
     }
 
     async function loadUsers() {
@@ -110,56 +150,156 @@
       const users = await res.json();
       const tbody = document.querySelector('#user-table tbody');
       tbody.innerHTML = '';
-      users.forEach(u => {
+      users.forEach((u) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${escapeHtml(u.name || u.email.split('@')[0])}</td>
           <td>${escapeHtml(u.username || '-')}</td>
           <td>${escapeHtml(u.email)}</td>
           <td>${u.checkedIn ? 'Checked In' : 'Not Checked In'}</td>
+          <td>${formatCurrency(u.foodFundBalance)} / ${formatCurrency(u.foodFundTotal)}</td>
+          <td>
+            <div style="min-width:160px; display:grid; gap:6px;">
+              <div>${escapeHtml(u.assignedQrCode || 'Not assigned')}</div>
+              <input type="text" id="qr-${u._id}" class="qr-input" placeholder="#0001" value="${escapeHtml(u.assignedQrCode || '')}">
+              <button class="btn-small" style="background:#60a5fa; color:#081c35;" onclick="assignPhysicalQr('${u.email}', '${u._id}')">Save QR</button>
+            </div>
+          </td>
           <td>${u.score || 0}</td>
-          <td>${!u.checkedIn ? `<button class="btn-small" style="background:#4caf50; margin-right:5px;" onclick="manualCheckin('${u.email}','${escapeHtml(u.name)}')">Check-in</button>` : ''}
-              <input type="number" id="score-${u._id}" placeholder="points" class="score-input" style="width:60px;">
-              <button class="btn-small" style="background:#ffc857; color:#081c35;" onclick="addScore('${u.email}', document.getElementById('score-${u._id}').value)">Add Score</button>
+          <td>
+            ${!u.checkedIn ? `<button class="btn-small" style="background:#4caf50; margin-right:5px;" onclick="manualCheckin('${u.email}','${escapeHtml(u.name)}')">Check-in</button>` : ''}
+            <input type="number" id="score-${u._id}" placeholder="points" class="score-input" style="width:80px;">
+            <button class="btn-small" style="background:#ffc857; color:#081c35;" onclick="addScore('${u.email}', document.getElementById('score-${u._id}').value)">Add Score</button>
           </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
+    async function loadFoodRequests() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/food-requests`, { headers });
+        const requests = await res.json();
+        const target = document.getElementById('food-request-list');
+
+        if (!Array.isArray(requests) || !requests.length) {
+          target.innerHTML = '<p style="color:rgba(255,255,255,.7);">No food requests yet.</p>';
+          return;
+        }
+
+        target.innerHTML = requests.map((request) => `
+          <div class="request-card">
+            <div class="request-top">
+              <div>
+                <strong>${escapeHtml(request.name)}</strong>
+                <div class="request-meta">${escapeHtml(request.email)}${request.assignedQrCode ? ` • QR ${escapeHtml(request.assignedQrCode)}` : ''}</div>
+              </div>
+              <div class="pill status-${escapeHtml(request.status)}">${escapeHtml(request.status)}</div>
+            </div>
+            <div class="request-meta">
+              <div><strong>Source:</strong> ${escapeHtml(request.provider)}</div>
+              <div><strong>Amount:</strong> ${formatCurrency(request.requestedAmount)} from ${formatCurrency(request.foodFundBalance)} remaining</div>
+              <div><strong>Note:</strong> ${escapeHtml(request.itemNote)}</div>
+              <div><strong>Requested:</strong> ${formatDate(request.createdAt)}</div>
+              <div><strong>Admin note:</strong> ${escapeHtml(request.adminNote || 'No note yet')}</div>
+            </div>
+            ${request.status === 'pending' ? `
+              <div class="request-actions">
+                <input type="text" id="admin-note-${request.id}" class="note-input" placeholder="Optional admin note">
+                <button class="btn-small" style="background:#4caf50; color:#081c35;" onclick="processFoodRequest('${request.id}', 'approved')">Approve + Deduct</button>
+                <button class="btn-small" style="background:#ef4444; color:#fff;" onclick="processFoodRequest('${request.id}', 'rejected')">Reject</button>
+              </div>
+            ` : ''}
+          </div>
+        `).join('');
+      } catch (err) {
+        toast('Failed to load food requests', 'err');
+      }
+    }
+
+    async function processFoodRequest(requestId, status) {
+      const adminNote = document.getElementById(`admin-note-${requestId}`)?.value || '';
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/food-requests/${requestId}/process`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, adminNote })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast(data.msg || 'Failed to process request', 'err');
+          return;
+        }
+        toast(data.msg, 'ok');
+        loadStats();
+        loadUsers();
+        loadFoodRequests();
+      } catch (err) {
+        toast('Network error', 'err');
+      }
+    }
+
+    async function assignPhysicalQr(email, userId) {
+      const assignedQrCode = document.getElementById(`qr-${userId}`).value.trim();
+      if (!assignedQrCode) {
+        toast('Enter a QR code like #0001', 'err');
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/assign-physical-qr`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, assignedQrCode })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast(data.msg || 'Failed to assign QR', 'err');
+          return;
+        }
+        toast(`Saved physical QR ${data.assignedQrCode}`, 'ok');
+        loadUsers();
+        loadFoodRequests();
+      } catch (err) {
+        toast('Network error', 'err');
+      }
+    }
+
     async function manualCheckin(email, name) {
       if (!confirm(`Are you sure ${name || email} has checked in?`)) return;
       try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/manual-checkin`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+        const res = await fetch(`${API_BASE_URL}/api/admin/manual-checkin`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
         const data = await res.json();
-        if (res.ok) { toast(`Checked in successfully`, 'ok'); loadStats(); loadUsers(); }
+        if (res.ok) { toast('Checked in successfully', 'ok'); loadStats(); loadUsers(); }
         else toast(data.msg || 'Check-in failed', 'err');
-      } catch(err) { toast('Network error', 'err'); }
+      } catch (err) { toast('Network error', 'err'); }
     }
 
-async function addScore(email, points) {
-  // Allow negative numbers – only check that points is a valid number
-  if (points === undefined || points === null || points === '' || isNaN(points)) {
-    toast('Please enter a valid number', 'err');
-    return;
-  }
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/admin/add-score`, {
-      method: 'POST',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, points: parseInt(points) })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      toast(`✅ ${data.msg} (New Score: ${data.newScore})`, 'ok');
-      loadUsers();
-    } else {
-      toast(data.msg || 'Failed to add score', 'err');
+    async function addScore(email, points) {
+      if (points === undefined || points === null || points === '' || isNaN(points)) {
+        toast('Please enter a valid number', 'err');
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/add-score`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, points: parseInt(points, 10) })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          toast(`${data.msg} (New Score: ${data.newScore})`, 'ok');
+          loadUsers();
+        } else {
+          toast(data.msg || 'Failed to add score', 'err');
+        }
+      } catch (err) {
+        toast('Network error', 'err');
+      }
     }
-  } catch (err) {
-    toast('Network error', 'err');
-  }
-}
 
     async function addUser() {
       const email = document.getElementById('new-user-email').value.trim().toLowerCase();
@@ -167,11 +307,24 @@ async function addScore(email, points) {
       const username = document.getElementById('new-user-username').value.trim();
       if (!email) { toast('Please enter email', 'err'); return; }
       try {
-        const res = await fetch(`${API_BASE_URL}/api/user/add-approved-email`, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, username }) });
+        const res = await fetch(`${API_BASE_URL}/api/user/add-approved-email`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name, username })
+        });
         const data = await res.json();
-        if (res.ok) { toast(`User added`, 'ok'); document.getElementById('new-user-email').value = ''; document.getElementById('new-user-name').value = ''; document.getElementById('new-user-username').value = ''; loadUsers(); }
-        else toast(data.msg || 'Failed to add user', 'err');
-      } catch(err) { toast('Network error', 'err'); }
+        if (res.ok) {
+          toast('User added', 'ok');
+          document.getElementById('new-user-email').value = '';
+          document.getElementById('new-user-name').value = '';
+          document.getElementById('new-user-username').value = '';
+          loadUsers();
+        } else {
+          toast(data.msg || 'Failed to add user', 'err');
+        }
+      } catch (err) {
+        toast('Network error', 'err');
+      }
     }
 
     async function loadEventStatus() {
@@ -179,7 +332,7 @@ async function addScore(email, points) {
         const res = await fetch(`${API_BASE_URL}/api/admin/event-status`, { headers });
         const data = await res.json();
         document.getElementById('event-status').innerHTML = `Event is currently <strong>${data.isOpen ? 'OPEN' : 'CLOSED'}</strong>`;
-      } catch(err) { console.error(err); }
+      } catch (err) { console.error(err); }
     }
 
     async function toggleEvent() {
@@ -188,15 +341,27 @@ async function addScore(email, points) {
         const data = await res.json();
         loadEventStatus();
         toast(`Event is now ${data.isOpen ? 'OPEN' : 'CLOSED'}`, 'info');
-      } catch(err) { toast('Failed to toggle event status', 'err'); }
+      } catch (err) { toast('Failed to toggle event status', 'err'); }
     }
 
     async function exportCSV() {
       const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
       const users = await res.json();
-      const headersCSV = ['Name','Username','Email','Phone','Checked In','Checked In At','Score','Registered At'];
-      const rows = users.map(u => [u.name || u.email.split('@')[0], u.username || '', u.email, u.phone || '', u.checkedIn ? 'Yes' : 'No', u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '', u.score || 0, new Date(u.createdAt).toLocaleString()]);
-      const csv = [headersCSV, ...rows].map(row => row.join(',')).join('\n');
+      const headersCSV = ['Name','Username','Email','Phone','Checked In','Checked In At','Score','Food Fund Total','Food Fund Balance','Assigned QR','Registered At'];
+      const rows = users.map((u) => [
+        u.name || u.email.split('@')[0],
+        u.username || '',
+        u.email,
+        u.phone || '',
+        u.checkedIn ? 'Yes' : 'No',
+        u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '',
+        u.score || 0,
+        u.foodFundTotal || 0,
+        u.foodFundBalance || 0,
+        u.assignedQrCode || '',
+        new Date(u.createdAt).toLocaleString()
+      ]);
+      const csv = [headersCSV, ...rows].map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -205,51 +370,49 @@ async function addScore(email, points) {
       URL.revokeObjectURL(a.href);
     }
 
-
     async function loadAnnouncement() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
-    const data = await res.json();
-    document.getElementById('announcement-text').value = data.text;
-  } catch(err) { console.error(err); }
-}
-async function updateAnnouncement() {
-  const text = document.getElementById('announcement-text').value;
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/admin/announcement`, {
-      method: 'POST',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
-    });
-    const data = await res.json();
-    if (res.ok) toast('Announcement updated', 'ok');
-    else toast(data.msg || 'Failed', 'err');
-  } catch(err) { toast('Network error', 'err'); }
-}
-// Call loadAnnouncement() in initial load.
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
+        const data = await res.json();
+        document.getElementById('announcement-text').value = data.text;
+      } catch (err) { console.error(err); }
+    }
 
-async function loadEventNote() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/admin/event-note`, { headers });
-    const data = await res.json();
-    document.getElementById('event-note-text').value = data.text;
-  } catch(err) { console.error(err); }
-}
-async function updateEventNote() {
-  const text = document.getElementById('event-note-text').value;
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/admin/event-note`, {
-      method: 'POST',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
-    });
-    const data = await res.json();
-    if (res.ok) toast('Note updated', 'ok');
-    else toast(data.msg || 'Failed', 'err');
-  } catch(err) { toast('Network error', 'err'); }
-}
-// Call loadEventNote() in the initial load (e.g., inside the existing loadStats/loadUsers block)
-loadEventNote();
+    async function updateAnnouncement() {
+      const text = document.getElementById('announcement-text').value;
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/announcement`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        const data = await res.json();
+        if (res.ok) toast('Announcement updated', 'ok');
+        else toast(data.msg || 'Failed', 'err');
+      } catch (err) { toast('Network error', 'err'); }
+    }
+
+    async function loadEventNote() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/event-note`, { headers });
+        const data = await res.json();
+        document.getElementById('event-note-text').value = data.text;
+      } catch (err) { console.error(err); }
+    }
+
+    async function updateEventNote() {
+      const text = document.getElementById('event-note-text').value;
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/event-note`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        const data = await res.json();
+        if (res.ok) toast('Note updated', 'ok');
+        else toast(data.msg || 'Failed', 'err');
+      } catch (err) { toast('Network error', 'err'); }
+    }
 
     function toast(msg, type) {
       const t = document.getElementById('toast');
@@ -263,9 +426,12 @@ loadEventNote();
       window.location.href = 'admin.html';
     }
 
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
-    loadStats(); loadUsers(); loadEventStatus();
+    loadStats();
+    loadUsers();
+    loadFoodRequests();
+    loadEventStatus();
+    loadAnnouncement();
+    loadEventNote();
   </script>
 </body>
 </html>
