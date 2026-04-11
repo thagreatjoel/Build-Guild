@@ -2,37 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
   <script src="../config.js"></script>
   <style>
-    .stats-grid { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-    .stat-card { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 16px 24px; flex: 1; text-align: center; }
-    .stat-number { font-size: 32px; font-weight: 800; color: var(--bp-warning); }
-    .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; }
-    .section { background: var(--bp-darker); border: 2px solid rgba(255,255,255,.14); padding: 20px; margin-bottom: 24px; }
-    .section h2 { font-size: 18px; margin-bottom: 16px; }
-    .user-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .user-table th, .user-table td { border: 1px solid rgba(255,255,255,.2); padding: 8px; text-align: left; vertical-align: top; }
-    .user-table th { background: rgba(0,0,0,.3); }
-    .btn-small { padding: 4px 12px; font-size: 12px; margin: 2px; }
-    .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-    .score-input, .qr-input, .note-input, .amount-input { width: 100%; padding: 6px; margin-right: 5px; background: var(--bp-dark); border: 1px solid rgba(255,255,255,.2); color: #fff; }
-    .banner-link { position: fixed; top: 20px; left: 0; z-index: 999; }
-    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
-    .request-card { border: 1px solid rgba(255,255,255,.12); padding: 14px; margin-bottom: 12px; background: rgba(0,0,0,.18); }
-    .request-card:last-child { margin-bottom: 0; }
-    .request-top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
-    .request-meta { color: rgba(255,255,255,.75); line-height: 1.5; font-size: 13px; }
-    .request-actions { display: grid; grid-template-columns: 110px 1fr auto auto; gap: 8px; margin-top: 12px; }
-    .pill { display: inline-block; padding: 3px 8px; border: 1px solid rgba(255,255,255,.2); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
-    .status-pending { color: var(--bp-warning); }
-    .status-approved { color: #a8f0ae; }
-    .status-rejected { color: #fe8e86; }
-    @media (max-width: 900px) { .request-actions { grid-template-columns: 1fr; } }
-    @media (max-width: 600px) { .stats-grid { flex-direction: column; } .stat-card { margin-bottom: 10px; } }
+    .admin-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; }
+    .queue-list { display: grid; gap: 12px; }
+    .queue-card { border: 1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.18); padding: 14px; }
+    .queue-meta { color: rgba(255,255,255,.7); font-size: 13px; line-height: 1.55; margin-top: 8px; }
+    .inline-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    @media (max-width: 980px) { .admin-layout, .inline-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -48,101 +29,109 @@
     </filter>
   </svg>
 
-  <div class="view active z1" style="padding-top: 40px;">
-    <div style="width:100%; max-width: 1280px;">
-      <div class="flex-between" style="margin-bottom: 20px;">
-        <h1 style="font-size: 28px;">Admin Dashboard</h1>
-        <button class="btn btn-outline btn-small" onclick="logout()">Logout</button>
-      </div>
-
-      <div class="stats-grid" id="stats">
-        <div class="stat-card"><div class="stat-number" id="total-reg">-</div><div class="stat-label">Total Registered</div></div>
-        <div class="stat-card"><div class="stat-number" id="total-checked">-</div><div class="stat-label">Checked In</div></div>
-        <div class="stat-card"><div class="stat-number" id="pending-food-count">-</div><div class="stat-label">Pending Food Requests</div></div>
-      </div>
-
-      <div class="section">
-        <h2>Announcement Editor</h2>
-        <textarea id="announcement-text" rows="4" style="width:100%; background: var(--bp-dark); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px;"></textarea>
-        <button class="btn btn-primary" onclick="updateAnnouncement()" style="margin-top:10px;">Update Announcement</button>
-      </div>
-
-      <div class="section">
-        <h2>User Management</h2>
-        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-          <input type="email" id="new-user-email" placeholder="Email" style="flex:2; min-width:180px; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <input type="text" id="new-user-name" placeholder="Full Name" style="flex:2; min-width:180px; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <input type="text" id="new-user-username" placeholder="Username" style="flex:2; min-width:180px; padding: 8px; background: var(--bp-dark); border:1px solid rgba(255,255,255,.2); color:#fff;">
-          <button class="btn btn-primary" onclick="addUser()">Add User</button>
+  <main class="page-shell">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Admin Dashboard</div>
+        <div class="page-subtitle">Cleaner event controls, attendee overview, and a dedicated food-fund tools page for QR generation and scanning.</div>
+        <div class="topbar-nav">
+          <a class="topbar-link active" href="/admin/dashboard.html">Overview</a>
+          <a class="topbar-link" href="/admin/food-tools.html">Food Tools</a>
         </div>
       </div>
-
-      <div class="section">
-        <div class="flex-between">
-          <h2>Food Request Queue</h2>
-          <button class="btn btn-outline btn-small" onclick="loadFoodRequests()">Refresh</button>
-        </div>
-        <div id="food-request-list">Loading food requests...</div>
-      </div>
-
-      <div class="section">
-        <div class="flex-between">
-          <h2>Attendees, QR Assignment & Scores</h2>
-          <button class="btn btn-outline btn-small" onclick="exportCSV()">Export CSV</button>
-        </div>
-        <div style="overflow-x: auto;">
-          <table class="user-table" id="user-table">
-            <thead>
-              <tr><th>Name</th><th>Username</th><th>Email</th><th>Status</th><th>Food Fund</th><th>Physical QR</th><th>Score</th><th>Actions</th></tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2>Event Control</h2>
-        <div id="event-status" style="margin-bottom: 15px;">Loading...</div>
-        <textarea id="event-note-text" rows="3" style="width:100%; background: var(--bp-dark); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px;"></textarea>
-        <button class="btn btn-primary" onclick="updateEventNote()" style="margin-top:10px;">Update Note</button>
-        <div id="note-msg" class="msg" style="margin-top:10px;"></div>
-        <button class="btn btn-primary" onclick="toggleEvent()">Toggle Event Status</button>
-      </div>
+      <button class="btn btn-outline no-print" onclick="logout()">Logout</button>
     </div>
-  </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-number" id="total-reg">-</div><div class="stat-label">Total Registered</div></div>
+      <div class="stat-card"><div class="stat-number" id="total-checked">-</div><div class="stat-label">Checked In</div></div>
+      <div class="stat-card"><div class="stat-number" id="pending-food-count">-</div><div class="stat-label">Pending Food Requests</div></div>
+    </div>
+
+    <div class="admin-layout" style="margin-top:18px;">
+      <section class="section-stack">
+        <div class="surface">
+          <div class="card-eyebrow">Quick Add Approved User</div>
+          <div class="inline-grid">
+            <input type="email" id="new-user-email" class="input" placeholder="Email">
+            <input type="text" id="new-user-name" class="input" placeholder="Full name">
+            <input type="text" id="new-user-username" class="input" placeholder="Username">
+          </div>
+          <div style="margin-top:12px;"><button class="btn btn-primary" onclick="addUser()">Add User</button></div>
+        </div>
+
+        <div class="surface">
+          <div style="display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap:wrap;">
+            <div>
+              <div class="card-eyebrow">Attendees</div>
+              <div class="page-subtitle" style="margin:0;">Assign printed QR codes and manage scores from one table.</div>
+            </div>
+            <button class="btn btn-outline" onclick="exportCSV()">Export CSV</button>
+          </div>
+          <div class="table-wrap" style="margin-top:14px;">
+            <table class="table" id="user-table">
+              <thead>
+                <tr><th>Name</th><th>Email</th><th>Status</th><th>Food Fund</th><th>Physical QR</th><th>Score</th><th>Actions</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-stack">
+        <div class="surface">
+          <div class="card-eyebrow">Pending Food Queue</div>
+          <div id="food-request-list" class="queue-list">
+            <div class="empty-state">Loading food requests...</div>
+          </div>
+          <div style="margin-top:14px;"><a class="btn btn-primary" href="/admin/food-tools.html">Open Food Tools</a></div>
+        </div>
+
+        <div class="surface">
+          <div class="card-eyebrow">Announcement</div>
+          <textarea id="announcement-text" rows="4" placeholder="Write announcement for attendees"></textarea>
+          <div style="margin-top:12px;"><button class="btn btn-primary" onclick="updateAnnouncement()">Update Announcement</button></div>
+        </div>
+
+        <div class="surface">
+          <div class="card-eyebrow">Event Control</div>
+          <div id="event-status" class="page-subtitle" style="margin:0 0 12px;">Loading...</div>
+          <textarea id="event-note-text" rows="4" placeholder="Optional note shown on waiting screen"></textarea>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+            <button class="btn btn-primary" onclick="updateEventNote()">Update Note</button>
+            <button class="btn btn-outline" onclick="toggleEvent()">Toggle Event Status</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
 
   <div id="toast" class="toast"></div>
 
   <script>
-    let token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken');
     if (!token) window.location.href = 'admin.html';
-
     const headers = { 'x-auth-token': token };
 
     function escapeHtml(str) {
-      return String(str || '').replace(/[&<>"']/g, (char) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[char]));
+      return String(str || '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
     }
-
-    function formatCurrency(value) {
-      return `$${Number(value || 0).toFixed(2)}`;
-    }
-
-    function formatDate(value) {
-      return value ? new Date(value).toLocaleString() : 'Pending';
+    function formatCurrency(value) { return `$${Number(value || 0).toFixed(2)}`; }
+    function formatDate(value) { return value ? new Date(value).toLocaleString() : 'Pending'; }
+    function toast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast show t-${type}`;
+      setTimeout(() => t.classList.remove('show'), 3400);
     }
 
     async function loadStats() {
       const res = await fetch(`${API_BASE_URL}/api/admin/stats`, { headers });
       const data = await res.json();
-      document.getElementById('total-reg').innerText = data.total;
-      document.getElementById('total-checked').innerText = data.checkedIn;
-      document.getElementById('pending-food-count').innerText = data.pendingFoodRequests || 0;
+      document.getElementById('total-reg').textContent = data.total;
+      document.getElementById('total-checked').textContent = data.checkedIn;
+      document.getElementById('pending-food-count').textContent = data.pendingFoodRequests || 0;
     }
 
     async function loadUsers() {
@@ -150,217 +139,135 @@
       const users = await res.json();
       const tbody = document.querySelector('#user-table tbody');
       tbody.innerHTML = '';
-      users.forEach((u) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${escapeHtml(u.name || u.email.split('@')[0])}</td>
-          <td>${escapeHtml(u.username || '-')}</td>
-          <td>${escapeHtml(u.email)}</td>
-          <td>${u.checkedIn ? 'Checked In' : 'Not Checked In'}</td>
-          <td>${formatCurrency(u.foodFundBalance)} / ${formatCurrency(u.foodFundTotal)}</td>
+      users.forEach((user) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${escapeHtml(user.name || user.username || user.email.split('@')[0])}</td>
+          <td>${escapeHtml(user.email)}</td>
+          <td>${user.checkedIn ? 'Checked In' : 'Not Checked In'}</td>
+          <td>${formatCurrency(user.foodFundBalance)} / ${formatCurrency(user.foodFundTotal)}</td>
           <td>
-            <div style="min-width:160px; display:grid; gap:6px;">
-              <div>${escapeHtml(u.assignedQrCode || 'Not assigned')}</div>
-              <input type="text" id="qr-${u._id}" class="qr-input" placeholder="#0001" value="${escapeHtml(u.assignedQrCode || '')}">
-              <button class="btn-small" style="background:#60a5fa; color:#081c35;" onclick="assignPhysicalQr('${u.email}', '${u._id}')">Save QR</button>
+            <div style="display:grid; gap:8px; min-width:170px;">
+              <div>${escapeHtml(user.assignedQrCode || 'Not assigned')}</div>
+              <input class="input" id="qr-${user._id}" type="text" placeholder="#0001" value="${escapeHtml(user.assignedQrCode || '')}">
+              <button class="btn btn-outline" onclick="assignPhysicalQr('${user.email}', '${user._id}')">Save QR</button>
             </div>
           </td>
-          <td>${u.score || 0}</td>
+          <td>${user.score || 0}</td>
           <td>
-            ${!u.checkedIn ? `<button class="btn-small" style="background:#4caf50; margin-right:5px;" onclick="manualCheckin('${u.email}','${escapeHtml(u.name)}')">Check-in</button>` : ''}
-            <input type="number" id="score-${u._id}" placeholder="points" class="score-input" style="width:80px;">
-            <button class="btn-small" style="background:#ffc857; color:#081c35;" onclick="addScore('${u.email}', document.getElementById('score-${u._id}').value)">Add Score</button>
+            <div style="display:grid; gap:8px; min-width:180px;">
+              ${!user.checkedIn ? `<button class="btn btn-outline" onclick="manualCheckin('${user.email}','${escapeHtml(user.name)}')">Check-in</button>` : ''}
+              <input class="input" type="number" id="score-${user._id}" placeholder="points">
+              <button class="btn btn-primary" onclick="addScore('${user.email}', document.getElementById('score-${user._id}').value)">Add Score</button>
+            </div>
           </td>
         `;
-        tbody.appendChild(tr);
+        tbody.appendChild(row);
       });
     }
 
     async function loadFoodRequests() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/food-requests`, { headers });
-        const requests = await res.json();
-        const target = document.getElementById('food-request-list');
-
-        if (!Array.isArray(requests) || !requests.length) {
-          target.innerHTML = '<p style="color:rgba(255,255,255,.7);">No food requests yet.</p>';
-          return;
-        }
-
-        target.innerHTML = requests.map((request) => `
-          <div class="request-card">
-            <div class="request-top">
-              <div>
-                <strong>${escapeHtml(request.name)}</strong>
-                <div class="request-meta">${escapeHtml(request.email)}${request.assignedQrCode ? ` • QR ${escapeHtml(request.assignedQrCode)}` : ''}</div>
-              </div>
-              <div class="pill status-${escapeHtml(request.status)}">${escapeHtml(request.status)}</div>
-            </div>
-            <div class="request-meta">
-              <div><strong>Source:</strong> ${escapeHtml(request.provider)}</div>
-              <div><strong>Amount:</strong> ${formatCurrency(request.requestedAmount)} from ${formatCurrency(request.foodFundBalance)} remaining</div>
-              <div><strong>Note:</strong> ${escapeHtml(request.itemNote)}</div>
-              <div><strong>Requested:</strong> ${formatDate(request.createdAt)}</div>
-              <div><strong>Admin note:</strong> ${escapeHtml(request.adminNote || 'No note yet')}</div>
-            </div>
-            ${request.status === 'pending' ? `
-              <div class="request-actions">
-                <input type="text" id="admin-note-${request.id}" class="note-input" placeholder="Optional admin note">
-                <button class="btn-small" style="background:#4caf50; color:#081c35;" onclick="processFoodRequest('${request.id}', 'approved')">Approve + Deduct</button>
-                <button class="btn-small" style="background:#ef4444; color:#fff;" onclick="processFoodRequest('${request.id}', 'rejected')">Reject</button>
-              </div>
-            ` : ''}
+      const res = await fetch(`${API_BASE_URL}/api/admin/food-requests`, { headers });
+      const requests = await res.json();
+      const target = document.getElementById('food-request-list');
+      const pending = requests.filter((request) => request.status === 'pending').slice(0, 5);
+      if (!pending.length) {
+        target.innerHTML = '<div class="empty-state">No pending food requests.</div>';
+        return;
+      }
+      target.innerHTML = pending.map((request) => `
+        <div class="queue-card">
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <strong>${escapeHtml(request.name)} • ${formatCurrency(request.requestedAmount)}</strong>
+            <span class="pill status-pending">Pending</span>
           </div>
-        `).join('');
-      } catch (err) {
-        toast('Failed to load food requests', 'err');
-      }
-    }
-
-    async function processFoodRequest(requestId, status) {
-      const adminNote = document.getElementById(`admin-note-${requestId}`)?.value || '';
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/food-requests/${requestId}/process`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status, adminNote })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          toast(data.msg || 'Failed to process request', 'err');
-          return;
-        }
-        toast(data.msg, 'ok');
-        loadStats();
-        loadUsers();
-        loadFoodRequests();
-      } catch (err) {
-        toast('Network error', 'err');
-      }
+          <div class="queue-meta">${escapeHtml(request.provider)}${request.assignedQrCode ? ` • ${escapeHtml(request.assignedQrCode)}` : ''}</div>
+          <div class="queue-meta">${escapeHtml(request.itemNote)}</div>
+          <div class="queue-meta">Requested: ${formatDate(request.createdAt)}</div>
+        </div>
+      `).join('');
     }
 
     async function assignPhysicalQr(email, userId) {
       const assignedQrCode = document.getElementById(`qr-${userId}`).value.trim();
-      if (!assignedQrCode) {
-        toast('Enter a QR code like #0001', 'err');
-        return;
-      }
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/assign-physical-qr`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, assignedQrCode })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          toast(data.msg || 'Failed to assign QR', 'err');
-          return;
-        }
-        toast(`Saved physical QR ${data.assignedQrCode}`, 'ok');
-        loadUsers();
-        loadFoodRequests();
-      } catch (err) {
-        toast('Network error', 'err');
-      }
+      if (!assignedQrCode) return toast('Enter a QR code like #0001', 'err');
+      const res = await fetch(`${API_BASE_URL}/api/admin/assign-physical-qr`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, assignedQrCode })
+      });
+      const data = await res.json();
+      if (!res.ok) return toast(data.msg || 'Failed to assign QR', 'err');
+      toast(`Saved physical QR ${data.assignedQrCode}`, 'ok');
+      loadUsers();
+      loadFoodRequests();
     }
 
     async function manualCheckin(email, name) {
-      if (!confirm(`Are you sure ${name || email} has checked in?`)) return;
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/manual-checkin`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        if (res.ok) { toast('Checked in successfully', 'ok'); loadStats(); loadUsers(); }
-        else toast(data.msg || 'Check-in failed', 'err');
-      } catch (err) { toast('Network error', 'err'); }
+      if (!confirm(`Check in ${name || email}?`)) return;
+      const res = await fetch(`${API_BASE_URL}/api/admin/manual-checkin`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) return toast(data.msg || 'Check-in failed', 'err');
+      toast('Checked in successfully', 'ok');
+      loadStats();
+      loadUsers();
     }
 
     async function addScore(email, points) {
-      if (points === undefined || points === null || points === '' || isNaN(points)) {
-        toast('Please enter a valid number', 'err');
-        return;
-      }
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/add-score`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, points: parseInt(points, 10) })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          toast(`${data.msg} (New Score: ${data.newScore})`, 'ok');
-          loadUsers();
-        } else {
-          toast(data.msg || 'Failed to add score', 'err');
-        }
-      } catch (err) {
-        toast('Network error', 'err');
-      }
+      if (points === undefined || points === null || points === '' || isNaN(points)) return toast('Please enter a valid number', 'err');
+      const res = await fetch(`${API_BASE_URL}/api/admin/add-score`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, points: parseInt(points, 10) })
+      });
+      const data = await res.json();
+      if (!res.ok) return toast(data.msg || 'Failed to add score', 'err');
+      toast(`${data.msg} (New score: ${data.newScore})`, 'ok');
+      loadUsers();
     }
 
     async function addUser() {
       const email = document.getElementById('new-user-email').value.trim().toLowerCase();
       const name = document.getElementById('new-user-name').value.trim();
       const username = document.getElementById('new-user-username').value.trim();
-      if (!email) { toast('Please enter email', 'err'); return; }
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/add-approved-email`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name, username })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          toast('User added', 'ok');
-          document.getElementById('new-user-email').value = '';
-          document.getElementById('new-user-name').value = '';
-          document.getElementById('new-user-username').value = '';
-          loadUsers();
-        } else {
-          toast(data.msg || 'Failed to add user', 'err');
-        }
-      } catch (err) {
-        toast('Network error', 'err');
-      }
+      if (!email) return toast('Please enter email', 'err');
+      const res = await fetch(`${API_BASE_URL}/api/user/add-approved-email`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name, username })
+      });
+      const data = await res.json();
+      if (!res.ok) return toast(data.msg || 'Failed to add user', 'err');
+      toast('User added', 'ok');
+      document.getElementById('new-user-email').value = '';
+      document.getElementById('new-user-name').value = '';
+      document.getElementById('new-user-username').value = '';
+      loadUsers();
+      loadStats();
     }
 
     async function loadEventStatus() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/event-status`, { headers });
-        const data = await res.json();
-        document.getElementById('event-status').innerHTML = `Event is currently <strong>${data.isOpen ? 'OPEN' : 'CLOSED'}</strong>`;
-      } catch (err) { console.error(err); }
+      const res = await fetch(`${API_BASE_URL}/api/admin/event-status`, { headers });
+      const data = await res.json();
+      document.getElementById('event-status').innerHTML = `Event is currently <strong>${data.isOpen ? 'OPEN' : 'CLOSED'}</strong>`;
     }
 
     async function toggleEvent() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/event-status/toggle`, { method: 'POST', headers });
-        const data = await res.json();
-        loadEventStatus();
-        toast(`Event is now ${data.isOpen ? 'OPEN' : 'CLOSED'}`, 'info');
-      } catch (err) { toast('Failed to toggle event status', 'err'); }
+      const res = await fetch(`${API_BASE_URL}/api/admin/event-status/toggle`, { method: 'POST', headers });
+      const data = await res.json();
+      toast(`Event is now ${data.isOpen ? 'OPEN' : 'CLOSED'}`, 'info');
+      loadEventStatus();
     }
 
     async function exportCSV() {
       const res = await fetch(`${API_BASE_URL}/api/admin/users`, { headers });
       const users = await res.json();
-      const headersCSV = ['Name','Username','Email','Phone','Checked In','Checked In At','Score','Food Fund Total','Food Fund Balance','Assigned QR','Registered At'];
-      const rows = users.map((u) => [
-        u.name || u.email.split('@')[0],
-        u.username || '',
-        u.email,
-        u.phone || '',
-        u.checkedIn ? 'Yes' : 'No',
-        u.checkedInAt ? new Date(u.checkedInAt).toLocaleString() : '',
-        u.score || 0,
-        u.foodFundTotal || 0,
-        u.foodFundBalance || 0,
-        u.assignedQrCode || '',
-        new Date(u.createdAt).toLocaleString()
-      ]);
+      const headersCSV = ['Name', 'Email', 'Checked In', 'Score', 'Food Fund Total', 'Food Fund Balance', 'Assigned QR'];
+      const rows = users.map((u) => [u.name || u.email.split('@')[0], u.email, u.checkedIn ? 'Yes' : 'No', u.score || 0, u.foodFundTotal || 0, u.foodFundBalance || 0, u.assignedQrCode || '']);
       const csv = [headersCSV, ...rows].map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
       const a = document.createElement('a');
@@ -371,54 +278,39 @@
     }
 
     async function loadAnnouncement() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
-        const data = await res.json();
-        document.getElementById('announcement-text').value = data.text;
-      } catch (err) { console.error(err); }
+      const res = await fetch(`${API_BASE_URL}/api/user/announcement`);
+      const data = await res.json();
+      document.getElementById('announcement-text').value = data.text || '';
     }
 
     async function updateAnnouncement() {
       const text = document.getElementById('announcement-text').value;
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/announcement`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text })
-        });
-        const data = await res.json();
-        if (res.ok) toast('Announcement updated', 'ok');
-        else toast(data.msg || 'Failed', 'err');
-      } catch (err) { toast('Network error', 'err'); }
+      const res = await fetch(`${API_BASE_URL}/api/admin/announcement`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      const data = await res.json();
+      if (!res.ok) return toast(data.msg || 'Failed', 'err');
+      toast('Announcement updated', 'ok');
     }
 
     async function loadEventNote() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/event-note`, { headers });
-        const data = await res.json();
-        document.getElementById('event-note-text').value = data.text;
-      } catch (err) { console.error(err); }
+      const res = await fetch(`${API_BASE_URL}/api/admin/event-note`, { headers });
+      const data = await res.json();
+      document.getElementById('event-note-text').value = data.text || '';
     }
 
     async function updateEventNote() {
       const text = document.getElementById('event-note-text').value;
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/event-note`, {
-          method: 'POST',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text })
-        });
-        const data = await res.json();
-        if (res.ok) toast('Note updated', 'ok');
-        else toast(data.msg || 'Failed', 'err');
-      } catch (err) { toast('Network error', 'err'); }
-    }
-
-    function toast(msg, type) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = `toast show t-${type}`;
-      setTimeout(() => t.classList.remove('show'), 3400);
+      const res = await fetch(`${API_BASE_URL}/api/admin/event-note`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      const data = await res.json();
+      if (!res.ok) return toast(data.msg || 'Failed', 'err');
+      toast('Note updated', 'ok');
     }
 
     function logout() {
@@ -426,12 +318,8 @@
       window.location.href = 'admin.html';
     }
 
-    loadStats();
-    loadUsers();
-    loadFoodRequests();
-    loadEventStatus();
-    loadAnnouncement();
-    loadEventNote();
+    Promise.all([loadStats(), loadUsers(), loadFoodRequests(), loadEventStatus(), loadAnnouncement(), loadEventNote()])
+      .catch(() => toast('Failed to load admin dashboard', 'err'));
   </script>
 </body>
 </html>
