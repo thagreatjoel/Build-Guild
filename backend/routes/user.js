@@ -12,6 +12,7 @@ const {
 
 const otpStore = new Map();
 const DEFAULT_FOOD_FUND = 5;
+const USER_FOOD_QR_TYPE = 'buildguild-user-food-pass';
 
 function normalizeFoodState(user) {
   let changed = false;
@@ -42,6 +43,8 @@ function buildFoodQrPayload(user) {
     : null;
 
   return {
+    type: USER_FOOD_QR_TYPE,
+    version: 1,
     attendee: user.name || user.username || user.email.split('@')[0],
     email: user.email,
     physicalQrCode: user.assignedQrCode || '',

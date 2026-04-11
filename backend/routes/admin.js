@@ -7,6 +7,8 @@ const { sendQREmail } = require('../utils/email');
 const EventStatus = require('../models/EventStatus');
 
 const DEFAULT_FOOD_FUND = 5;
+const PHYSICAL_QR_TYPE = 'buildguild-physical-qr';
+const USER_FOOD_QR_TYPE = 'buildguild-user-food-pass';
 
 function normalizeFoodState(user) {
   let changed = false;
@@ -51,6 +53,47 @@ function serializeFoodRequest(user, request) {
   };
 }
 
+function getLatestRequest(user) {
+  if (!Array.isArray(user.foodRequests) || !user.foodRequests.length) return null;
+  const sorted = user.foodRequests.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const latest = sorted[0];
+  return {
+    id: latest._id,
+    provider: latest.provider,
+    itemNote: latest.itemNote,
+    requestedAmount: latest.requestedAmount,
+    status: latest.status,
+    adminNote: latest.adminNote || '',
+    createdAt: latest.createdAt,
+    processedAt: latest.processedAt
+  };
+}
+
+function serializeUserSummary(user) {
+  return {
+    id: user._id,
+    name: user.name || user.username || user.email.split('@')[0],
+    username: user.username || '',
+    email: user.email,
+    checkedIn: !!user.checkedIn,
+    assignedQrCode: user.assignedQrCode || '',
+    foodFundBalance: Number((user.foodFundBalance || 0).toFixed(2)),
+    foodFundTotal: Number((user.foodFundTotal || DEFAULT_FOOD_FUND).toFixed(2)),
+    latestFoodRequest: getLatestRequest(user)
+  };
+}
+
+function parseScannedPayload(scannedValue) {
+  const raw = String(scannedValue || '').trim();
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    return raw;
+  }
+}
+
 async function normalizeAllUsers(users) {
   await Promise.all(users.map(async (user) => {
     if (normalizeFoodState(user)) {
@@ -91,7 +134,7 @@ router.post('/manual-register', auth, async (req, res) => {
   try {
     const { name, email, phone } = req.body;
 
-    let existing = await User.findOne({ email: email.toLowerCase() });
+    const existing = await User.findOne({ email: email.toLowerCase() });
     if (existing) return res.status(400).json({ msg: 'Email already registered' });
 
     const qrToken = uuidv4();
@@ -186,16 +229,91 @@ router.post('/assign-physical-qr', auth, async (req, res) => {
     if (!email) return res.status(400).json({ msg: 'Email required' });
     if (!assignedQrCode || !assignedQrCode.trim()) return res.status(400).json({ msg: 'Physical QR code is required' });
 
+    const normalizedCode = assignedQrCode.trim().toUpperCase();
+    const existingOwner = await User.findOne({
+      email: { $ne: email.toLowerCase() },
+      assignedQrCode: normalizedCode
+    });
+    if (existingOwner) {
+      return res.status(400).json({ msg: `QR code ${normalizedCode} is already assigned to another user` });
+    }
+
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) return res.status(404).json({ msg: 'User not found' });
 
-    user.assignedQrCode = assignedQrCode.trim().toUpperCase();
+    user.assignedQrCode = normalizedCode;
     normalizeFoodState(user);
     await user.save();
 
     res.json({ msg: 'Physical QR code assigned', assignedQrCode: user.assignedQrCode });
   } catch (err) {
     console.error('Assign physical QR error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+router.get('/qr-template/:code', auth, async (req, res) => {
+  const code = `#${String(req.params.code || '').replace(/[^0-9]/g, '').padStart(4, '0')}`;
+  const owner = await User.findOne({ assignedQrCode: code });
+  res.json({
+    type: PHYSICAL_QR_TYPE,
+    version: 1,
+    code,
+    assigned: !!owner,
+    assignedUser: owner ? serializeUserSummary(owner) : null
+  });
+});
+
+router.post('/scan-food-qr', auth, async (req, res) => {
+  try {
+    const { scannedValue } = req.body;
+    if (!scannedValue || !String(scannedValue).trim()) {
+      return res.status(400).json({ msg: 'Scanned value is required' });
+    }
+
+    const parsed = parseScannedPayload(scannedValue);
+    let code = '';
+    let email = '';
+
+    if (typeof parsed === 'string') {
+      if (parsed.includes('@')) email = parsed.toLowerCase();
+      else code = parsed.toUpperCase();
+    } else if (parsed && typeof parsed === 'object') {
+      if (parsed.type === PHYSICAL_QR_TYPE && parsed.code) {
+        code = String(parsed.code).toUpperCase();
+      }
+      if (parsed.type === USER_FOOD_QR_TYPE) {
+        if (parsed.physicalQrCode) code = String(parsed.physicalQrCode).toUpperCase();
+        if (parsed.email) email = String(parsed.email).toLowerCase();
+      }
+      if (!code && parsed.physicalQrCode) code = String(parsed.physicalQrCode).toUpperCase();
+      if (!email && parsed.email) email = String(parsed.email).toLowerCase();
+    }
+
+    let user = null;
+    if (email) user = await User.findOne({ email });
+    if (!user && code) user = await User.findOne({ assignedQrCode: code });
+
+    if (!user) {
+      return res.json({
+        found: false,
+        code: code || '',
+        email: email || '',
+        msg: code ? `No user is assigned to ${code} yet` : 'No matching user found for this QR code'
+      });
+    }
+
+    normalizeFoodState(user);
+    await user.save();
+
+    res.json({
+      found: true,
+      msg: 'Food fund found',
+      code: user.assignedQrCode || code || '',
+      user: serializeUserSummary(user)
+    });
+  } catch (err) {
+    console.error('Food QR scan error:', err);
     res.status(500).json({ msg: 'Server error' });
   }
 });

@@ -8,10 +8,8 @@
   <link rel="stylesheet" href="style.css">
   <script src="config.js"></script>
   <style>
-    .waiting-container { text-align: center; max-width: 500px; margin: 0 auto; }
-    .status-message { font-size: 20px; margin: 20px 0; color: var(--bp-warning); }
-    .banner-link { position: fixed; top: 20px; left: 0px; z-index: 999; }
-    .banner-link img { width: 180px; max-width: 25vw; height: auto; border: 0; }
+    .waiting-card { max-width: 720px; }
+    .status-message { font-size: clamp(20px, 4vw, 28px); margin: 18px 0; color: var(--bp-warning); line-height: 1.2; }
   </style>
 </head>
 <body>
@@ -28,52 +26,43 @@
   </svg>
 
   <div class="view active z1">
-    <div class="card waiting-container">
-  <div class="card-eyebrow">Build Guild Kochi · April 15, 2026</div>
-  <div class="card-h1">Welcome, <span id="user-name" style="color:var(--bp-warning)">...</span></div>
-  <div class="status-message">Event is currently closed by organizers.</div>
-  <div id="admin-note" class="admin-note" style="margin-top: 20px; padding: 10px; background: rgba(255,200,87,0.1); border-left: 3px solid var(--bp-warning); display: none;"></div>
-  <div class="card-sub">You'll be automatically redirected when the event opens.</div>
-  <button class="btn btn-outline" onclick="logout()">Logout</button>
-</div>
-
+    <div class="card waiting-card">
+      <div class="card-eyebrow">Build Guild Kochi · April 15, 2026</div>
+      <div class="card-h1">Welcome, <span id="user-name" style="color:var(--bp-warning)">Guest</span></div>
+      <div class="status-message">The event is currently closed by the organizers.</div>
+      <div id="admin-note" class="note-box" style="display:none;"></div>
+      <div class="card-sub">This page will automatically redirect you when the event opens again.</div>
+      <button class="btn btn-outline" onclick="logout()">Logout</button>
+    </div>
   </div>
 
   <div id="toast" class="toast"></div>
 
   <script>
-    
-  const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
-  if (session.displayName) {
-    document.getElementById('user-name').textContent = session.displayName;
-  } else if (session.username) {
-    document.getElementById('user-name').textContent = session.username;
-  } else {
-    document.getElementById('user-name').textContent = 'Guest';
-  }
+    const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
+    document.getElementById('user-name').textContent = session.displayName || session.username || 'Guest';
 
-  
     function logout() {
       localStorage.removeItem('eventAccess');
       window.location.href = '/';
     }
-async function loadAdminNote() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/user/event-note`);
-    const data = await res.json();
-    const noteDiv = document.getElementById('admin-note');
-    if (data.text && data.text.trim() !== '') {
-      noteDiv.innerHTML = `${data.text}`;
-      noteDiv.style.display = 'block';
-    } else {
-      noteDiv.style.display = 'none';
+
+    async function loadAdminNote() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/event-note`);
+        const data = await res.json();
+        const noteDiv = document.getElementById('admin-note');
+        if (data.text && data.text.trim()) {
+          noteDiv.innerHTML = data.text;
+          noteDiv.style.display = 'block';
+        } else {
+          noteDiv.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Failed to load admin note:', err);
+      }
     }
-  } catch (err) {
-    console.error('Failed to load admin note:', err);
-  }
-}
-// Call it once on page load and also after each event status check (optional)
-loadAdminNote();
+
     async function checkEventStatus() {
       try {
         const res = await fetch(`${API_BASE_URL}/api/admin/event-status`);
@@ -86,6 +75,7 @@ loadAdminNote();
       }
     }
 
+    loadAdminNote();
     setInterval(checkEventStatus, 5000);
     checkEventStatus();
   </script>

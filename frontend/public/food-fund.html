@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Fund — Build Guild Kochi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <style>
+    .food-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 18px; }
+    .qr-box { background: #fff; min-height: 220px; display: flex; align-items: center; justify-content: center; padding: 14px; }
+    .qr-preview { white-space: pre-wrap; word-break: break-word; font-size: 12px; line-height: 1.5; color: rgba(255,255,255,.78); background: rgba(0,0,0,.2); padding: 14px; border: 1px solid rgba(255,255,255,.1); }
+    .request-list { display: grid; gap: 12px; }
+    .request-card { border: 1px solid rgba(255,255,255,.12); padding: 14px; background: rgba(0,0,0,.16); }
+    .fund-big { font-size: clamp(42px, 6vw, 64px); font-weight: 800; color: var(--bp-warning); line-height: 1; }
+    .request-form { display: grid; gap: 12px; }
+    @media (max-width: 980px) { .food-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
+  <svg width="0" height="0" style="position:fixed">
+    <filter id="grainy" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
+
+  <main class="page-shell">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Food Fund</div>
+        <div class="page-subtitle">Your assigned QR, remaining virtual coupon balance, and food request form in one place.</div>
+        <div class="topbar-nav">
+          <a class="topbar-link" href="/dashboard.html">Overview</a>
+          <a class="topbar-link active" href="/food-fund.html">Food Fund</a>
+          <a class="topbar-link" href="/leaderboard.html">Leaderboard</a>
+        </div>
+      </div>
+      <button class="btn btn-outline no-print" id="logout-btn">Logout</button>
+    </div>
+
+    <div class="food-grid">
+      <section class="section-stack">
+        <div class="surface">
+          <div class="card-eyebrow">Balance</div>
+          <div class="fund-big" id="food-fund-balance">$0.00</div>
+          <div class="page-subtitle" style="margin:10px 0 0;">Starts at $5.00 per attendee. Admin approves the order manually and deducts the approved amount from this balance.</div>
+        </div>
+
+        <div class="surface">
+          <div class="card-eyebrow">Request Food</div>
+          <form id="food-request-form" class="request-form">
+            <div class="field">
+              <label>Food Source</label>
+              <select id="food-provider">
+                <option value="">Choose source</option>
+                <option value="Swiggy">Swiggy</option>
+                <option value="Zomato">Zomato</option>
+                <option value="Nearby hotel">Nearby hotel</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Requested Amount</label>
+              <input id="food-amount" type="number" min="0.01" max="5" step="0.01" placeholder="Example 3.50">
+            </div>
+            <div class="field">
+              <label>Food Note</label>
+              <textarea id="food-note" rows="4" placeholder="Example: Veg biryani from Zomato, no onion, deliver near help desk."></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">Send Food Request</button>
+          </form>
+        </div>
+
+        <div class="surface">
+          <div class="card-eyebrow">Recent Requests</div>
+          <div id="food-request-list" class="request-list">
+            <div class="empty-state">No food requests yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-stack">
+        <div class="surface">
+          <div class="card-eyebrow">User Food QR</div>
+          <div class="grid two" style="align-items:start;">
+            <div id="food-qr" class="qr-box"></div>
+            <div class="section-stack">
+              <div>
+                <div class="label">Assigned Physical QR</div>
+                <div id="assigned-qr-code" style="font-size:28px; font-weight:800; color:var(--bp-warning);">Not assigned</div>
+              </div>
+              <div class="note-box">This QR is what admins can scan later to identify your balance and latest request status. The printed card code and your profile are both included.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="surface">
+          <div class="card-eyebrow">QR Payload Preview</div>
+          <div id="qr-payload-preview" class="qr-preview">Loading...</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
+    if (!session.loggedIn || Date.now() - session.timestamp > 24 * 60 * 60 * 1000) {
+      window.location.href = '/';
+    }
+
+    const userEmail = session.email;
+    let currentUser = null;
+
+    function formatCurrency(amount) {
+      return `$${Number(amount || 0).toFixed(2)}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    }
+
+    function formatDate(value) {
+      return value ? new Date(value).toLocaleString() : 'Pending';
+    }
+
+    function toast(msg, type) {
+      const toastDiv = document.getElementById('toast');
+      toastDiv.textContent = msg;
+      toastDiv.className = `toast show t-${type}`;
+      setTimeout(() => toastDiv.classList.remove('show'), 3400);
+    }
+
+    function renderQr(payload) {
+      const target = document.getElementById('food-qr');
+      target.innerHTML = '';
+      const text = JSON.stringify(payload, null, 2);
+      if (window.QRCode) {
+        new QRCode(target, {
+          text,
+          width: 190,
+          height: 190,
+          colorDark: '#081c35',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } else {
+        target.textContent = 'QR library failed to load';
+      }
+      document.getElementById('qr-payload-preview').textContent = text;
+    }
+
+    function renderRequests(requests) {
+      const wrap = document.getElementById('food-request-list');
+      if (!requests || !requests.length) {
+        wrap.innerHTML = '<div class="empty-state">No food requests yet.</div>';
+        return;
+      }
+      wrap.innerHTML = requests.map((request) => `
+        <div class="request-card">
+          <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <strong>${escapeHtml(request.provider)} • ${formatCurrency(request.requestedAmount)}</strong>
+            <span class="pill status-${escapeHtml(request.status)}">${escapeHtml(request.status)}</span>
+          </div>
+          <div class="page-subtitle" style="margin-top:10px;">${escapeHtml(request.itemNote)}</div>
+          <div class="request-meta">Requested: ${formatDate(request.createdAt)}</div>
+          <div class="request-meta">Admin note: ${escapeHtml(request.adminNote || 'No note yet')}</div>
+        </div>
+      `).join('');
+    }
+
+    async function loadProfile() {
+      const res = await fetch(`${API_BASE_URL}/api/user/profile?email=${encodeURIComponent(userEmail)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.msg || 'Failed to load food fund');
+      currentUser = data;
+      document.getElementById('food-fund-balance').textContent = formatCurrency(data.foodFundBalance);
+      document.getElementById('assigned-qr-code').textContent = data.assignedQrCode || 'Not assigned';
+      renderRequests(data.foodRequests || []);
+      renderQr(data.qrPayload || { email: data.email, physicalQrCode: data.assignedQrCode || '', foodFundBalance: data.foodFundBalance || 0 });
+    }
+
+    async function submitFoodRequest(event) {
+      event.preventDefault();
+      const provider = document.getElementById('food-provider').value.trim();
+      const requestedAmount = Number(document.getElementById('food-amount').value);
+      const itemNote = document.getElementById('food-note').value.trim();
+
+      if (!provider) return toast('Choose a food source', 'err');
+      if (!itemNote) return toast('Add a food note', 'err');
+      if (!Number.isFinite(requestedAmount) || requestedAmount <= 0) return toast('Enter a valid amount', 'err');
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/food-request`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail, provider, requestedAmount, itemNote })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.msg || 'Failed to send request');
+        document.getElementById('food-provider').value = '';
+        document.getElementById('food-amount').value = '';
+        document.getElementById('food-note').value = '';
+        toast('Food request sent to admin', 'ok');
+        await loadProfile();
+      } catch (err) {
+        toast(err.message || 'Failed to send request', 'err');
+      }
+    }
+
+    async function logout() {
+      await fetch(`${API_BASE_URL}/api/user/login-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, loggedIn: false })
+      }).catch(() => {});
+      localStorage.removeItem('eventAccess');
+      window.location.href = '/';
+    }
+
+    document.getElementById('food-request-form').addEventListener('submit', submitFoodRequest);
+    document.getElementById('logout-btn').addEventListener('click', logout);
+
+    loadProfile().catch((err) => toast(err.message || 'Failed to load food fund', 'err'));
+  </script>
+</body>
+</html>
