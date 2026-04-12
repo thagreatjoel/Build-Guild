@@ -13,17 +13,12 @@
     .profile-avatar { width: 120px; height: 120px; object-fit: cover; border-radius: 12px; cursor: pointer; margin: 0 auto 14px; display: block; }
     .profile-name { font-size: 28px; font-weight: 800; line-height: 1.1; }
     .profile-email { color: rgba(255,255,255,.66); margin-top: 8px; word-break: break-word; }
-    .muted { color: rgba(255,255,255,.7); line-height: 1.6; }
-    .info-list { display: grid; gap: 10px; margin-top: 18px; }
-    .info-item { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
-    .quick-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-    .fund-amount { font-size: clamp(34px, 5vw, 52px); font-weight: 800; color: var(--bp-warning); }
-    .request-item { border: 1px solid rgba(255,255,255,.12); padding: 14px; background: rgba(0,0,0,.16); }
-    .request-meta { color: rgba(255,255,255,.68); font-size: 13px; margin-top: 8px; line-height: 1.5; }
     .inline-form { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
     .inline-form .input { flex: 1 1 220px; }
     .file-input { display: none; }
-    @media (max-width: 980px) { .hero-grid, .quick-grid { grid-template-columns: 1fr; } }
+    .info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .muted { color: rgba(255,255,255,.7); line-height: 1.6; }
+    @media (max-width: 980px) { .hero-grid, .info-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -43,7 +38,6 @@
     <div class="page-header">
       <div>
         <div class="page-title">Attendee Dashboard</div>
-        <div class="page-subtitle">Your event profile, score, check-in status, and a cleaner path to the food fund tools.</div>
         <div class="topbar-nav">
           <a class="topbar-link active" href="/dashboard.html">Overview</a>
           <a class="topbar-link" href="/food-fund.html">Food Fund</a>
@@ -63,44 +57,29 @@
           <input id="edit-name-input" class="input" type="text" placeholder="Update display name">
           <button class="btn btn-primary" id="save-name-btn">Save Name</button>
         </div>
-        <div class="note-box">Tap your avatar to upload a new picture. The same visual style is used across mobile and desktop now.</div>
       </section>
 
       <section class="section-stack">
         <div class="stat-grid">
           <div class="stat-card"><div class="stat-number" id="user-score">0</div><div class="stat-label">Score</div></div>
           <div class="stat-card"><div class="stat-number" id="user-checkin">No</div><div class="stat-label">Checked In</div></div>
-          <div class="stat-card"><div class="stat-number" id="food-balance">$0.00</div><div class="stat-label">Food Fund Left</div></div>
+          <div class="stat-card"><div class="stat-number" id="user-username">-</div><div class="stat-label">Username</div></div>
         </div>
 
-        <div class="quick-grid">
+        <div class="info-grid">
           <section class="surface">
-            <div class="card-eyebrow">Food Fund</div>
-            <div class="fund-amount" id="quick-food-balance">$0.00</div>
-            <div class="muted">This is your virtual coupon balance. Admin holds the real cash and deducts from this amount after approving your order.</div>
-            <div class="inline-form" style="margin-top:18px;">
-              <a class="btn btn-primary" href="/food-fund.html">Open Food Fund Page</a>
+            <div class="card-eyebrow">Event Info</div>
+            <div id="announcement" class="muted">Loading announcement...</div>
+          </section>
+
+          <section class="surface">
+            <div class="card-eyebrow">Quick Links</div>
+            <div style="display:grid; gap:10px;">
+              <a class="btn btn-primary" href="/food-fund.html">Open Food Fund</a>
+              <a class="btn btn-outline" href="/leaderboard.html">Open Leaderboard</a>
             </div>
           </section>
-
-          <section class="surface">
-            <div class="card-eyebrow">Assigned Physical QR</div>
-            <div class="page-title" id="assigned-qr" style="font-size:32px;">Not assigned</div>
-            <div class="muted">Admins can assign a printed card like <code>#0001</code> later. Your food QR page will update automatically.</div>
-          </section>
         </div>
-
-        <section class="surface">
-          <div class="card-eyebrow">Event Info</div>
-          <div id="announcement" class="muted">Loading announcement...</div>
-        </section>
-
-        <section class="surface">
-          <div class="card-eyebrow">Recent Food Requests</div>
-          <div id="food-request-list" class="section-stack">
-            <div class="empty-state">No food requests yet.</div>
-          </div>
-        </section>
       </section>
     </div>
   </main>
@@ -114,20 +93,7 @@
     }
 
     const userEmail = session.email;
-    let currentUser = {};
     const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230e305b'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23ffc857' font-family='monospace'%3E%F0%9F%91%A4%3C/text%3E%3C/svg%3E";
-
-    function formatCurrency(amount) {
-      return `$${Number(amount || 0).toFixed(2)}`;
-    }
-
-    function escapeHtml(str) {
-      return String(str || '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-    }
-
-    function formatDate(value) {
-      return value ? new Date(value).toLocaleString() : 'Pending';
-    }
 
     function toast(msg, type) {
       const toastDiv = document.getElementById('toast');
@@ -165,43 +131,17 @@
       });
     }
 
-    function renderFoodRequests(requests) {
-      const wrap = document.getElementById('food-request-list');
-      if (!requests || !requests.length) {
-        wrap.innerHTML = '<div class="empty-state">No food requests yet.</div>';
-        return;
-      }
-      wrap.innerHTML = requests.map((request) => `
-        <div class="request-item">
-          <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-            <strong>${escapeHtml(request.provider)} • ${formatCurrency(request.requestedAmount)}</strong>
-            <span class="pill status-${escapeHtml(request.status)}">${escapeHtml(request.status)}</span>
-          </div>
-          <div class="request-meta">${escapeHtml(request.itemNote)}</div>
-          <div class="request-meta">Requested: ${formatDate(request.createdAt)} • Admin note: ${escapeHtml(request.adminNote || 'No note yet')}</div>
-        </div>
-      `).join('');
-    }
-
     async function loadProfile() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/profile?email=${encodeURIComponent(userEmail)}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.msg || 'Failed to load profile');
-        currentUser = data;
-        document.getElementById('display-name').textContent = data.name || data.username || data.email.split('@')[0];
-        document.getElementById('profile-email').textContent = data.email;
-        document.getElementById('edit-name-input').value = data.name || '';
-        document.getElementById('user-score').textContent = data.score || 0;
-        document.getElementById('user-checkin').textContent = data.checkedIn ? 'Yes' : 'No';
-        document.getElementById('food-balance').textContent = formatCurrency(data.foodFundBalance);
-        document.getElementById('quick-food-balance').textContent = formatCurrency(data.foodFundBalance);
-        document.getElementById('assigned-qr').textContent = data.assignedQrCode || 'Not assigned';
-        document.getElementById('profile-avatar').src = data.profilePicture && data.profilePicture.startsWith('data:image') ? data.profilePicture : DEFAULT_AVATAR;
-        renderFoodRequests(data.foodRequests || []);
-      } catch (err) {
-        toast(err.message || 'Failed to load profile', 'err');
-      }
+      const res = await fetch(`${API_BASE_URL}/api/user/profile?email=${encodeURIComponent(userEmail)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.msg || 'Failed to load profile');
+      document.getElementById('display-name').textContent = data.name || data.username || data.email.split('@')[0];
+      document.getElementById('profile-email').textContent = data.email;
+      document.getElementById('edit-name-input').value = data.name || '';
+      document.getElementById('user-score').textContent = data.score || 0;
+      document.getElementById('user-checkin').textContent = data.checkedIn ? 'Yes' : 'No';
+      document.getElementById('user-username').textContent = data.username || '-';
+      document.getElementById('profile-avatar').src = data.profilePicture && data.profilePicture.startsWith('data:image') ? data.profilePicture : DEFAULT_AVATAR;
     }
 
     async function updateProfile(payload) {
@@ -221,7 +161,7 @@
         const data = await res.json();
         document.getElementById('announcement').innerHTML = data.text || 'No announcement yet.';
       } catch (err) {
-        document.getElementById('announcement').innerHTML = 'Build Guild Kochi updates will appear here.';
+        document.getElementById('announcement').innerHTML = 'No announcement yet.';
       }
     }
 
@@ -240,10 +180,7 @@
 
     document.getElementById('save-name-btn').addEventListener('click', async () => {
       const name = document.getElementById('edit-name-input').value.trim();
-      if (!name) {
-        toast('Please enter a valid display name', 'err');
-        return;
-      }
+      if (!name) return toast('Please enter a valid display name', 'err');
       try {
         await updateProfile({ name });
         toast('Name updated', 'ok');
@@ -260,10 +197,7 @@
     document.getElementById('avatar-input').addEventListener('change', async (event) => {
       const file = event.target.files[0];
       if (!file) return;
-      if (file.size > 2 * 1024 * 1024) {
-        toast('Image too large. Max 2MB.', 'err');
-        return;
-      }
+      if (file.size > 2 * 1024 * 1024) return toast('Image too large. Max 2MB.', 'err');
       try {
         const profilePicture = await resizeImage(file);
         await updateProfile({ profilePicture });
@@ -285,13 +219,9 @@
       window.location.href = '/';
     });
 
-    async function init() {
-      await Promise.all([loadProfile(), loadAnnouncement()]);
-      checkEventStatus();
-      setInterval(checkEventStatus, 10000);
-    }
-
-    init();
+    Promise.all([loadProfile(), loadAnnouncement()]).catch((err) => toast(err.message || 'Failed to load dashboard', 'err'));
+    checkEventStatus();
+    setInterval(checkEventStatus, 10000);
   </script>
 </body>
 </html>

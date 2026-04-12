@@ -2,316 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leaderboard — Build Guild Kochi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
   <style>
-    /* ── Exactly the same background as index.html ── */
-@font-face {
-  font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicLight.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicFull.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Phantom Sans';
-  src: url('../font/RC-BasicDark.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@keyframes moveGrid {
-  0% { background-position: 0 0, 0 0; }
-  100% { background-position: 100px 100px, 100px 100px; }
-}
-
-:root {
-  --bp-lighter: #344b6a;
-  --bp-dark: #0e305b;
-  --bp-darker: #081c35;
-  --bp-light: #dbe4ee;
-  --bp-danger: #fe8e86;
-  --bp-danger-darker: #bd4c44;
-  --bp-warning: #ffc857;
-  --bp-success: #a8f0ae;
-  --f: 'Phantom Sans', 'Poppins', sans-serif;
-  --fh: 'Poppins', sans-serif;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-}
-
-body {
-  font-family: var(--f);
-  background: var(--bp-dark);
-  color: #fff;
-  min-height: 100vh;
-  overscroll-behavior: none;
-  background-image:
-    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
-  background-size: 50px 50px;
-  background-position: 0 0, 0 0;
-  background-color: var(--bp-dark);
-  animation: moveGrid 10s linear infinite;
-  position: relative;
-}
-
-/* Grain overlay */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse, #000000b1, transparent);
-  opacity: .4;
-  filter: url(#grainy);
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.z1 {
-  position: relative;
-  z-index: 1;
-}
-
-/* Hack Club banner fixed top‑left */
-.banner-link {
-  position: fixed;
-  top: 20px;
-  left: 0px;
-  z-index: 999;
-}
-.banner-link img {
-  width: 180px;
-  max-width: 25vw;
-  height: auto;
-  border: 0;
-}
-
-/* Main container – full height, padded to clear the banner */
-.leaderboard-container {
-  width: 100%;
-  height: 100vh;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: clamp(80px, 12vh, 120px) 4vw 2vh 4vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-/* Hero title */
-.hero-title {
-  text-align: center;
-  flex-shrink: 0;
-  margin-bottom: 2vh;
-}
-.hero-title h1 {
-  font-family: var(--fh);
-  font-size: clamp(2rem, 6vh, 5rem);
-  font-weight: 800;
-  letter-spacing: 2px;
-  margin-bottom: 0.25vh;
-}
-.hero-title .highlight {
-  color: var(--bp-warning);
-}
-.event-date {
-  font-size: clamp(0.8rem, 2vh, 1.2rem);
-  color: rgba(255,255,255,0.6);
-  margin-top: 0;
-}
-
-/* Card – same dark background */
-.leaderboard-card {
-  background: var(--bp-darker);
-  border: 2px solid rgba(255,255,255,);
-  padding: 1.5vh 2vw;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-/* Stats summary */
-.stats-summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 1vh 0 1.5vh;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  margin-bottom: 1.5vh;
-}
-.stats-summary span:first-child {
-  font-size: clamp(0.8rem, 1.5vh, 1rem);
-  color: rgba(255,255,255,0.6);
-}
-.stats-summary span:last-child {
-  font-size: clamp(1.2rem, 3vh, 2rem);
-  font-weight: 800;
-  color: var(--bp-warning);
-}
-
-/* Leaderboard list */
-.leaderboard-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5vh;
-}
-.leaderboard-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0.5vh 0;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.leaderboard-item:last-child {
-  border-bottom: none;
-}
-
-/* Rank styling – no emojis, fixed width, larger text */
-.rank {
-  width: 60px;
-  font-weight: 800;
-  font-size: clamp(1.2rem, 3vh, 1.8rem);
-  color: var(--bp-warning);
-  text-align: left;
-}
-.rank.top-1 { color: #ffd700; }
-.rank.top-2 { color: #c0c0c0; }
-.rank.top-3 { color: #cd7f32; }
-
-/* Profile picture – squircle */
-.profile-pic {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  object-fit: cover;
-  margin-right: 0.8rem;
-  background: var(--bp-dark);
-  border: 1px solid rgba(255,255,255,0.2);
-}
-
-/* User info section – left aligned, tight gap */
-.user-info {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  justify-content: flex-start;
-}
-.user-details {
-  flex: 1;
-}
-
-/* Username – larger text */
-.username {
-  font-family: var(--fh);
-  font-weight: 700;
-  font-size: clamp(1rem, 2.5vh, 1.5rem);
-  color: #fff;
-  margin-bottom: 0;
-}
-
-/* Hide email */
-.email {
-  display: none;
-}
-
-/* Score – larger, pill shaped */
-.score {
-  font-weight: 800;
-  font-size: clamp(1.1rem, 2.5vh, 1.6rem);
-  color: var(--bp-warning);
-  background: rgba(255,200,87,0.1);
-  padding: 0.2rem 0.8rem;
-  border-radius: 40px;
-  min-width: 80px;
-  text-align: center;
-}
-
-.empty-message {
-  text-align: center;
-  padding: 4vh;
-  color: rgba(255,255,255,0.5);
-  font-size: clamp(0.8rem, 1.5vh, 1rem);
-}
-
-/* Sponsors */
-.sponsors {
-  flex-shrink: 0;
-  text-align: center;
-  padding: 1vh 0;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  margin-top: 1vh;
-}
-.sponsors-label {
-  font-size: clamp(0.6rem, 1.3vh, 0.8rem);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: rgba(255,255,255,0.4);
-  margin-bottom: 0.5vh;
-}
-.sponsor-logos {
-  display: flex;
-  justify-content: center;
-  gap: clamp(1rem, 3vw, 3rem);
-  flex-wrap: wrap;
-}
-.sponsor {
-  font-weight: 700;
-  font-size: clamp(0.8rem, 1.8vh, 1.2rem);
-  color: rgba(255,255,255,0.7);
-}
-
-/* Responsive adjustments */
-@media (max-width: 700px) {
-  .leaderboard-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .rank {
-  width: 60px;
-  font-weight: 800;
-  font-size: clamp(1.2rem, 3vh, 1.8rem);
-  text-align: left;
-}
-.rank.top-1 { color: var(--bp-warning); }      /* yellow */
-.rank.top-2 { color: #d3d3d3; }               /* greyish white */
-.rank.top-3 { color: #cd7f32; }               /* bronze / brown */
-.rank:not(.top-1):not(.top-2):not(.top-3) {
-  color: #ffffff;                             /* white for others */
-}
-  .user-info {
-    width: 100%;
-    margin-top: 4px;
-  }
-  .score {
-    align-self: flex-start;
-    margin-top: 6px;
-  }
-}
+    .leaderboard-layout { display: grid; gap: 18px; }
+    .leader-row { display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px; border: 1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.16); }
+    .leader-rank { font-size: clamp(22px, 4vw, 34px); font-weight: 800; color: #fff; }
+    .leader-rank.top-1 { color: #ffd700; }
+    .leader-rank.top-2 { color: #d6d6d6; }
+    .leader-rank.top-3 { color: #cd7f32; }
+    .leader-user { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .leader-avatar { width: 56px; height: 56px; object-fit: cover; border-radius: 14px; border: 1px solid rgba(255,255,255,.16); background: var(--bp-dark); }
+    .leader-name { font-size: clamp(18px, 2.4vw, 24px); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .leader-score { font-size: clamp(18px, 3vw, 28px); font-weight: 800; color: var(--bp-warning); white-space: nowrap; }
+    @media (max-width: 700px) {
+      .leader-row { grid-template-columns: 1fr; }
+      .leader-score { justify-self: start; }
+    }
   </style>
 </head>
 <body>
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
   <svg width="0" height="0" style="position:fixed">
     <filter id="grainy" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
@@ -320,86 +37,34 @@ body::after {
     </filter>
   </svg>
 
-  <!-- Banner fixed to top‑left -->
-  <a href="https://hackclub.com/" class="banner-link">
-    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
-  </a>
-
-  <div class="leaderboard-container z1">
-    <div class="hero-title">
-      <h1>
-        <span class="schedule-text"></span>
-        <span class="highlight"> Leaderboard</span>
-      </h1>
-      <div class="event-date">Top builders who've made their best</div>
-    </div>
-
-    <div class="leaderboard-card">
-      <div class="stats-summary">
-        <span>✨ Qualified participants</span>
-        <span id="total-users">—</span>
+  <main class="page-shell">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Leaderboard</div>
+        <div class="topbar-nav">
+          <a class="topbar-link" href="/dashboard.html">Overview</a>
+          <a class="topbar-link" href="/food-fund.html">Food Fund</a>
+          <a class="topbar-link active" href="/leaderboard.html">Leaderboard</a>
+        </div>
       </div>
-      <div id="leaderboard-list" class="leaderboard-list">Loading...</div>
+      <div class="pill">Live scores</div>
     </div>
 
-    <div class="sponsors">
-      <div class="sponsors-label">Proudly supported by</div>
-      <div class="sponsor-logos">
-        <span class="sponsor">HACKCLUB</span>
-        <span class="sponsor">BLUEPRINT</span>
-        <span class="sponsor">JLCPCB</span>
-        <span class="sponsor">OSHWELD</span>
-        <span class="sponsor">EASYEDA</span>
-      </div>
+    <div class="stat-grid" style="margin-bottom:18px;">
+      <div class="stat-card"><div class="stat-number" id="total-users">0</div><div class="stat-label">Qualified Participants</div></div>
+      <div class="stat-card"><div class="stat-number" id="top-score">0</div><div class="stat-label">Top Score</div></div>
+      <div class="stat-card"><div class="stat-number">10s</div><div class="stat-label">Refresh Rate</div></div>
     </div>
-  </div>
 
-   <script src="config.js"></script>
+    <section class="surface leaderboard-layout" id="leaderboard-list">
+      <div class="empty-state">Loading leaderboard...</div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
   <script>
-    const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230e305b'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23ffc857' font-family='monospace'%3E👤%3C/text%3E%3C/svg%3E";
-
-    async function loadLeaderboard() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/leaderboard`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        let users = await res.json();
-
-        // Optional: if no test user exists, you can add a mock one for demonstration
-        // But it's better to insert a real user in MongoDB.
-
-        document.getElementById('total-users').textContent = users.length;
-
-        const container = document.getElementById('leaderboard-list');
-        if (users.length === 0) {
-          container.innerHTML = '<div class="empty-message">No participants yet.<br>Check back after the event starts!</div>';
-          return;
-        }
-
-        container.innerHTML = users.map((user, index) => {
-          let rankClass = '';
-          if (index === 0) rankClass = 'top-1';
-          else if (index === 1) rankClass = 'top-2';
-          else if (index === 2) rankClass = 'top-3';
-          const rankText = `#${index + 1}`;  // no emoji
-          const profilePic = (user.profilePicture && user.profilePicture.trim() !== '') ? user.profilePicture : DEFAULT_AVATAR;
-          return `
-            <div class="leaderboard-item">
-              <div class="rank ${rankClass}">${rankText}</div>
-              <div class="user-info">
-                <img class="profile-pic" src="${escapeHtml(profilePic)}" alt="avatar" onerror="this.src='${DEFAULT_AVATAR}'">
-                <div class="user-details">
-                  <div class="username">${escapeHtml(user.username || user.name || user.email.split('@')[0])}</div>
-                </div>
-              </div>
-              <div class="score">${user.score || 0} pts</div>
-            </div>
-          `;
-        }).join('');
-      } catch (err) {
-        console.error('Leaderboard error:', err);
-        document.getElementById('leaderboard-list').innerHTML = '<div class="empty-message">Failed to load leaderboard. Please try again later.</div>';
-      }
-    }
+    const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230e305b'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='%23ffc857' font-family='monospace'%3E%F0%9F%91%A4%3C/text%3E%3C/svg%3E";
 
     function escapeHtml(text) {
       const div = document.createElement('div');
@@ -407,39 +72,64 @@ body::after {
       return div.innerHTML;
     }
 
-const evtSource = new EventSource("https://build-guild.onrender.com/api/slide/events");
-
-evtSource.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-
-  if (data.action === "viewer") {
-    window.location.href = "https://kochiguild.netlify.app/viewer";
-  }
-};
-
-
-    
-async function checkEventStatus() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/admin/event-status`);
-    const data = await res.json();
-    if (!data.isOpen) {
-      toast('Event has been closed. Redirecting...', 'info');
-      setTimeout(() => {
-        window.location.href = '/waiting.html';
-      }, 2000);
+    function toast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast show t-${type}`;
+      setTimeout(() => t.classList.remove('show'), 3400);
     }
-  } catch (err) {
-    console.error('Failed to check event status:', err);
-  }
-}
-// Check every 10 seconds
-setInterval(checkEventStatus, 10000);
-checkEventStatus();
 
+    async function loadLeaderboard() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user/leaderboard`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const users = await res.json();
+        document.getElementById('total-users').textContent = users.length;
+        document.getElementById('top-score').textContent = users.length ? users[0].score || 0 : 0;
+
+        const container = document.getElementById('leaderboard-list');
+        if (!users.length) {
+          container.innerHTML = '<div class="empty-state">No participants yet.</div>';
+          return;
+        }
+
+        container.innerHTML = users.map((user, index) => {
+          const rankClass = index === 0 ? 'top-1' : index === 1 ? 'top-2' : index === 2 ? 'top-3' : '';
+          const profilePic = user.profilePicture && user.profilePicture.trim() ? user.profilePicture : DEFAULT_AVATAR;
+          return `
+            <div class="leader-row">
+              <div class="leader-rank ${rankClass}">#${index + 1}</div>
+              <div class="leader-user">
+                <img class="leader-avatar" src="${escapeHtml(profilePic)}" alt="avatar" onerror="this.src='${DEFAULT_AVATAR}'">
+                <div class="leader-name">${escapeHtml(user.username || user.name || user.email.split('@')[0])}</div>
+              </div>
+              <div class="leader-score">${user.score || 0} pts</div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Leaderboard error:', err);
+        document.getElementById('leaderboard-list').innerHTML = '<div class="empty-state">Failed to load leaderboard.</div>';
+      }
+    }
+
+    async function checkEventStatus() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/event-status`);
+        const data = await res.json();
+        if (!data.isOpen) {
+          toast('Event has been closed. Redirecting...', 'info');
+          setTimeout(() => { window.location.href = '/waiting.html'; }, 1800);
+        }
+      } catch (err) {
+        console.error('Failed to check event status:', err);
+      }
+    }
 
     loadLeaderboard();
     setInterval(loadLeaderboard, 10000);
+    checkEventStatus();
+    setInterval(checkEventStatus, 10000);
   </script>
 </body>
 </html>
