@@ -1,17 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>What's Soldering? — Build Guild Kochi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./pdf-slide.css">
-</head>
-<body>
-  <main class="slide-shell">
-    <figure class="stage">
-      <img src="./pdf-pages/page-08.jpg" alt="What's soldering slide">
-    </figure>
-  </main>
-</body>
-</html>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
+  @keyframes moveGrid {
+    0% { background-position: 0 0, 0 0; }
+    100% { background-position: 100px 100px, 100px 100px; }
+  }
+  :root {
+    --bp-lighter: #344b6a;
+    --bp-dark: #0e305b;
+    --bp-darker: #081c35;
+    --bp-light: #dbe4ee;
+    --bp-danger: #fe8e86;
+    --bp-warning: #ffc857;
+    --bp-success: #a8f0ae;
+    --f: 'Poppins', sans-serif;
+    --fh: 'Poppins';
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  .slide-root {
+    font-family: var(--f);
+    background: var(--bp-dark);
+    color: #fff;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-position: 0 0, 0 0;
+    background-color: var(--bp-dark);
+    animation: moveGrid 10s linear infinite;
+    position: relative;
+    overflow: hidden;
+  }
+  .banner-link {
+    position: absolute;
+    top: clamp(8px, 2.5%, 30px);
+    left: 0;
+    z-index: 999;
+  }
+  .banner-link img {
+    width: clamp(80px, 12vw, 180px);
+    height: auto;
+    border: 0;
+    display: block;
+  }
+  .container {
+    width: 100%;
+    height: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: clamp(10px, 3vh, 80px) clamp(16px, 5vw, 80px) clamp(10px, 2.5vh, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px, 2.5vh, 28px);
+  }
+  .hero-logo {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(4px, 1vh, 14px);
+  }
+  .blueprint-logo {
+    max-width: clamp(120px, 20vw, 380px);
+  }
+  .blueprint-logo img { width: 100%; height: auto; display: block; }
+  .main-title {
+    font-family: var(--f);
+    font-size: clamp(0.45rem, 2vh, 1.2rem);
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+  .main-title .kochi { color: var(--bp-warning); }
+  .content-card {
+    background: rgba(8, 28, 53, 1);
+    padding: clamp(10px, 2vh, 32px) clamp(14px, 4vw, 48px);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 0;
+  }
+  .card-heading {
+    font-family: var(--fh);
+    font-size: clamp(0.9rem, 4vh, 4rem);
+    font-weight: 800;
+    color: var(--bp-warning);
+    text-align: center;
+    margin-bottom: clamp(6px, 1vh, 16px);
+    margin-top: clamp(4px, 1.5vh, 2rem);
+    flex-shrink: 0;
+  }
+  .three-columns {
+    display: flex;
+    flex-direction: row;
+    gap: clamp(8px, 2vw, 2rem);
+    align-items: stretch;
+    min-height: 0;
+    flex: 1;
+    margin-bottom: clamp(4px, 1vh, 1rem);
+  }
+  .image-col {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+  }
+  .image-col img {
+    width: 100%;
+    height: 100%;
+    max-height: 44vh;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: block;
+  }
+  .sponsors {
+    flex-shrink: 0;
+    text-align: center;
+    padding-top: clamp(6px, 1.5vh, 20px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .sponsors-label {
+    font-size: clamp(0.38rem, 1.1vh, 0.75rem);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: clamp(4px, 0.8vh, 12px);
+  }
+  .sponsor-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(10px, 3vw, 48px);
+    flex-wrap: wrap;
+  }
+  .sponsor {
+    font-weight: 700;
+    font-size: clamp(0.4rem, 1.5vh, 1rem);
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 1px;
+  }
+</style>
+
+<div class="slide-root">
+  <a href="https://hackclub.com/" class="banner-link">
+    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
+  </a>
+
+  <div class="container">
+    <div class="hero-logo">
+      <div class="blueprint-logo">
+        <img src="https://blueprint.hackclub.com/assets/homepage_logo-3585630b.webp" alt="Blueprint">
+      </div>
+      <div class="main-title">
+        Build Guild <span class="kochi">Kochi</span>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="card-heading">MATERIAL USED AND REQUIRED?</div>
+      <div class="three-columns">
+        <div class="image-col">
+          <img src="https://raw.githubusercontent.com/thagreatjoel/Build-Guild/refs/heads/main/frontend/public/slide/Types%20of%20PCB%20Soldering%20and%20the%20Assembly%20Process-72802.jpg" alt="Material 1">
+        </div>
+        <div class="image-col">
+          <img src="https://raw.githubusercontent.com/thagreatjoel/Build-Guild/refs/heads/main/frontend/public/slide/Types%20of%20PCB%20Soldering%20and%20the%20Assembly%20Process-72802.jpg" alt="Material 2">
+        </div>
+        <div class="image-col">
+          <img src="https://raw.githubusercontent.com/thagreatjoel/Build-Guild/refs/heads/main/frontend/public/slide/Types%20of%20PCB%20Soldering%20and%20the%20Assembly%20Process-72802.jpg" alt="Material 3">
+        </div>
+      </div>
+    </div>
+
+    <div class="sponsors">
+      <div class="sponsors-label">Proudly supported by</div>
+      <div class="sponsor-logos">
+        <span class="sponsor">HACKCLUB</span>
+        <span class="sponsor">BLUEPRINT</span>
+        <span class="sponsor">JLCPCB</span>
+        <span class="sponsor">OSHWELD</span>
+        <span class="sponsor">EASYEDA</span>
+      </div>
+    </div>
+  </div>
+</div>
