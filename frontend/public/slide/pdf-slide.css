@@ -1,0 +1,116 @@
+@font-face {
+  font-family: 'Phantom Sans';
+  src: url('../font/RC-BasicLight.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Phantom Sans';
+  src: url('../font/RC-BasicFull.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Phantom Sans';
+  src: url('../font/RC-BasicFull.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@keyframes moveGrid {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+
+  100% {
+    background-position: 100px 100px, 100px 100px;
+  }
+}
+
+:root {
+  --bp-dark: #0e305b;
+  --bp-frame: rgba(255, 255, 255, 0.12);
+  --bp-shadow: rgba(0, 0, 0, 0.38);
+  --bp-glow: rgba(255, 200, 87, 0.12);
+  --f: 'Phantom Sans', 'Poppins', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--f);
+  background: var(--bp-dark);
+  color: #fff;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: 0 0, 0 0;
+  animation: moveGrid 10s linear infinite;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.1), transparent 42%),
+    radial-gradient(circle at bottom, rgba(8, 28, 53, 0.45), transparent 55%);
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.72), transparent 72%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.slide-shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  padding: clamp(16px, 2vw, 30px);
+  display: grid;
+  place-items: center;
+}
+
+.stage {
+  width: min(96vw, calc(96dvh * 16 / 9));
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  border-radius: clamp(18px, 2vw, 28px);
+  overflow: hidden;
+  border: 1px solid var(--bp-frame);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(8, 28, 53, 0.92);
+  box-shadow:
+    0 20px 60px var(--bp-shadow),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 40px var(--bp-glow);
+}
+
+.stage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
