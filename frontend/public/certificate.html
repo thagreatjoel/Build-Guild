@@ -763,28 +763,28 @@
         label: 'Participation',
         eyebrow: 'Official Recognition',
         title: 'Certificate of<br>Participation',
-        description: 'For active participation in the <span class="hl">Soldering 101 Course</span> and the <span class="hl">Soldering &amp; Desoldering Marathon</span>. This event was organized in association with <span class="hl">Hack Club</span> and supported by international technical partners <span class="hl">EasyEDA</span>, <span class="hl">JLCPCB</span>, and <span class="hl">OSHWLab</span>.',
+        description: 'For active participation in the Soldering 101 Course and the Soldering & Desoldering Marathon. This event was organized in association with Hack Club and supported by international technical partners EasyEDA, JLCPCB, and OSHWLab.',
         note: 'Build Guild Kochi • Participation Certificate'
       },
       'first-prize': {
         label: 'First Prize',
         eyebrow: 'Top Award',
         title: 'Certificate of<br>First Prize',
-        description: 'Awarded for achieving <span class="hl">First Prize</span> in the <span class="hl">Soldering &amp; Desoldering Marathon</span> conducted as part of the <span class="hl">Soldering 101 Course</span> by <span class="hl">Build Guild Kochi</span> in association with <span class="hl">Hack Club</span>.',
+        description: 'Awarded for achieving First Prize in the Soldering & Desoldering Marathon conducted as part of the Soldering 101 Course by Build Guild Kochi in association with Hack Club.',
         note: 'Build Guild Kochi • First Prize Certificate'
       },
       'second-prize': {
         label: 'Second Prize',
         eyebrow: 'Merit Award',
         title: 'Certificate of<br>Second Prize',
-        description: 'Awarded for securing <span class="hl">Second Prize</span> in the <span class="hl">Soldering &amp; Desoldering Marathon</span> conducted as part of the <span class="hl">Soldering 101 Course</span> by <span class="hl">Build Guild Kochi</span> in association with <span class="hl">Hack Club</span>.',
+        description: 'Awarded for securing Second Prize in the Soldering & Desoldering Marathon conducted as part of the Soldering 101 Course by Build Guild Kochi in association with Hack Club.',
         note: 'Build Guild Kochi • Second Prize Certificate'
       },
       'third-prize': {
         label: 'Third Prize',
         eyebrow: 'Recognition Award',
         title: 'Certificate of<br>Third Prize',
-        description: 'Awarded for securing <span class="hl">Third Prize</span> in the <span class="hl">Soldering &amp; Desoldering Marathon</span> conducted as part of the <span class="hl">Soldering 101 Course</span> by <span class="hl">Build Guild Kochi</span> in association with <span class="hl">Hack Club</span>.',
+        description: 'Awarded for securing Third Prize in the Soldering & Desoldering Marathon conducted as part of the Soldering 101 Course by Build Guild Kochi in association with Hack Club.',
         note: 'Build Guild Kochi • Third Prize Certificate'
       }
     };
@@ -794,8 +794,7 @@
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/
-/g, '<br>')
+        .replace(/\n/g, '<br>')
         .replace(/Soldering 101 Course/g, '<span class="hl">Soldering 101 Course</span>')
         .replace(/Soldering &amp; Desoldering Marathon/g, '<span class="hl">Soldering &amp; Desoldering Marathon</span>')
         .replace(/First Prize/g, '<span class="hl">First Prize</span>')
@@ -814,7 +813,7 @@
 
     function updateDescription() {
       const value = descriptionText.value.trim();
-      descriptionDisplay.innerHTML = normalizeDescriptionText(value || getSelectedCategory().description.replace(/<br>/g, ' '));
+      descriptionDisplay.innerHTML = normalizeDescriptionText(value || getSelectedCategory().description);
     }
 
     function updateCategory() {
@@ -823,8 +822,7 @@
       headlineTitle.innerHTML = current.title;
       eyebrowText.textContent = current.eyebrow;
       printNote.textContent = current.note;
-      descriptionText.value = current.description.replace(/<span class="hl">/g, '').replace(/<\/span>/g, '').replace(/<br>/g, '
-');
+      descriptionText.value = current.description;
       updateDescription();
     }
 
