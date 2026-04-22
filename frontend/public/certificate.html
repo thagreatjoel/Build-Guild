@@ -107,7 +107,7 @@
     .page {
       position: relative;
       z-index: 1;
-      width: min(1420px, 100%);
+      width: min(1720px, 100%);
       margin: 0 auto;
       padding: 92px 20px 24px;
       display: grid;
@@ -239,22 +239,22 @@
     .preview-viewport {
       position: relative;
       width: 100%;
-      aspect-ratio: 16 / 10;
+      aspect-ratio: 2480 / 3508;
       overflow: hidden;
       background: rgba(5, 18, 35, 0.72);
       border: 1px solid rgba(255,255,255,0.08);
     }
 
     .preview-stage {
-      width: 1440px;
-      height: 900px;
+      width: 2480px;
+      height: 3508px;
       transform-origin: top left;
       transform: scale(var(--preview-scale, 1));
     }
 
     .certificate {
-      width: 1440px;
-      height: 900px;
+      width: 2480px;
+      height: 3508px;
       position: relative;
       overflow: hidden;
       color: #fff;
@@ -276,12 +276,12 @@
     }
 
     .certificate::before {
-      inset: 18px;
+      inset: 48px;
       border: 1px solid rgba(255,255,255,0.12);
     }
 
     .certificate::after {
-      inset: 40px;
+      inset: 110px;
       border: 1px solid rgba(255,255,255,0.12);
     }
 
@@ -296,7 +296,7 @@
       position: relative;
       z-index: 1;
       height: 100%;
-      padding: 56px 72px 48px;
+      padding: 220px 230px 190px;
       display: flex;
       flex-direction: column;
     }
@@ -304,19 +304,19 @@
     .topline {
       display: flex;
       justify-content: space-between;
-      gap: 22px;
+      gap: 40px;
       align-items: flex-start;
-      margin-bottom: 42px;
+      margin-bottom: 120px;
     }
 
     .brand-mark {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 18px;
     }
 
     .brand-kicker {
-      font-size: 0.9rem;
+      font-size: 2rem;
       letter-spacing: 0.32em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.62);
@@ -324,7 +324,7 @@
 
     .brand-title {
       font-family: var(--fh);
-      font-size: clamp(3.4rem, 4.2vw, 4.2rem);
+      font-size: 7rem;
       font-weight: 800;
       letter-spacing: 0.03em;
       line-height: 0.95;
@@ -333,12 +333,12 @@
     .brand-title span { color: var(--bp-warning); }
 
     .category-tag {
-      padding: 12px 16px;
+      padding: 22px 30px;
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      font-size: 0.76rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: rgba(255,255,255,0.86);
       white-space: nowrap;
@@ -346,10 +346,10 @@
 
     .hero-band {
       display: grid;
-      grid-template-columns: 120px 1fr 120px;
+      grid-template-columns: 240px 1fr 240px;
       align-items: center;
-      gap: 20px;
-      margin-bottom: 14px;
+      gap: 36px;
+      margin-bottom: 46px;
     }
 
     .line-token {
@@ -363,56 +363,58 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 8px;
-      height: 8px;
+      width: 16px;
+      height: 16px;
       transform: translate(-50%, -50%) rotate(45deg);
       background: rgba(255,255,255,0.78);
     }
 
     .headline {
       text-align: center;
-      margin-top: 8px;
+      margin-top: 24px;
     }
 
     .eyebrow {
       text-transform: uppercase;
       letter-spacing: 0.36em;
-      font-size: 0.84rem;
+      font-size: 1.45rem;
       color: rgba(255,255,255,0.58);
-      margin-bottom: 14px;
+      margin-bottom: 26px;
+      text-align: center;
     }
 
     .headline h2 {
       font-family: var(--fh);
-      font-size: clamp(5.8rem, 7vw, 6.6rem);
+      font-size: 8rem;
       line-height: 0.94;
-      margin-bottom: 18px;
+      margin-bottom: 38px;
       text-shadow: 0 0 22px rgba(255,255,255,0.08);
     }
 
     .presented {
-      font-size: clamp(1.35rem, 1.8vw, 1.55rem);
+      font-size: 2rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.62);
-      margin-bottom: 14px;
+      margin-bottom: 22px;
     }
 
     .participant-name {
       font-family: var(--fh);
-      font-size: clamp(6.6rem, 8vw, 7.8rem);
+      font-size: 7.2rem;
       font-weight: 800;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--bp-warning);
-      margin-bottom: 24px;
+      margin-bottom: 32px;
       word-break: break-word;
+      line-height: 1.05;
     }
 
     .name-underline {
-      width: min(620px, 100%);
-      height: 12px;
-      margin: 0 auto 30px;
+      width: min(1120px, 100%);
+      height: 18px;
+      margin: 0 auto 56px;
       position: relative;
     }
 
@@ -426,7 +428,7 @@
     }
 
     .name-underline::after {
-      width: 74px;
+      width: 120px;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
@@ -434,11 +436,11 @@
     }
 
     .description {
-      width: min(980px, 100%);
+      width: min(1650px, 100%);
       margin: 0 auto;
       text-align: center;
-      font-size: clamp(1.55rem, 2vw, 1.9rem);
-      line-height: 1.8;
+      font-size: 2.3rem;
+      line-height: 1.7;
       color: rgba(255,255,255,0.84);
     }
 
@@ -451,32 +453,32 @@
       margin-top: auto;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 72px;
-      padding-top: 42px;
+      gap: 120px;
+      padding-top: 120px;
       align-items: end;
     }
 
     .sponsors-strip {
-      padding-top: 18px;
+      padding-top: 54px;
       text-align: center;
     }
 
     .sponsors-label {
-      font-size: 0.72rem;
+      font-size: 1.1rem;
       text-transform: uppercase;
       letter-spacing: 0.22em;
       color: rgba(255,255,255,0.5);
-      margin-bottom: 12px;
+      margin-bottom: 18px;
     }
 
     .logos {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 34px;
+      gap: 54px;
       flex-wrap: wrap;
       color: rgba(255,255,255,0.86);
-      font-size: 0.9rem;
+      font-size: 1.35rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.14em;
@@ -497,25 +499,25 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 18px;
       text-align: center;
     }
 
     .signature-box {
       width: 100%;
-      max-width: 320px;
-      min-height: 98px;
+      max-width: 540px;
+      min-height: 170px;
       display: flex;
       align-items: end;
       justify-content: center;
-      padding: 0 8px 10px;
+      padding: 0 18px 18px;
       border-bottom: 2px solid rgba(255,255,255,0.26);
       overflow: hidden;
     }
 
     .signature-box img {
       max-width: 100%;
-      max-height: 68px;
+      max-height: 130px;
       object-fit: contain;
       display: none;
       filter: brightness(1.15);
@@ -525,29 +527,29 @@
       color: rgba(255,255,255,0.45);
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      font-size: 0.72rem;
+      font-size: 1rem;
       font-weight: 700;
     }
 
     .sign-name {
       font-family: var(--fh);
-      font-size: clamp(1.55rem, 2vw, 1.8rem);
+      font-size: 2.1rem;
       font-weight: 700;
       color: #fff;
     }
 
     .sign-role {
-      font-size: 0.84rem;
+      font-size: 1.1rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.62);
     }
 
     .print-note {
-      margin-top: 18px;
+      margin-top: 40px;
       text-align: right;
       color: rgba(255,255,255,0.5);
-      font-size: 0.74rem;
+      font-size: 1rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
@@ -617,7 +619,7 @@
       }
 
       @page {
-        size: auto;
+        size: A4 portrait;
         margin: 0;
       }
     }
@@ -631,7 +633,7 @@
   <div class="page">
     <aside class="panel">
       <h1>Certificate Builder</h1>
-      <p>The preview scales to your screen, and the certificate now uses the same dark blueprint-style theme as the rest of the repo.</p>
+      <p>The preview scales to your screen, and the certificate is sized for a portrait A4 export at 2480 x 3508.</p>
 
       <div class="field">
         <label for="category">Category</label>
@@ -684,6 +686,13 @@
                     <div class="brand-kicker">Build Guild Kochi</div>
                     <div class="brand-title">Soldering <span>101</span></div>
                   </div>
+                  <div class="category-tag" id="categoryValue">Participation</div>
+                </div>
+
+                <div class="hero-band">
+                  <div class="line-token"></div>
+                  <div class="eyebrow">Official Recognition</div>
+                  <div class="line-token"></div>
                 </div>
 
                 <div class="headline">
@@ -771,12 +780,13 @@
     }
 
     function updateCategory() {
-      categoryValue.textContent = categorySelect.value;
+      const value = categorySelect.value || 'Participation';
+      categoryValue.textContent = value;
     }
 
     function updatePreviewScale() {
       const viewportWidth = previewViewport.clientWidth;
-      const scale = Math.min(viewportWidth / 1440, 1);
+      const scale = Math.min(viewportWidth / 2480, 1);
       previewStage.style.setProperty('--preview-scale', String(scale));
       scaleLabel.textContent = scale < 1 ? `Scaled ${Math.round(scale * 100)}%` : 'Full Size';
     }
@@ -810,13 +820,13 @@
         throw new Error('html2canvas is not available');
       }
 
-      const exportScale = Math.max(window.devicePixelRatio || 1, 4);
+      const exportScale = Math.max(window.devicePixelRatio || 1, 2);
 
       return window.html2canvas(certificate, {
         backgroundColor: null,
         scale: exportScale,
-        width: 1440,
-        height: 900,
+        width: 2480,
+        height: 3508,
         useCORS: true,
         logging: false
       });
