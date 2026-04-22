@@ -1,68 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Participation Certificate - Build Guild Kochi</title>
-  <link rel="stylesheet" href="./certificate-print.css">
+    <meta charset="UTF-8">
+    <title>Build Guild - Official Master Certificate</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;700;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Phantom Sans';
+            src: url('./font/RC-BasicLight.ttf') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Phantom Sans';
+            src: url('./font/RC-BasicFull.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Phantom Sans';
+            src: url('./font/RC-BasicFull.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
+        body { margin: 0; padding: 0; background: #0a1128; display: flex; flex-direction: column; align-items: center; min-height: 100vh; font-family: 'Montserrat', sans-serif; }
+
+        .toolbar { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); padding: 15px 30px; border-radius: 50px; margin: 20px; display: flex; gap: 15px; align-items: center; border: 1px solid rgba(255,255,255,0.2); position: sticky; top: 10px; z-index: 1000; color: white; }
+        .toolbar select, .toolbar button { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-family: 'Montserrat', sans-serif; transition: 0.2s; }
+        .btn-gold { background: #ffd700; color: #000; }
+        .btn-white { background: #fff; color: #000; }
+
+        #certificate {
+            width: 95vw; height: 54vw; max-height: 95vh; max-width: 168vh;
+            /* ── Background from second code ── */
+            background:
+                radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 24%),
+                radial-gradient(circle at bottom left, rgba(52,75,106,0.22), transparent 28%),
+                linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
+                linear-gradient(135deg, #123f72 0%, #0b2a50 52%, #07192e 100%);
+            background-size: auto, auto, 50px 50px, 50px 50px, auto;
+            position: relative; box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        /* Double border frame from second code */
+        #certificate::before,
+        #certificate::after {
+            content: "";
+            position: absolute;
+            pointer-events: none;
+        }
+        #certificate::before {
+            inset: 1.4vw;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+        #certificate::after {
+            inset: 3vw;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .inner-content {
+            position: absolute; top: 31%; left: 50%; transform: translateX(-50%);
+            width: 85%; height: 60%; display: flex; flex-direction: column; align-items: center; text-align: center; color: white;
+        }
+
+        .medal { position: absolute; top: -1vw; right: 1vw; width: 8.5vw; height: 8.5vw; background-size: contain; background-repeat: no-repeat; display: none; z-index: 10; }
+        
+        .cursive-header { font-family: 'Great Vibes', cursive; font-size: 5.2vw; color: #ffd700; margin: 0; }
+        .label { font-size: 1.1vw; text-transform: uppercase; letter-spacing: 0.8vw; opacity: 0.7; margin: 0.5vw 0 1vw 0; }
+
+        .name { 
+            font-size: 4.8vw; font-weight: 900; margin: 0; text-transform: uppercase; color: #ffffff; 
+            letter-spacing: -1px; border-bottom: 0.25vw solid rgba(255, 215, 0, 0.4); padding: 0 4vw; outline: none; 
+        }
+
+        .description { 
+            font-family: 'Phantom Sans', 'Montserrat', sans-serif;
+            font-size: 1.3vw; font-weight: 300; max-width: 82%; margin-top: 1.8vw; line-height: 1.6; 
+            color: #e0e6ed; text-align: justify; text-justify: inter-word;
+        }
+        .description b { color: #ffd700; font-weight: 700; }
+
+        .signature-row { 
+            position: absolute; bottom: 1.5vw; width: 85%; 
+            display: flex; justify-content: space-around; align-items: flex-end; 
+        }
+
+        .sig-container { 
+            width: 38%; display: flex; flex-direction: column; align-items: center; 
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75vw; 
+            text-transform: uppercase; color: #ffd700;
+        }
+
+        .sig-img-wrapper {
+            min-height: 20px; width: 100%; display: flex; align-items: flex-end; justify-content: center;
+        }
+
+        .sig-img { 
+            max-height: 5.5vw; max-width: 15vw; display: none; 
+            margin-bottom: 8px; filter: brightness(0) invert(1); 
+        }
+
+        .sig-line { 
+            border-top: 1px solid rgba(255, 215, 0, 0.3); width: 100%;
+            padding-top: 8px; line-height: 1.4; opacity: 0.8; 
+        }
+
+        .upload-hint { font-size: 9px; color: #888; cursor: pointer; text-decoration: underline; margin-bottom: 5px; }
+
+        /* Top-left brand block */
+        .cert-brand {
+            position: absolute;
+            top: 3.6vw;
+            left: 3.6vw;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15vw;
+        }
+        .cert-brand-kicker {
+            font-family: 'Phantom Sans', 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-variant: small-caps;
+            font-size: 1.05vw;
+            letter-spacing: 0.28em;
+            color: rgba(255,255,255,0.58);
+            text-transform: lowercase;
+            line-height: 1;
+        }
+        .cert-brand-title {
+            font-family: 'Phantom Sans', 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 3.1vw;
+            line-height: 0.95;
+            letter-spacing: 0.02em;
+            color: #ffffff;
+        }
+        .cert-brand-title span { color: #ffd700; }
+
+        @media print { .toolbar, .upload-hint { display: none; } body { background: white; } #certificate { width: 100vw; height: 56.8vw; box-shadow: none; } }
+    </style>
 </head>
 <body>
-  <section class="certificate-page">
-    <div class="cert-grid-fade"></div>
-    <div class="certificate-inner">
-      <div class="topline">
-        <div class="brand-mark">
-          <div class="brand-kicker">Build Guild Kochi</div>
-          <div class="brand-title">Soldering <span>101</span></div>
-        </div>
-        <div class="category-tag">Participation</div>
-      </div>
 
-      <div class="hero-band">
-        <div class="line-token"></div>
-        <div class="eyebrow">Official Recognition</div>
-        <div class="line-token"></div>
-      </div>
-
-      <div class="headline">
-        <h1>Certificate of<br>Participation</h1>
-        <div class="presented">Presented to</div>
-        <div class="name-write-area" aria-hidden="true"></div>
-        <div class="name-underline"></div>
-        <div class="handwrite-note">Name to be written after printing</div>
-        <div class="description">For active participation in the <strong>Soldering 101 Course</strong> and the <strong>Soldering &amp; Desoldering Marathon</strong>. This event was organized in association with <strong>Hack Club</strong> and supported by international technical partners <strong>EasyEDA</strong>, <strong>JLCPCB</strong>, and <strong>OSHWLab</strong>.</div>
-      </div>
-
-      <div class="footer">
-        <div class="sign-block">
-          <div class="signature-box">
-            <div class="signature-placeholder">Signature</div>
-          </div>
-          <div class="sign-name">Lead Organizer</div>
-          <div class="sign-role">&amp; Mentor</div>
-        </div>
-
-        <div class="sign-block">
-          <div class="signature-box">
-            <div class="signature-placeholder">Signature</div>
-          </div>
-          <div class="sign-name">Co-Organizer</div>
-          <div class="sign-role">&amp; Manager</div>
-        </div>
-      </div>
-
-      <div class="sponsors-strip">
-        <div class="sponsors-label">Supported By</div>
-        <div class="logos">
-          <div>Hack Club</div>
-          <div>EasyEDA</div>
-          <div>JLCPCB</div>
-          <div>OSHWLab</div>
-        </div>
-      </div>
-
-      <div class="print-note">Build Guild Kochi • Participation Certificate</div>
+    <div class="toolbar">
+        <label>Category:</label>
+        <select id="rankPicker" onchange="applyRank()">
+            <option value="participation">Participation</option>
+            <option value="1st">1st Place</option>
+            <option value="2nd">2nd Place</option>
+            <option value="3rd">3rd Place</option>
+        </select>
+        <button class="btn-white" onclick="saveAsImage()">Save as PNG</button>
+        <button class="btn-gold" onclick="window.print()">Save as PDF</button>
     </div>
-  </section>
+
+    <div id="certificate">
+        <div class="cert-brand">
+            <div class="cert-brand-kicker">blueprint guild build</div>
+            <div class="cert-brand-title">Soldering <span>101</span></div>
+        </div>
+        <div class="inner-content">
+            <div id="medalIcon" class="medal"></div>
+            
+            <div id="certTitle" class="cursive-header">Certificate of Participation</div>
+            <div class="label">Presented to</div>
+            
+            <div class="name" contenteditable="true">ALBIN ANIL</div>
+
+            <div id="certDesc" class="description">
+                For successful completion of the <b>Soldering 101 Course</b> and participation in the <b>Soldering & Desoldering Marathon</b>. This event was organized in association with <b>Hack Club</b> and supported by international technical partners <b>EasyEDA</b>, <b>JLCPCB</b>, and <b>OSHWLab</b>.
+            </div>
+
+            <div class="signature-row">
+                <div class="sig-container">
+                    <span class="upload-hint" onclick="document.getElementById('l1').click()">[Upload Signature]</span>
+                    <input type="file" style="display:none" id="l1" onchange="loadS(this, 's1')">
+                    <div class="sig-img-wrapper">
+                        <img id="s1" class="sig-img">
+                    </div>
+                    <div class="sig-line">Lead Organizer<br>& Mentor</div>
+                </div>
+
+                <div class="sig-container">
+                    <span class="upload-hint" onclick="document.getElementById('l2').click()">[Upload Signature]</span>
+                    <input type="file" style="display:none" id="l2" onchange="loadS(this, 's2')">
+                    <div class="sig-img-wrapper">
+                        <img id="s2" class="sig-img">
+                    </div>
+                    <div class="sig-line">Co-Organizer<br>& Manager</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function applyRank() {
+            const rank = document.getElementById('rankPicker').value;
+            const medal = document.getElementById('medalIcon');
+            const title = document.getElementById('certTitle');
+            const desc = document.getElementById('certDesc');
+            const baseDesc = "This event was organized in association with <b>Hack Club</b> and supported by international technical partners <b>EasyEDA</b>, <b>JLCPCB</b>, and <b>OSHWLab</b>.";
+
+            medal.style.display = "none";
+            title.innerText = "Certificate of Participation";
+            desc.innerHTML = `For successful completion of the <b>Soldering 101 Course</b> and participation in the <b>Soldering & Desoldering Marathon</b>. ${baseDesc}`;
+
+            if (rank !== "participation") {
+                medal.style.display = "block";
+                title.innerText = "Certificate of Achievement";
+                const medals = {
+                    "1st": "https://cdn-icons-png.flaticon.com/512/2583/2583344.png",
+                    "2nd": "https://cdn-icons-png.flaticon.com/512/2583/2583319.png",
+                    "3rd": "https://cdn-icons-png.flaticon.com/512/2583/2583434.png"
+                };
+                medal.style.backgroundImage = `url('${medals[rank]}')`;
+                const rankText = rank === "1st" ? "First Place" : rank === "2nd" ? "Second Place" : "Third Place";
+                desc.innerHTML = `Awarded <b>${rankText}</b> in the Soldering & Desoldering Marathon and completion of the <b>Soldering 101</b> course. ${baseDesc}`;
+            }
+        }
+
+        function saveAsImage() {
+            const cert = document.getElementById('certificate');
+            const hints = document.querySelectorAll('.upload-hint');
+            hints.forEach(h => h.style.visibility = 'hidden');
+            html2canvas(cert, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL("image/png");
+                link.download = `HackClub_Certificate.png`;
+                link.click();
+                hints.forEach(h => h.style.visibility = 'visible');
+            });
+        }
+
+        function loadS(input, id) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById(id);
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 </body>
 </html>
