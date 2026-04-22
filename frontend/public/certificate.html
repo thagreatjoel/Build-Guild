@@ -14,6 +14,7 @@
       font-style: normal;
       font-display: swap;
     }
+
     @font-face {
       font-family: 'Phantom Sans';
       src: url('./font/RC-BasicFull.ttf') format('truetype');
@@ -21,6 +22,7 @@
       font-style: normal;
       font-display: swap;
     }
+
     @font-face {
       font-family: 'Phantom Sans';
       src: url('./font/RC-BasicFull.ttf') format('truetype');
@@ -33,6 +35,7 @@
       0% { background-position: 0 0, 0 0; }
       100% { background-position: 100px 100px, 100px 100px; }
     }
+
     @keyframes drift {
       0% { transform: translate3d(0, 0, 0); }
       50% { transform: translate3d(10px, -8px, 0); }
@@ -45,7 +48,6 @@
       --bp-darker: #081c35;
       --bp-light: #dbe4ee;
       --bp-warning: #ffc857;
-      --bp-success: #a8f0ae;
       --f: 'Phantom Sans', 'Poppins', sans-serif;
       --fh: 'Phantom Sans', 'Poppins', sans-serif;
     }
@@ -62,7 +64,6 @@
         linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
       background-size: 50px 50px;
-      background-position: 0 0, 0 0;
       animation: moveGrid 10s linear infinite;
       position: relative;
       overflow-x: hidden;
@@ -107,7 +108,7 @@
     .page {
       position: relative;
       z-index: 1;
-      width: min(1720px, 100%);
+      width: min(1780px, 100%);
       margin: 0 auto;
       padding: 92px 20px 24px;
       display: grid;
@@ -152,9 +153,9 @@
       letter-spacing: 0.16em;
     }
 
-    .field input,
     .field textarea,
-    .field select {
+    .field select,
+    .field input {
       width: 100%;
       font: inherit;
       color: #fff;
@@ -165,15 +166,15 @@
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .field input:focus,
     .field textarea:focus,
-    .field select:focus {
+    .field select:focus,
+    .field input:focus {
       border-color: rgba(255,200,87,0.72);
       box-shadow: 0 0 0 3px rgba(255,200,87,0.12);
     }
 
     .field textarea {
-      min-height: 132px;
+      min-height: 152px;
       resize: vertical;
       line-height: 1.55;
     }
@@ -239,22 +240,22 @@
     .preview-viewport {
       position: relative;
       width: 100%;
-      aspect-ratio: 2480 / 3508;
+      aspect-ratio: 3508 / 2480;
       overflow: hidden;
       background: rgba(5, 18, 35, 0.72);
       border: 1px solid rgba(255,255,255,0.08);
     }
 
     .preview-stage {
-      width: 2480px;
-      height: 3508px;
+      width: 3508px;
+      height: 2480px;
       transform-origin: top left;
       transform: scale(var(--preview-scale, 1));
     }
 
     .certificate {
-      width: 2480px;
-      height: 3508px;
+      width: 3508px;
+      height: 2480px;
       position: relative;
       overflow: hidden;
       color: #fff;
@@ -281,7 +282,7 @@
     }
 
     .certificate::after {
-      inset: 110px;
+      inset: 108px;
       border: 1px solid rgba(255,255,255,0.12);
     }
 
@@ -296,7 +297,7 @@
       position: relative;
       z-index: 1;
       height: 100%;
-      padding: 220px 230px 190px;
+      padding: 140px 220px 130px;
       display: flex;
       flex-direction: column;
     }
@@ -306,17 +307,17 @@
       justify-content: space-between;
       gap: 40px;
       align-items: flex-start;
-      margin-bottom: 96px;
+      margin-bottom: 48px;
     }
 
     .brand-mark {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 12px;
     }
 
     .brand-kicker {
-      font-size: 1.75rem;
+      font-size: 1.35rem;
       letter-spacing: 0.32em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.62);
@@ -324,7 +325,7 @@
 
     .brand-title {
       font-family: var(--fh);
-      font-size: 7rem;
+      font-size: 5.6rem;
       font-weight: 800;
       letter-spacing: 0.03em;
       line-height: 0.95;
@@ -333,12 +334,12 @@
     .brand-title span { color: var(--bp-warning); }
 
     .category-tag {
-      padding: 22px 30px;
+      padding: 18px 26px;
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: 700;
       color: rgba(255,255,255,0.86);
       white-space: nowrap;
@@ -346,10 +347,10 @@
 
     .hero-band {
       display: grid;
-      grid-template-columns: 240px 1fr 240px;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      gap: 36px;
-      margin-bottom: 34px;
+      gap: 34px;
+      margin-bottom: 26px;
     }
 
     .line-token {
@@ -363,58 +364,52 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       transform: translate(-50%, -50%) rotate(45deg);
       background: rgba(255,255,255,0.78);
     }
 
-    .headline {
-      text-align: center;
-      margin-top: 24px;
-    }
-
     .eyebrow {
       text-transform: uppercase;
-      letter-spacing: 0.36em;
-      font-size: 1.2rem;
+      letter-spacing: 0.34em;
+      font-size: 1rem;
       color: rgba(255,255,255,0.58);
-      margin-bottom: 20px;
       text-align: center;
+      white-space: nowrap;
+    }
+
+    .headline {
+      text-align: center;
+      margin-top: 6px;
     }
 
     .headline h2 {
       font-family: var(--fh);
-      font-size: 6.9rem;
-      line-height: 0.94;
-      margin-bottom: 28px;
+      font-size: 5.9rem;
+      line-height: 0.95;
+      margin-bottom: 20px;
       text-shadow: 0 0 22px rgba(255,255,255,0.08);
     }
 
     .presented {
-      font-size: 2rem;
-      letter-spacing: 0.28em;
+      font-size: 1.45rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.62);
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
-    .participant-name {
-      font-family: var(--fh);
-      font-size: 5.9rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--bp-warning);
-      margin-bottom: 22px;
-      word-break: break-word;
-      line-height: 1.05;
+    .name-write-area {
+      width: min(1580px, 100%);
+      height: 160px;
+      margin: 0 auto 8px;
     }
 
     .name-underline {
-      width: min(980px, 100%);
-      height: 14px;
-      margin: 0 auto 40px;
+      width: min(1580px, 100%);
+      height: 16px;
+      margin: 0 auto 34px;
       position: relative;
     }
 
@@ -424,23 +419,31 @@
       position: absolute;
       inset: 50% 0 auto;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.24), transparent);
     }
 
     .name-underline::after {
-      width: 88px;
+      width: 120px;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
       background: rgba(255,255,255,0.78);
     }
 
+    .handwrite-note {
+      font-size: 0.88rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 28px;
+    }
+
     .description {
-      width: min(1480px, 100%);
+      width: min(2100px, 100%);
       margin: 0 auto;
       text-align: center;
-      font-size: 1.9rem;
-      line-height: 1.55;
+      font-size: 1.45rem;
+      line-height: 1.6;
       color: rgba(255,255,255,0.84);
     }
 
@@ -453,32 +456,82 @@
       margin-top: auto;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 96px;
-      padding-top: 84px;
+      gap: 120px;
+      padding-top: 64px;
       align-items: end;
     }
 
+    .sign-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .signature-box {
+      width: 100%;
+      max-width: 520px;
+      min-height: 140px;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      padding: 0 16px 14px;
+      border-bottom: 2px solid rgba(255,255,255,0.26);
+      overflow: hidden;
+    }
+
+    .signature-box img {
+      max-width: 100%;
+      max-height: 110px;
+      object-fit: contain;
+      display: none;
+      filter: brightness(1.15);
+    }
+
+    .signature-placeholder {
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .sign-name {
+      font-family: var(--fh);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .sign-role {
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.62);
+    }
+
     .sponsors-strip {
-      padding-top: 40px;
+      padding-top: 34px;
       text-align: center;
     }
 
     .sponsors-label {
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       text-transform: uppercase;
       letter-spacing: 0.22em;
       color: rgba(255,255,255,0.5);
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
     .logos {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 54px;
+      gap: 48px;
       flex-wrap: wrap;
       color: rgba(255,255,255,0.86);
-      font-size: 1.35rem;
+      font-size: 1.08rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.14em;
@@ -495,61 +548,11 @@
       letter-spacing: inherit;
     }
 
-    .sign-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-      text-align: center;
-    }
-
-    .signature-box {
-      width: 100%;
-      max-width: 540px;
-      min-height: 170px;
-      display: flex;
-      align-items: end;
-      justify-content: center;
-      padding: 0 18px 18px;
-      border-bottom: 2px solid rgba(255,255,255,0.26);
-      overflow: hidden;
-    }
-
-    .signature-box img {
-      max-width: 100%;
-      max-height: 130px;
-      object-fit: contain;
-      display: none;
-      filter: brightness(1.15);
-    }
-
-    .signature-placeholder {
-      color: rgba(255,255,255,0.45);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
-    .sign-name {
-      font-family: var(--fh);
-      font-size: 2.1rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .sign-role {
-      font-size: 1.1rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.62);
-    }
-
     .print-note {
-      margin-top: 28px;
+      margin-top: 26px;
       text-align: right;
       color: rgba(255,255,255,0.5);
-      font-size: 1rem;
+      font-size: 0.9rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
@@ -619,7 +622,7 @@
       }
 
       @page {
-        size: A4 portrait;
+        size: A4 landscape;
         margin: 0;
       }
     }
@@ -633,23 +636,21 @@
   <div class="page">
     <aside class="panel">
       <h1>Certificate Builder</h1>
-      <p>The preview scales to your screen, and the certificate is sized for a portrait A4 export at 2480 x 3508.</p>
+      <p>The preview scales to your screen, and the certificate now exports in landscape A4 at 3508 x 2480 with a blank handwritten name area.</p>
 
       <div class="field">
         <label for="category">Category</label>
         <select id="category">
-          <option value="Participation" selected>Participation</option>
+          <option value="participation" selected>Participation</option>
+          <option value="first-prize">First Prize</option>
+          <option value="second-prize">Second Prize</option>
+          <option value="third-prize">Third Prize</option>
         </select>
       </div>
 
       <div class="field">
-        <label for="participantName">Participant Name</label>
-        <input id="participantName" type="text" value="ALBIN ANIL" placeholder="Enter participant name">
-      </div>
-
-      <div class="field">
         <label for="descriptionText">Certificate Text</label>
-        <textarea id="descriptionText">For successful completion of the Soldering 101 Course and participation in the Soldering &amp; Desoldering Marathon. This event was organized in association with Hack Club and supported by international technical partners EasyEDA, JLCPCB, and OSHWLab.</textarea>
+        <textarea id="descriptionText"></textarea>
       </div>
 
       <div class="field">
@@ -667,7 +668,7 @@
         <button class="btn btn-secondary" id="downloadPdf">Save as PDF</button>
       </div>
 
-      <div class="hint">PNG downloads directly. PDF opens your browser print dialog with the certificate isolated for export.</div>
+      <div class="hint">The printed certificate leaves the name area blank so you can handwrite names later.</div>
     </aside>
 
     <main class="stage">
@@ -691,15 +692,16 @@
 
                 <div class="hero-band">
                   <div class="line-token"></div>
-                  <div class="eyebrow">Official Recognition</div>
+                  <div class="eyebrow" id="eyebrowText">Official Recognition</div>
                   <div class="line-token"></div>
                 </div>
 
                 <div class="headline">
-                  <h2>Certificate of<br>Participation</h2>
+                  <h2 id="headlineTitle">Certificate of<br>Participation</h2>
                   <div class="presented">Presented to</div>
-                  <div class="participant-name" id="participantNameDisplay">ALBIN ANIL</div>
+                  <div class="name-write-area" aria-hidden="true"></div>
                   <div class="name-underline"></div>
+                  <div class="handwrite-note">Name to be written after printing</div>
                   <div class="description" id="descriptionDisplay"></div>
                 </div>
 
@@ -733,7 +735,7 @@
                   </div>
                 </div>
 
-                <div class="print-note">Build Guild Kochi • Participation Certificate</div>
+                <div class="print-note" id="printNote">Build Guild Kochi • Participation Certificate</div>
               </div>
             </section>
           </div>
@@ -744,49 +746,91 @@
   </div>
 
   <script>
-    const participantNameInput = document.getElementById('participantName');
-    const participantNameDisplay = document.getElementById('participantNameDisplay');
-    const descriptionText = document.getElementById('descriptionText');
-    const descriptionDisplay = document.getElementById('descriptionDisplay');
     const categorySelect = document.getElementById('category');
     const categoryValue = document.getElementById('categoryValue');
+    const headlineTitle = document.getElementById('headlineTitle');
+    const eyebrowText = document.getElementById('eyebrowText');
+    const descriptionText = document.getElementById('descriptionText');
+    const descriptionDisplay = document.getElementById('descriptionDisplay');
+    const printNote = document.getElementById('printNote');
     const certificate = document.getElementById('certificate');
     const previewViewport = document.getElementById('previewViewport');
     const previewStage = document.getElementById('previewStage');
     const scaleLabel = document.getElementById('scaleLabel');
 
-    function formatDescription(text) {
-      const escaped = text
+    const categoryContent = {
+      'participation': {
+        label: 'Participation',
+        eyebrow: 'Official Recognition',
+        title: 'Certificate of<br>Participation',
+        description: 'For active participation in the <span class="hl">Soldering 101 Course</span> and the <span class="hl">Soldering &amp; Desoldering Marathon</span>. This event was organized in association with <span class="hl">Hack Club</span> and supported by international technical partners <span class="hl">EasyEDA</span>, <span class="hl">JLCPCB</span>, and <span class="hl">OSHWLab</span>.',
+        note: 'Build Guild Kochi • Participation Certificate'
+      },
+      'first-prize': {
+        label: 'First Prize',
+        eyebrow: 'Top Award',
+        title: 'Certificate of<br>First Prize',
+        description: 'Awarded for achieving <span class="hl">First Prize</span> in the <span class="hl">Soldering &amp; Desoldering Marathon</span> conducted as part of the <span class="hl">Soldering 101 Course</span> by <span class="hl">Build Guild Kochi</span> in association with <span class="hl">Hack Club</span>.',
+        note: 'Build Guild Kochi • First Prize Certificate'
+      },
+      'second-prize': {
+        label: 'Second Prize',
+        eyebrow: 'Merit Award',
+        title: 'Certificate of<br>Second Prize',
+        description: 'Awarded for securing <span class="hl">Second Prize</span> in the <span class="hl">Soldering &amp; Desoldering Marathon</span> conducted as part of the <span class="hl">Soldering 101 Course</span> by <span class="hl">Build Guild Kochi</span> in association with <span class="hl">Hack Club</span>.',
+        note: 'Build Guild Kochi • Second Prize Certificate'
+      },
+      'third-prize': {
+        label: 'Third Prize',
+        eyebrow: 'Recognition Award',
+        title: 'Certificate of<br>Third Prize',
+        description: 'Awarded for securing <span class="hl">Third Prize</span> in the <span class="hl">Soldering &amp; Desoldering Marathon</span> conducted as part of the <span class="hl">Soldering 101 Course</span> by <span class="hl">Build Guild Kochi</span> in association with <span class="hl">Hack Club</span>.',
+        note: 'Build Guild Kochi • Third Prize Certificate'
+      }
+    };
+
+    function normalizeDescriptionText(text) {
+      return text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-
-      return escaped
+        .replace(/>/g, '&gt;')
+        .replace(/
+/g, '<br>')
         .replace(/Soldering 101 Course/g, '<span class="hl">Soldering 101 Course</span>')
         .replace(/Soldering &amp; Desoldering Marathon/g, '<span class="hl">Soldering &amp; Desoldering Marathon</span>')
+        .replace(/First Prize/g, '<span class="hl">First Prize</span>')
+        .replace(/Second Prize/g, '<span class="hl">Second Prize</span>')
+        .replace(/Third Prize/g, '<span class="hl">Third Prize</span>')
         .replace(/Hack Club/g, '<span class="hl">Hack Club</span>')
+        .replace(/Build Guild Kochi/g, '<span class="hl">Build Guild Kochi</span>')
         .replace(/EasyEDA/g, '<span class="hl">EasyEDA</span>')
         .replace(/JLCPCB/g, '<span class="hl">JLCPCB</span>')
         .replace(/OSHWLab/g, '<span class="hl">OSHWLab</span>');
     }
 
-    function updateName() {
-      participantNameDisplay.textContent = (participantNameInput.value.trim() || 'PARTICIPANT NAME').toUpperCase();
+    function getSelectedCategory() {
+      return categoryContent[categorySelect.value] || categoryContent['participation'];
     }
 
     function updateDescription() {
-      const value = descriptionText.value.trim() || 'Certificate description';
-      descriptionDisplay.innerHTML = formatDescription(value);
+      const value = descriptionText.value.trim();
+      descriptionDisplay.innerHTML = normalizeDescriptionText(value || getSelectedCategory().description.replace(/<br>/g, ' '));
     }
 
     function updateCategory() {
-      const value = categorySelect.value || 'Participation';
-      categoryValue.textContent = value;
+      const current = getSelectedCategory();
+      categoryValue.textContent = current.label;
+      headlineTitle.innerHTML = current.title;
+      eyebrowText.textContent = current.eyebrow;
+      printNote.textContent = current.note;
+      descriptionText.value = current.description.replace(/<span class="hl">/g, '').replace(/<\/span>/g, '').replace(/<br>/g, '
+');
+      updateDescription();
     }
 
     function updatePreviewScale() {
       const viewportWidth = previewViewport.clientWidth;
-      const scale = Math.min(viewportWidth / 2480, 1);
+      const scale = Math.min(viewportWidth / 3508, 1);
       previewStage.style.setProperty('--preview-scale', String(scale));
       scaleLabel.textContent = scale < 1 ? `Scaled ${Math.round(scale * 100)}%` : 'Full Size';
     }
@@ -825,8 +869,8 @@
       return window.html2canvas(certificate, {
         backgroundColor: null,
         scale: exportScale,
-        width: 2480,
-        height: 3508,
+        width: 3508,
+        height: 2480,
         useCORS: true,
         logging: false
       });
@@ -843,7 +887,6 @@
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    participantNameInput.addEventListener('input', updateName);
     descriptionText.addEventListener('input', updateDescription);
     categorySelect.addEventListener('change', updateCategory);
     bindSignatureInput('signatureOne', 'signaturePreviewOne', 'signaturePlaceholderOne');
@@ -857,7 +900,7 @@
 
       try {
         const canvas = await renderCertificateCanvas();
-        const safeName = (participantNameInput.value.trim() || 'participant').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+        const safeName = `${categorySelect.value}-certificate`.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
 
         if (canvas.toBlob) {
           canvas.toBlob((blob) => {
@@ -865,13 +908,13 @@
               alert('PNG export failed. Please try again.');
               return;
             }
-            downloadBlob(blob, `${safeName}-certificate.png`);
+            downloadBlob(blob, `${safeName}.png`);
           }, 'image/png');
         } else {
           const dataUrl = canvas.toDataURL('image/png');
           const link = document.createElement('a');
           link.href = dataUrl;
-          link.download = `${safeName}-certificate.png`;
+          link.download = `${safeName}.png`;
           document.body.appendChild(link);
           link.click();
           link.remove();
@@ -889,8 +932,6 @@
       window.print();
     });
 
-    updateName();
-    updateDescription();
     updateCategory();
     updatePreviewScale();
 
