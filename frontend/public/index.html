@@ -1,247 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Build Guild Kochi — Event Access</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script src="config.js"></script>
-  <style>
-    .otp-container { width: min(100%, 620px); margin: 0 auto; }
-    .otp-card { max-width: none; }
-    .otp-input { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin: 20px 0; }
-    .otp-input input {
-      width: 100%; min-width: 0; aspect-ratio: 1; text-align: center; font-size: clamp(18px, 4vw, 24px); font-weight: 700;
-      background: var(--bp-dark); border: 1px solid rgba(255,255,255,.18); color: #fff;
-    }
-    .otp-input input:focus { border-color: var(--bp-warning); outline: none; }
-    .resend-btn { background: none; border: none; color: var(--bp-warning); cursor: pointer; font-size: 14px; margin-top: 10px; text-align: left; }
-    .resend-btn:hover { text-decoration: underline; }
-    .email-display { background: rgba(255,200,87,0.1); padding: 12px; margin: 16px 0; text-align: center; border: 1px solid rgba(255,200,87,.2); }
-    .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; }
-    .hero-panel { background: var(--bp-panel); border: 1px solid rgba(255,255,255,.12); padding: 20px; }
-    .hero-points { display: grid; gap: 10px; margin-top: 18px; }
-    .hero-points div { color: rgba(255,255,255,.78); line-height: 1.55; }
-    @media (max-width: 900px) {
-      .hero-grid { grid-template-columns: 1fr; }
-      .otp-input { gap: 8px; }
-    }
-  </style>
-</head>
-<body>
-  <a href="https://hackclub.com/" class="banner-link">
-    <img src="https://assets.hackclub.com/banners/2026.svg" alt="Hack Club">
-  </a>
-
-  <svg width="0" height="0" style="position:fixed">
-    <filter id="grainy" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
-      <feColorMatrix type="saturate" values="0"/>
-      <feBlend in="SourceGraphic" mode="multiply"/>
-    </filter>
-  </svg>
-
-  <div class="view active z1">
-    <div class="otp-container">
-      <div class="card otp-card">
-        <div class="hero-grid">
-          <div>
-            <div class="card-eyebrow">Build Guild Kochi · April 2026</div>
-            <div class="card-h1">Event access made simple on <span style="color:var(--bp-warning)">phone and desktop</span></div>
-            <div class="card-sub">Use your approved email to enter the event space, reach your dashboard, and later access your food fund pass.</div>
-            <div class="hero-points">
-              <div>One-time password login for attendees.</div>
-              <div>Mobile-friendly layout with the same sizing language as the dashboard pages.</div>
-              <div>Food fund and QR tools available after login.</div>
-            </div>
-          </div>
-          <div class="hero-panel">
-            <div id="email-step">
-              <div class="field">
-                <label>Email Address</label>
-                <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
-              </div>
-              <button class="btn btn-primary btn-block" onclick="sendOTP(event)">Send OTP</button>
-              <div class="msg err" id="err-msg"></div>
-            </div>
-
-            <div id="otp-step" style="display:none;">
-              <div class="email-display" id="email-display"></div>
-              <div class="field">
-                <label>Enter 6-digit OTP</label>
-                <div class="otp-input">
-                  <input type="text" maxlength="1" class="otp-digit" data-index="0">
-                  <input type="text" maxlength="1" class="otp-digit" data-index="1">
-                  <input type="text" maxlength="1" class="otp-digit" data-index="2">
-                  <input type="text" maxlength="1" class="otp-digit" data-index="3">
-                  <input type="text" maxlength="1" class="otp-digit" data-index="4">
-                  <input type="text" maxlength="1" class="otp-digit" data-index="5">
-                </div>
-              </div>
-              <button class="btn btn-primary btn-block" onclick="verifyOTP()">Verify and continue</button>
-              <button class="resend-btn" onclick="resendOTP()">Resend OTP</button>
-              <button class="resend-btn" onclick="goBack()">Back to email</button>
-              <div class="msg err" id="otp-err-msg"></div>
-            </div>
-          </div>
-        </div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Guild Kochi — Dashboard</title><link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head><body><!-- grain --><svg width="0" height="0">
+  <filter id="grainy">
+    <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feBlend in="SourceGraphic" mode="multiply"/>
+  </filter>
+</svg><div class="page-shell">  <!-- HEADER -->  <div class="page-header">
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-subtitle">
+        Build Guild Kochi · Event concluded
       </div>
+    </div><div class="topbar-nav">
+  <a class="topbar-link active">Overview</a>
+</div>
+
+  </div>  <!-- EVENT CARD -->  <div class="dashboard-card">
+    <div class="card-eyebrow">Build Guild Kochi · April 23, 2026</div>
+    <div class="card-h1">
+      Event Completed
     </div>
+    <div class="card-sub">
+      A one-day hardware meetup where people came together to solder,
+      build, and create real things.
+    </div><!-- STATS -->
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-number">1</div>
+    <div class="stat-label">Day</div>
   </div>
+  <div class="stat-card">
+    <div class="stat-number">50+</div>
+    <div class="stat-label">Builders</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">∞</div>
+    <div class="stat-label">Memories</div>
+  </div>
+</div>
 
-  <div id="toast" class="toast"></div>
+  </div>  <!-- FINAL MESSAGE -->  <div class="dashboard-card">
+    <div class="card-h1">Build Guild Kochi</div>
+    <div class="card-sub">
+      Started with circuits.<br><br>  Ended with confidence, curiosity, and happiness.<br><br>
 
-  <script>
-    let currentEmail = '';
+  What was built here continues beyond this event.
+</div>
 
-    const session = JSON.parse(localStorage.getItem('eventAccess') || '{}');
-    if (session.loggedIn && Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
-      window.location.href = '/waiting.html';
-    }
+<div class="note-box">
+  📍 TinkerSpace, Kochi<br>
+  🎉 Sponsored by Hack Club Blueprint
+</div>
 
-    document.querySelectorAll('.otp-digit').forEach((input, index, inputs) => {
-      input.addEventListener('input', (event) => {
-        event.target.value = event.target.value.replace(/\D/g, '');
-        if (event.target.value && index < inputs.length - 1) inputs[index + 1].focus();
-      });
-      input.addEventListener('keydown', (event) => {
-        if (event.key === 'Backspace' && !event.target.value && index > 0) inputs[index - 1].focus();
-      });
-    });
-
-    async function recordLogin(email) {
-      try {
-        await fetch(`${API_BASE_URL}/api/user/login-status`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, loggedIn: true })
-        });
-      } catch (err) {
-        console.error('Failed to record login:', err);
-      }
-    }
-
-    async function sendOTP(event) {
-      const email = document.getElementById('email').value.trim().toLowerCase();
-      const errDiv = document.getElementById('err-msg');
-      errDiv.style.display = 'none';
-
-      if (!email) {
-        errDiv.textContent = 'Please enter your email';
-        errDiv.style.display = 'block';
-        return;
-      }
-
-      const btn = event.target;
-      const originalText = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = 'Sending...';
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/send-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          currentEmail = email;
-          toast('OTP sent to your email', 'ok');
-          document.getElementById('email-step').style.display = 'none';
-          document.getElementById('otp-step').style.display = 'block';
-          document.getElementById('email-display').textContent = email;
-          document.querySelectorAll('.otp-digit').forEach((input) => { input.value = ''; });
-          document.querySelector('.otp-digit').focus();
-        } else {
-          errDiv.textContent = data.msg || 'Failed to send OTP';
-          errDiv.style.display = 'block';
-        }
-      } catch (err) {
-        errDiv.textContent = 'Network error. Please try again.';
-        errDiv.style.display = 'block';
-      } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
-      }
-    }
-
-    async function verifyOTP() {
-      const digits = document.querySelectorAll('.otp-digit');
-      const enteredOTP = Array.from(digits).map((digit) => digit.value).join('');
-      const errDiv = document.getElementById('otp-err-msg');
-      errDiv.style.display = 'none';
-
-      if (enteredOTP.length !== 6) {
-        errDiv.textContent = 'Please enter the full 6-digit OTP';
-        errDiv.style.display = 'block';
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/verify-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: currentEmail, otp: enteredOTP })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          await recordLogin(currentEmail);
-          localStorage.setItem('eventAccess', JSON.stringify({
-            email: currentEmail,
-            username: data.username,
-            displayName: data.displayName,
-            loggedIn: true,
-            timestamp: Date.now()
-          }));
-
-          try {
-            const statusRes = await fetch(`${API_BASE_URL}/api/admin/event-status`);
-            const statusData = await statusRes.json();
-            window.location.href = statusData.isOpen ? '/dashboard.html' : '/waiting.html';
-          } catch (err) {
-            window.location.href = '/waiting.html';
-          }
-        } else {
-          errDiv.textContent = data.msg || 'Invalid OTP';
-          errDiv.style.display = 'block';
-        }
-      } catch (err) {
-        errDiv.textContent = 'Network error. Please try again.';
-        errDiv.style.display = 'block';
-      }
-    }
-
-    async function resendOTP() {
-      if (!currentEmail) return;
-      toast('Resending OTP...', 'info');
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/user/send-otp`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: currentEmail })
-        });
-        const data = await res.json();
-        if (res.ok) toast('OTP resent. Check your email.', 'ok');
-        else toast(data.msg || 'Failed to resend', 'err');
-      } catch (err) {
-        toast('Network error', 'err');
-      }
-    }
-
-    function goBack() {
-      document.getElementById('email-step').style.display = 'block';
-      document.getElementById('otp-step').style.display = 'none';
-      document.getElementById('email').value = '';
-      document.getElementById('err-msg').style.display = 'none';
-    }
-
-    function toast(msg, type = 'info') {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = `toast show t-${type}`;
-      setTimeout(() => t.classList.remove('show'), 3400);
-    }
-  </script>
-</body>
+  </div></div></body>
 </html>
