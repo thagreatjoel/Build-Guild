@@ -1,32 +1,62 @@
 # Build Guild
-Event Website 
 
-## What is this?
+## What was Build Guild?
 
-I made this website for an event called **Build Guild**. It's a web app I built from scratch the frontend is what you see and interact with, and the backend handles all the behind-the-scenes work.
+Build Guild was a hacker meetup at **TinkerSpace** on **April 23, 2026**. Sponsored by **Hack Club**.
 
-I built this during the event, so things might change, break, or get better as I keep tinkering with it.
+People showed up to solder, compete, build stuff, and hang out with other people who like making things.
 
-## What does it do?
+No big sponsors. No fancy stages. Just hackers, a space, some competitions, and a dream. Hack Club made it happen.
 
-This website was created for the Build Guild event. It's my way of showing what I can build when I put my mind to something. Honestly, I'm still adding features and fixing little things here and there, but the core idea is there.
+## How the day went
 
-Right now, it includes things like QR functionality and frontend updates that I've been working on over the past few weeks.
+**10:00 AM** – Check in. People rolling in, finding seats, figuring out where the coffee was.
 
-## How I built it
+**10:30 AM** – Quick presentation to get everyone on the same page.
 
-I used HTML, CSS, and JavaScript for the frontend – that's everything you see on the screen. The backend handles the logic and data stuff, and I used Node.js to tie it all together.
+**1:00 PM** – Lunch. We had $65 for food. That's it. Made it work with pizza and drinks. Nobody starved.
 
-It's not perfect, but it's mine, and I'm proud of it.
+**2:00 PM to 8:00 PM** – Competitions ran. Six hours of building, debugging, and probably some quiet cursing.
 
-## Where things stand
+**8:30 PM** – Wrapped up and packed out.
 
-I've been working on this consistently. Here's what I've done lately:
+## What people built
 
-- Late April 2026 – Pushed a bunch of frontend updates
-- Mid April 2026 – Got QR features working on the backend
-- Early April 2026 – Cleaned up some messy files I accidentally included
+Attendees built **IoT hardware kits**. Real stuff. Things that connect, communicate, and actually do something. Not just blinking LEDs – though those are cool too.
+
+People soldered, assembled, coded, and got things working. Some worked on the first try. Some didn't. That's just how hardware goes.
+
+## The competitions
+
+Two competitions across two batches of people. Soldering challenges, building challenges, the kind that make you feel great when it works.
+
+Winners:
+
+- **1st place**
+- **2nd place**
+- **3rd place**
+
+Everyone who competed walked away with something – either a win, a new skill, or a story about what broke.
+
+## What's in this repo
+
+This repo has two things:
+
+1. **The event website** – Built for Build Guild so people could see what was happening, food management, or just check it out
+2. **The backend** – Because even a simple event website needs something running behind the scenes
+
+Nothing flashy. Just a digital footprint of what happened and the code that made it look decent.
+
+## Why Kochi TinkerSpace
+
+Because it's a real makerspace where people actually build things. Not a rented hall with tables and chairs. A real shop with real tools. They hosted us and made this whole thing possible.
+
+## A Event by
+
+**Hack Club** for sponsoring this. Without them, no pizza. No space. No event. Just a bunch of hackers with nowhere to go.
+
+To everyone who showed up, soldered, competed, and built something you made the day what it was.
 
 ---
 
-Thanks for stopping by. This was built with caffeine, late nights, and probably too much coffee.
+April 23, 2026. Sponsored by Hack Club.
