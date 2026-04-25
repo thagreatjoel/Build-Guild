@@ -3,7 +3,7 @@
 
 ## What was Build Guild?
 
-Build Guild was a hacker meetup at **[TinkerSpace](https://tinkerspace.org)** on **April 23, 2026**. Sponsored by **[Hack Club](https://hackclub.com)**.
+Build Guild was a hacker meetup at **[TinkerSpace](https://tinkerhub.org)** on **April 23, 2026**. Sponsored by **[Hack Club](https://hackclub.com)**.
 
 People showed up to solder, compete, build stuff, and hang out with other people who like making things.
 
@@ -50,7 +50,7 @@ Nothing flashy. Just a digital footprint of what happened and the code that made
 
 it's a real makerspace at kochi kerala, where people actually build things. Not a rented hall with tables and chairs. A real shop with real tools. They hosted us and made this whole thing possible. 🙌
 
-Check out: [TinkerSpace Kochi](https://tinkerspace.org)
+Check out: [TinkerSpace Kochi](https://tinkerhub.org)
 
 
 
