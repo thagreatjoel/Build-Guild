@@ -1,7 +1,7 @@
 # Build Guild
 
 ## What was Build Guild?
-![Build Guild](images/group-photo.jpg). 
+![Build Guild](/frontend/public/slide/1000118314%7E2.jpg). 
 
 Build Guild was a hacker meetup at **[TinkerSpace](https://tinkerspace.org)** on **April 23, 2026**. Sponsored by **[Hack Club](https://hackclub.com)**.
 
