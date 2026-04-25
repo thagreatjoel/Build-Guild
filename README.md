@@ -56,7 +56,7 @@ Check out: [TinkerSpace Kochi](https://tinkerhub.org/tinkerspace)
 
 ## An Event by
 
-**[Hack Club Blueprint](https://blueprint.hackclub.com)** – Without them, no pizza. No space. No event. Just a bunch of hackers with nowhere to go.
+**[Hack Club Blueprint](https://blueprint.hackclub.com)** – Without them, no pizza. No competition. No event. Just a bunch of hackers with nowhere to go.
 
 To everyone who showed up, soldered, competed, and built something – you made the day what it was. ❤️
 
