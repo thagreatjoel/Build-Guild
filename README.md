@@ -1,60 +1,47 @@
 # BUILD GUILD KOCHI
 
 ![Build Guild](/frontend/public/slide/1000118314%7E2.jpg)
-
 ## What was Build Guild?
 
-Just a hacker meetup at **[TinkerSpace](https://tinkerhub.org/tinkerspace)** on **April 23, 2026**. [Hack Club](https://hackclub.com) paid for it.
+A Great Day for hackers at **[TinkerSpace](https://tinkerhub.org/tinkerspace)**. The people at Hack Club made this event happen at TinkerSpace. Hackers went to TinkerSpace to make things and compete with hackers and build things and meet people who like making things.
 
-People showed up to solder, compete, build stuff, and hang out with other people who also like making things.
-
-No big sponsors. No fancy stages. Just hackers, a space, some competitions, and a dream. Hack Club made it happen.
+There were no companies giving us money or fancy stages at TinkerSpace. It was hackers and a space to work and competitions and a big dream. Hack Club made all of this happen at TinkerSpace. The hackers at TinkerSpace were very happy.
 
 ## How the day went
 
-**10:00 AM** – Check-in. People roll in, grab seats, make new friends.
-
-**10:30 AM** – A quick talk on soldering 101. Enough to get started.
-
-**1:00 PM** – Lunch. We had $65. That's it. Made it work with fried chicken, pizza, and drinks. Nobody starved. 🍕
-
-**2:00 PM to 8:00 PM** – Competitions ran. Six hours of building, debugging, and probably some quiet cursing. 🔧
-
-**8:30 PM** – Group photo. Pack up. Go home tired. 😴
+**10:00 AM** - People arrived at TinkerSpace. They found seats. Made new friends at TinkerSpace. The people at TinkerSpace were all very excited.
+**10:30 AM** - There was a talk about soldering at TinkerSpace. It was a talk and it helped people get started with soldering at TinkerSpace.
+**1:00 PM** - It was time for lunch at TinkerSpace. The people at TinkerSpace had sixty five dollars to spend on food.
+**2:00 PM to 8:00 PM** - The competitions took place at TinkerSpace. The hackers at TinkerSpace spent six hours building things and fixing problems and sometimes getting frustrated at TinkerSpace..
+**8:30 PM** - The people at TinkerSpace took a group photo. Then they packed up. Went home tired but happy from TinkerSpace.
 
 ## What people built
 
-Attendees built **IoT hardware kits**. Real stuff. Things that connect, communicate, and actually do something. Not just blinking LEDs — though those are cool too.
-
-People soldered, assembled, and got things working. Some worked on the first try. Some didn't. That's just hardware. 💀
+The hackers at TinkerSpace built **IoT hardware kits**. These are things that connect to things and communicate and do something useful at TinkerSpace. They are not just blinking lights at TinkerSpace. The people at TinkerSpace were very proud of what they built.
+The hackers at TinkerSpace put things together. Got their projects working at TinkerSpace. Some hackers got it working on the try at TinkerSpace. Others did not get it working at TinkerSpace.. That is what happens when you work with hardware at TinkerSpace.
 
 ## The competitions
 
-Two competitions across two batches of people. Soldering challenges, building challenges — the kind that make you feel great when it finally works.
+There were two competitions with two groups of people at TinkerSpace. These were building challenges at TinkerSpace. The hackers at TinkerSpace felt great when their projects finally worked at TinkerSpace.
+Every hacker who participated at TinkerSpace took something away: a win or a new skill or a story about what went wrong at TinkerSpace. The people at TinkerSpace learned a lot from each other.
 
-Everyone who competed walked away with something: a win, a new skill, or a story about what broke.
+## What's in this repository
 
-## What's in this repo
+1. **The event website** – This was so people could see what was happening and manage food or just check it out at TinkerSpace. The website was very helpful at TinkerSpace.
+2. **The backend* – Even a simple event site needs some system running behind the scenes at TinkerSpace. The people at TinkerSpace worked hard to make it happen.
 
-Two things:
-
-1. **The event website** – So people could see what was happening, manage food, or just check it out.
-2. **The backend** – Because even a simple event site needs something running behind the scenes.
-
-Nothing flashy. Just a digital footprint of what happened and the code that made it look decent.
+It is not fancy at TinkerSpace. It is a record of what happened and the code that made it look decent at TinkerSpace. The hackers at TinkerSpace are very happy with what they did.
 
 ## What is TinkerSpace?
 
-A real makerspace in Kochi, Kerala, where people actually build things. Not a rented hall with tables and chairs. A real shop with real tools. They hosted us and made this whole thing possible. 🙌
+TinkerSpace is a place in Kochi, Kerala, where people actually build things at TinkerSpace. They have a workshop with tools at TinkerSpace. They hosted the hackers at TinkerSpace. 
+Check [TinkerSpace Kochi](https://tinkerhub.org/tinkerspace)
 
-Check out: [TinkerSpace Kochi](https://tinkerhub.org/tinkerspace)
+## An Event, by
 
-## An Event by
-
-**[Hack Club Blueprint](https://blueprint.hackclub.com)** – Without them, no pizza. No competition. No event. Just a bunch of hackers with nowhere to go.
-
-To everyone who showed up, soldered, competed, and built something — you made the day what it was. ❤️
+**[Hack Club Blueprint](https://blueprint.hackclub.com)**. Without them there would be no pizza and no competition and no event at TinkerSpace. The people at Hack Club are very kind.
+To every hacker who showed up and soldered and competed and built something at TinkerSpace. The hackers at TinkerSpace made the day what it was, at TinkerSpace. The people, at TinkerSpace are very happy.
 
 ---
 
-April 23, 2026 | TinkerSpace, Kochi | Sponsored by Hack Club
+April 23 2026 TinkerSpace, Kochi | Sponsored by Hack Club
